@@ -1,0 +1,1 @@
+// A JavaScript file for managing CRUD of categories

@@ -1,0 +1,1 @@
+// A JavaScript file for connecting to the MySQL DBMS
