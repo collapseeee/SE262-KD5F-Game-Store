@@ -1,0 +1,150 @@
+<nav class="navbar navbar-expand-lg bg-custom d-flex align-items-center justify-content-center">
+  <div class="navbar-brand">
+    <div class="">
+      <a href="">
+        <img id="brand-icon" src="/assets/KD5FIcon.png" alt="" />
+      </a>
+    </div>
+    <div>
+      <a href="">
+        <img id="category-brand" src="/assets/category.svg" alt="Category Icon" />
+        <p>Category</p>
+      </a>
+    </div>
+  </div>
+  <ul class="navbar-nav mc-auto">
+
+    <li class="nav-item search-bar">
+      <form action="/" method="post">
+        <button id="search-button" type="submit">
+          <img src="/assets/search.svg" alt="Search Icon" />
+        </button>
+        <input type="text" name="gameName" id="gameName" />
+        <!-- 
+          <img id="category-search" src="/assets/category.svg" alt="Category Icon" /> -->
+
+        <select name="categories" id="categories">
+
+          <% categories.forEach((category)=> { %>
+            <option value="<%=category%>">
+              <%=category %>
+            </option>
+            <% }); %>
+        </select>
+      </form>
+    </li>
+    <li class="nav-item nav-button">
+      <a href="" type="button">
+        <img src="/assets/shopping_cart.svg" alt="">
+      </a>
+    </li>
+    <li class="nav-item nav-button">
+      <a href="" type="button">
+        <img src="/assets/wishlist.svg" alt="">
+      </a>
+    </li>
+    <li class="nav-item nav-button">
+      <a href="">
+        <img src="/assets/account.svg" alt="">
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .navbar-brand {
+    background-color: #8B00F5;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    border-radius: 38px;
+    font-size: 12px;
+  }
+
+
+  #brand-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+
+  #category-brand {
+    width: 48px;
+    height: 48px
+  }
+
+  .bg-custom {
+    background-color: #8122c9;
+  }
+
+  .search-bar {
+    width: 1024px;
+    height: 48px;
+  }
+
+  .search-bar form {
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+
+  #search-button {
+    margin: 0;
+    padding: 8px;
+    background-color: #2F2B33;
+    border: none;
+    border-radius: 50%;
+    align-self: center;
+  }
+
+  #search-button img {
+    width: 32px;
+    height: 32px;
+  }
+
+  #categories {
+    width: 35%;
+    height: 100%;
+    font-size: 1.5em;
+    padding: 0 10px;
+    color: #FEFEFE;
+    background-color: #8B00F5;
+  }
+
+  #gameName {
+    margin: 0;
+    padding: 0 0 0 24px;
+    color: #FEFEFE;
+    width: 55%;
+    height: 48px;
+    border-radius: 18px 0 0 18px;
+    border: none;
+    background-color: #2F2B33;
+  }
+
+
+  #category-search {
+    margin: 0;
+    padding: 18px;
+    align-items: center;
+    align-self: center;
+    border: 1px solid black
+  }
+
+  .nav-button {
+    background-color: #8B00F5;
+    margin: 0 10px;
+    padding: 15px;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    align-items: center;
+    align-self: center;
+  }
+
+
+  li>a>img {
+    width: 32px;
+  }
+</style>
