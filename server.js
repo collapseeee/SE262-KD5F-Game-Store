@@ -6,6 +6,7 @@ const Auth = require('./controllers/auth');
 const app = express();
 
 app.use(express.static('public'));
+app.use(express.static('node_modules/bootstrap'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
@@ -15,6 +16,7 @@ app.set("view engine", "ejs");
 app.get('/', (req, res) => {
     res.render('index', {
         // Data here
+        categories: ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
     });
 });
 
