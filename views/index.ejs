@@ -13,5 +13,24 @@
   <body>
     <!-- Navbar -->
     <%-include('buyer/partials/navbar');%>
+    <main class="container">
+      <%-include('buyer/partials/gameCard');%>
+      <p id="explore">
+        Explore more: <span id="login-text">Log in</span> or
+        <span id="register-text">Register</span>
+      </p>
+    </main>
   </body>
+  <style>
+    #explore {
+      margin: 25px;
+      text-align: center;
+      font-size: 2rem;
+    }
+    #login-text,
+    #register-text {
+      color: #b7ef00;
+      text-decoration: underline;
+    }
+  </style>
 </html>
