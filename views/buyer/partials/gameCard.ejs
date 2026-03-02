@@ -7,15 +7,34 @@
     <p class="game-name">MONSTER HUNTER RISE</p>
     <p class="game-price">$999</p>
     <form class="button-container">
-      <button id="wishlist"><img src="/assets/wishlist.svg" alt="" /></button>
+      <button id="wishlist">
+        <svg
+          class="bi px-auto card-svg"
+          width="32"
+          height="32"
+          fill="currentColor"
+        >
+          <use xlink:href="bootstrap-icons.svg#heart" />
+        </svg>
+      </button>
       <button id="add-to-cart">
-        <img src="/assets/add_to_cart.svg" alt="" />
+        <svg
+          class="bi px-auto card-svg"
+          width="32"
+          height="32"
+          fill="currentColor"
+        >
+          <use xlink:href="bootstrap-icons.svg#cart-plus" />
+        </svg>
       </button>
     </form>
   </div>
 </div>
 
 <style>
+  .card-svg {
+    color: #5c3b75;
+  }
   .card {
     display: inline-block;
     height: 430px;
