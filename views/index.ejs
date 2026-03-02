@@ -14,82 +14,37 @@
   <body>
     <!-- Navbar -->
     <%-include('buyer/partials/navbar');%>
-    <main class="container d-block my-4">
+    <main class="container my-4">
       <!-- Carousel -->
-      <div class="align-items-center my-4 w-100">
-        <h1>Highlight</h1>
-        <div
-          id="autoplay-carousel"
-          class="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-indicators">
-            <button
-              type="button"
-              data-bs-target="#autoplay-carousel"
-              data-bs-slide-to="0"
-              class="active"
-              aria-current="true"
-              aria-label="Slide 1"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#autoplay-carousel"
-              data-bs-slide-to="1"
-              aria-label="Slide 2"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#autoplay-carousel"
-              data-bs-slide-to="2"
-              aria-label="Slide 3"
-            ></button>
-          </div>
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img
-                src="https://placehold.co/1280x640"
-                class="d-block w-100 rounded-4"
-                alt="..."
-              />
-            </div>
-            <div class="carousel-item">
-              <img
-                src="https://placehold.co/1280x640"
-                class="d-block w-100 rounded-4"
-                alt="..."
-              />
-            </div>
-            <div class="carousel-item">
-              <img
-                src="https://placehold.co/1280x640"
-                class="d-block w-100 rounded-4"
-                alt="..."
-              />
-            </div>
-          </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#autoplay-carousel"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#autoplay-carousel"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+      <%-include('buyer/partials/carousel');%>
+
+      <!-- Game Cards Grid -->
+      <div class="container">
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
         </div>
       </div>
-      <!-- End of Carousel -->
-      <%-include('buyer/partials/gameCard');%>
 
       <!-- Explore more Text -->
       <p id="explore">
@@ -97,6 +52,8 @@
         <span id="register-text">Register</span>
       </p>
     </main>
+
+    <%-include('buyer/partials/footer')%>
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
   </body>
   <style>
