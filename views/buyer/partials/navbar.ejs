@@ -1,16 +1,12 @@
 <nav class="navbar navbar-expand-lg bg-custom my-3">
-  <div class="container-fluid justify-content-center">
-    <div class="navbar-brand d-lg-flex px-2">
-      <div class="icon-container">
-        <a href="">
-          <img class="rounded-circle" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
-        </a>
-      </div>
-      <div class="category-container ps-1">
-        <a class="nav-item nav-button mx-2 d-block align-items-center">
-
+  <div class="container align-items-start justify-content-center">
+    <div class="navbar-brand align-items-center rounded-5 d-lg-flex px-2">
+      <a href="">
+        <img class="rounded-circle" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
+      </a>
+      <div class="category-container px-3">
           <!-- Brand Category Dropdown -->
-          <div class="dropdown">
+          <div class="nav-item dropdown">
             <a class="dropdown-toggle-custom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <svg class="bi" width="32" height="32" fill="currentColor">
                 <use xlink:href="bootstrap-icons.svg#tags-fill" />
@@ -27,12 +23,11 @@
                 <%});%>
             </ul>
           </div>
-        </a>
       </div>
     </div>
-    <ul class="navbar-nav">
+    <ul class="navbar-nav flex-grow-1">
       <!-- Search bar -->
-      <li class="nav-item search-bar d-flex mx-4 flex-grow-1">
+      <li class="nav-item search-bar mx-4 flex-grow-1">
         <form class="d-flex h-100 w-100 align-items-center" action="/" method="post">
           <!-- Search Button -->
           <button class="rounded-start-5" id="search-button" type="submit">
@@ -42,7 +37,7 @@
           </button>
 
           <!-- Search Input -->
-          <input class="d-flex h-100 px-2" type="text" name="gameName" id="search-input" />
+          <input class="d-flex flex-grow-1 h-100 px-2" type="text" name="gameName" id="search-input" />
 
           <!-- Category Dropdown -->
           <div class="dropdown h-100">
@@ -96,13 +91,18 @@
     background-color: #8b00f5;
     text-align: center;
     align-items: center;
-    border-radius: 38px;
+    height: 100%;
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
     font-size: 12px;
+  }
+
+  .navbar-brand, .nav-button, #search-button, #search-input, .dropdown > a > div{
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
   }
 
   #brand-icon {
     size: auto;
-    max-width: 80px;
+    max-width: 64px;
   }
 
 
@@ -117,7 +117,6 @@
 
   /* Search bar */
   .search-bar {
-    max-width: 1024px;
     height: 48px;
   }
 
@@ -126,11 +125,6 @@
     height: 100%;
     background-color: #2f2b33;
     border: none;
-  }
-
-  #search-button img {
-    width: 32px;
-    height: 32px;
   }
 
   #search-input {
@@ -166,5 +160,11 @@
 
   li>a>img {
     width: 32px;
+  }
+
+  .category-container p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
   }
 </style>
