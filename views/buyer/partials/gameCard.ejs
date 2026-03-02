@@ -1,0 +1,93 @@
+<div class="card col-lg-3 col-12 rounded-3 p-0 my-2">
+  <img class="rounded-top-3 w-100" src="https://placehold.co/256x256" alt="" />
+  <div>
+    <p class="game-category">Category1</p>
+    <p class="game-name">MONSTER HUNTER RISE</p>
+    <p class="game-price">$999</p>
+    <form class="button-container">
+      <button id="wishlist">
+        <svg
+          class="bi px-auto card-svg"
+          width="32"
+          height="32"
+          fill="currentColor"
+        >
+          <use xlink:href="bootstrap-icons.svg#heart" />
+        </svg>
+      </button>
+      <button id="add-to-cart">
+        <svg
+          class="bi px-auto card-svg"
+          width="32"
+          height="32"
+          fill="currentColor"
+        >
+          <use xlink:href="bootstrap-icons.svg#cart-plus" />
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .card-svg {
+    color: #5c3b75;
+  }
+
+  .card {
+    height: 430px;
+    width: 256px;
+    background-color: #5c3b75;
+    color: #fefefe;
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+  }
+
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #wishlist,
+  #add-to-cart {
+    background-color: #b7ef00;
+    height: 48px;
+    border: none;
+  }
+
+  #wishlist > img,
+  #add-to-cart > img {
+    width: 32px;
+  }
+
+  #wishlist {
+    width: 48px;
+    border-radius: 50%;
+    margin: 0 0 0 15px;
+  }
+
+  #add-to-cart {
+    width: 70%;
+    border-radius: 50px;
+    margin: 0 15px 0 5px;
+  }
+
+  .game-category {
+    margin: 5px 25px 0 25px;
+    color: #cfcfcf;
+  }
+
+  .game-name {
+    line-height: 1.1;
+    margin: 0 25px;
+    font-size: 1.5em;
+    text-align: justify;
+  }
+
+  .game-price {
+    margin: 0;
+    text-align: right;
+    font-size: 1.5em;
+    padding-right: 25px;
+  }
+</style>

@@ -23,6 +23,7 @@
     "axios": "^1.13.5",
     "body-parser": "^2.2.2",
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "dotenv": "^17.3.1",
     "ejs": "^4.0.1",
     "express": "^5.2.1",

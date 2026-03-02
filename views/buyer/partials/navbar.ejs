@@ -1,0 +1,170 @@
+<nav class="navbar navbar-expand-lg bg-custom my-3">
+  <div class="container align-items-start justify-content-center">
+    <div class="navbar-brand align-items-center rounded-5 d-lg-flex px-2">
+      <a href="">
+        <img class="rounded-circle" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
+      </a>
+      <div class="category-container px-3">
+          <!-- Brand Category Dropdown -->
+          <div class="nav-item dropdown">
+            <a class="dropdown-toggle-custom" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <svg class="bi" width="32" height="32" fill="currentColor">
+                <use xlink:href="bootstrap-icons.svg#tags-fill" />
+              </svg>
+              <p>Category</p>
+            </a>
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu">
+              <% categories.forEach(category=> { %>
+                <li><a class="dropdown-item" href="#">
+                    <%=category%>
+                  </a></li>
+
+                <%});%>
+            </ul>
+          </div>
+      </div>
+    </div>
+    <ul class="navbar-nav flex-grow-1">
+      <!-- Search bar -->
+      <li class="nav-item search-bar mx-4 flex-grow-1">
+        <form class="d-flex h-100 w-100 align-items-center" action="/" method="post">
+          <!-- Search Button -->
+          <button class="rounded-start-5" id="search-button" type="submit">
+            <svg class="bi px-2" width="32" height="32" fill="currentColor">
+              <use xlink:href="bootstrap-icons.svg#search" />
+            </svg>
+          </button>
+
+          <!-- Search Input -->
+          <input class="d-flex flex-grow-1 h-100 px-2" type="text" name="gameName" id="search-input" />
+
+          <!-- Category Dropdown -->
+          <div class="dropdown h-100">
+            <a class="align-items-center dropdown-toggle-custom" href="#" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <div class="h-100 rounded-end-5 px-3 d-flex align-items-center justify-content-center">
+                <p class="m-0 p-0">Category</p>
+                <svg class="bi ms-1" width="12" height="12" fill="currentColor">
+                  <use xlink:href="bootstrap-icons.svg#arrow-down" />
+                </svg>
+              </div>
+            </a>
+
+            <ul class="dropdown-menu">
+              <% categories.forEach(category=> { %>
+                <li><a class="dropdown-item" href="#">
+                    <%=category%>
+                  </a></li>
+
+                <%});%>
+            </ul>
+          </div>
+        </form>
+      </li>
+      <!-- End of search bar -->
+      <a class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle">
+        <svg class="bi" width="32" height="32" fill="currentColor">
+          <use xlink:href="bootstrap-icons.svg#cart3" />
+        </svg>
+      </a>
+      <a class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle">
+        <svg class="bi" width="32" height="32" fill="currentColor">
+          <use xlink:href="bootstrap-icons.svg#heart" />
+        </svg>
+      </a>
+      <a class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle">
+        <svg class="bi" width="32" height="32" fill="currentColor">
+          <use xlink:href="bootstrap-icons.svg#person" />
+        </svg>
+      </a>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  svg {
+    color: #FEFEFE;
+  }
+
+  .navbar-brand {
+    background-color: #8b00f5;
+    text-align: center;
+    align-items: center;
+    height: 100%;
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+    font-size: 12px;
+  }
+
+  .navbar-brand, .nav-button, #search-button, #search-input, .dropdown > a > div{
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+  }
+
+  #brand-icon {
+    size: auto;
+    max-width: 64px;
+  }
+
+
+  .category-container>* {
+    text-decoration: none;
+    color: #fefefe;
+  }
+
+  .bg-custom {
+    background-color: #8122c9;
+  }
+
+  /* Search bar */
+  .search-bar {
+    height: 48px;
+  }
+
+  #search-button {
+    margin: 0;
+    height: 100%;
+    background-color: #2f2b33;
+    border: none;
+  }
+
+  #search-input {
+    margin: 0;
+    color: #fefefe;
+    border: none;
+    background-color: #2f2b33;
+  }
+
+  .dropdown-toggle {
+    margin: 0;
+    height: 100%;
+    color: #fefefe;
+    background-color: #8b00f5;
+  }
+
+  .nav-button {
+    background-color: #8b00f5;
+    color: #FEFEFE;
+    cursor: pointer;
+  }
+
+  .dropdown-toggle-custom {
+    text-decoration: none;
+    color: #fefefe;
+  }
+
+  .dropdown-toggle-custom>div {
+    background-color: #8b00f5;
+    text-align: center;
+  }
+
+
+  li>a>img {
+    width: 32px;
+  }
+
+  .category-container p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+  }
+</style>
