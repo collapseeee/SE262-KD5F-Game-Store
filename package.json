@@ -21,6 +21,7 @@
   "homepage": "https://github.com/camt-pathathai/termproject-2025-mhuhaorak-frontend#readme",
   "dependencies": {
     "axios": "^1.13.5",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "bootstrap": "^5.3.8",
     "dotenv": "^17.3.1",

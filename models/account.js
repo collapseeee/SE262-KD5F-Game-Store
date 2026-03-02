@@ -1,4 +1,4 @@
-import connection from './db.js';
+const connection = require( './db');
 
 // Execute SQL command method
 const executeQuery = (sql, args) => {
@@ -16,7 +16,7 @@ const executeQuery = (sql, args) => {
 const Account = {
   // Get user by ID
   getUserById: async (userId) => {
-    const sql = 'SELECT * FROM users WHERE id = ?';
+    const sql = 'SELECT * FROM Account WHERE user_id = ?';
     try {
       const results = await executeQuery(sql, [userId]);
       return results;
@@ -27,9 +27,9 @@ const Account = {
 
   // Create new user
   createUser: async (userData) => {
-    const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO Account (username, password) VALUES (?, ?)';
     try {
-      const results = await executeQuery(sql, [userData.username, userData.email, userData.password]);
+      const results = await executeQuery(sql, [userData.username, userData.password]);
       return results;
     } catch (error) {
       throw error;
@@ -37,4 +37,4 @@ const Account = {
   }
 };
 
-export default Account;
+module.exports = Account;
