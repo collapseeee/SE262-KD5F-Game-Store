@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.static('public'));
 app.use(express.static('node_modules/bootstrap'));
+app.use(express.static('node_modules/bootstrap-icons'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
