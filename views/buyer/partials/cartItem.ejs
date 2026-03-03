@@ -1,0 +1,30 @@
+<div class="container cart-container rounded-4 mb-3">
+  <div class="p-4 row">
+    <div class="col-auto">
+      <img
+        class="game-poster w-100"
+        src="https://placehold.co/512x256"
+        alt=""
+      />
+    </div>
+    <div class="col d-flex flex-column my-lg-0 my-sm-2">
+      <div class="row">
+        <p class="fs-3 fw-medium col-6"><%=game.name%></p>
+        <p class="fs-3 col-6 text-end">$ <%=game.price%></p>
+      </div>
+      <p class="fs-4"><% game.categories.forEach((category) => { %>
+        <%=category%> 
+      <%})%></p>
+      <div class="row mt-auto">
+        <p class="opacity-75 col-10 text-start"><%=game.wishlisted_date%></p>
+        <a class="link-danger col-2 link-underline-danger text-end">Remove</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cart-container {
+    background-color: #8b00f5;
+  }
+</style>
