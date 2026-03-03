@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Contacts</title>
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <%-include('partials/navbar')%>
+    <main class="container my-4">
+      <h1 class="fs-1">Personal Information</h1>
+      <div class="container-fluid account-container p-5 rounded-4 row">
+        <div
+          class="image-container p-5 mx-auto rounded-4 w-100 h-100 col-lg-6 justify-content-center"
+        >
+          <img
+            id="user-image"
+            class="w-100 h-100"
+            src="/assets/user.png"
+            alt=""
+          />
+        </div>
+        <div class="fs-3 flex-grow-1 col-lg-6 ps-5">
+          <div class="row">
+            <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
+              Username:
+            </p>
+            <p class="col-lg-6 text-lg-end text-sm-center"><%=username%></p>
+          </div>
+          <div class="row">
+            <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
+              Account created:
+            </p>
+            <p class="col-lg-6 col-sm-12 text-lg-end text-sm-center">
+              <%=createDate%>
+            </p>
+          </div>
+          <div class="row">
+            <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
+              Total spend:
+            </p>
+            <p class="col-lg-6 text-lg-end text-sm-center">$<%=totalSpend%></p>
+          </div>
+          <div class="row">
+            <p class="fw-bold col-lg-6 text-lg-start text-sm-center">
+              Game purchased:
+            </p>
+            <p class="col-lg-6 text-lg-end text-sm-center"><%=totalGame%></p>
+          </div>
+        </div>
+      </div>
+      <div class="my-3">
+        <button
+          id="logout-button"
+          class="fs-2 rounded-4 px-4 border-0 py-2 mx-2"
+        >
+          Log Out
+        </button>
+        <a id="delete-account-button" class="fs-3 text-danger m-4" href=""
+          >Delete my account</a
+        >
+      </div>
+    </main>
+    <%-include('partials/footer')%>
+  </body>
+
+  <style>
+    .account-container {
+      background-color: #8b00f5;
+    }
+    .image-container {
+      background-color: #fefefe;
+      max-width: 512px;
+      max-height: 512px;
+    }
+
+    #logout-button {
+      background-color: #8b00f5;
+      color: white;
+    }
+  </style>
+</html>
