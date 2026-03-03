@@ -21,6 +21,7 @@ const Account = {
       const results = await executeQuery(sql, [userId]);
       return results;
     } catch (error) {
+      error.message = 'Error creating user: ' + error.message;
       throw error;
     }
   },
@@ -32,6 +33,7 @@ const Account = {
       const results = await executeQuery(sql, [userData.username, userData.password]);
       return results;
     } catch (error) {
+      error.message = 'Error creating user: ' + error.message;
       throw error;
     }
   },
@@ -41,6 +43,7 @@ const Account = {
       const results = await executeQuery(sql, [username]);
       return results;
     } catch (error) {
+      error.message = 'Error creating user: ' + error.message;
       throw error;
     }
   }

@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint . --ext .js",
+    "lint:html": "eslint . --format html --output-file eslint-report.html"
   },
   "repository": {
     "type": "git",
@@ -26,10 +28,16 @@
     "bootstrap": "^5.3.8",
     "dotenv": "^17.3.1",
     "ejs": "^4.0.1",
+    "eslint": "^10.0.2",
     "express": "^5.2.1",
     "express-mysql-session": "^3.0.3",
     "express-session": "^1.19.0",
     "mysql2": "^3.18.0",
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.4.0"
   }
 }
