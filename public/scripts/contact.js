@@ -31,4 +31,9 @@ async function init() {
         window.open('https://maps.app.goo.gl/zyzYV6TUJsVbt2AP6', '_blank')
     });
 }
-init();
+
+try {
+    await init();
+} catch (error) {
+    console.error(error)
+}
