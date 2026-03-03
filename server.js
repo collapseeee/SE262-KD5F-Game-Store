@@ -26,14 +26,22 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
+app.set('views', './views');
 
 // Endpoints
 
 app.get('/', (req, res) => {
+    console.log('Session before rendering:', req.session);
+    if (req.session.username) {
     res.render('index', {
-        // Data here
+        username: req.session.username,
+        role: req.session.role
     });
-});
+} else {
+    console.log('No user logged in, rendering identification page.');
+    res.render('identification');
+}});
+
 
 app.post('/loginBuyer', (req, res) => {
     const { username, password, role } = req.body;
@@ -41,8 +49,8 @@ app.post('/loginBuyer', (req, res) => {
         .then(() => {
             req.session.username = username;
             req.session.role = role;
-            res.send('Login successful');
             console.log('Session after login:', req.session);
+            return res.redirect('/');
         })
         .catch(error => {
             console.error(error);
@@ -57,7 +65,8 @@ app.post('/loginSeller', (req, res) => {
         .then(() => {
             req.session.username = username;
             req.session.role = role;
-            res.send('Login successful');
+            
+            res.redirect('/');
             console.log('Session after login:', req.session);
         })
         .catch(error => {
@@ -73,7 +82,8 @@ app.post('/signup', (req, res) => {
         .then(() => {
             req.session.username = username;
             req.session.role = role;
-            res.send('Signup successful');
+            
+            res.redirect('/');
             console.log('Session after signup:', req.session);
         })
         .catch(error => {
