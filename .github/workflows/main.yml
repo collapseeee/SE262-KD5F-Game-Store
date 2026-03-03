@@ -1,0 +1,34 @@
+name: Node.js ESLint Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  eslint-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # ปรับตามเวอร์ชันที่คุณใช้
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint and Export HTML
+        run: npx eslint . --format html --output-file eslint-report.html
+        continue-on-error: true
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-html-report
+          path: eslint-report.html
