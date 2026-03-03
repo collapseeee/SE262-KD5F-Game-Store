@@ -34,6 +34,15 @@ const Account = {
     } catch (error) {
       throw error;
     }
+  },
+  getUserByName: async (username) => {
+    const sql = 'SELECT * FROM Account WHERE username = ?';
+    try {
+      const results = await executeQuery(sql, [username]);
+      return results;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
