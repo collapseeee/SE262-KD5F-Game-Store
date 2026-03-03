@@ -60,8 +60,10 @@ app.get('/wishlist', (req, res) => {
     });
 });
 app.get('/contact', (req, res) => {
+
     res.render('contact', {
         // Data here
+        categories: ['All Category', 'FPS', 'Soul-Like', 'Family']
     });
 });
 
