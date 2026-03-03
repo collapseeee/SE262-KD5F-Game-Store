@@ -1,0 +1,146 @@
+#sign {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto;
+    font-size: 3em;
+}
+
+@media (max-width: 576px) {
+    #sign {
+        font-size: 2em;
+        margin: 20px auto;
+    }
+}
+
+.identification h1 {
+    font-size: 2em;
+}
+
+@media (max-width: 576px) {
+    .identification h1 {
+        font-size: 1.5em;
+    }
+
+    .identification > i {
+        font-size: 5em;
+    }
+
+    .btn {
+        font-size: 1.1em;
+    }
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.contentBox {
+    width: 100%;
+    background-color: #8B00F5;
+    border-radius: 12px;
+}
+
+.contentBox>a {
+    padding: 20px 10px;
+    margin: 10px;
+    color: #B7EF00;
+    font-size: 1em;
+}
+
+.identification {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+
+    >i {
+        font-size: 8em;
+        color: #000000;
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+.btn {
+    padding: 10px 20px;
+    margin: 10px;
+    margin-bottom: 20px;
+    color: #8B00F5;
+    background-color: #B7EF00;
+    border-radius: 5px;
+    font-size: 1.5em;
+}
+
+.hyperlink {
+    color: #B7EF00;
+    font-size: 1.2em;
+    position: relative;
+    top: 10px;
+}
+
+.form-group {
+    width: 80%;
+    margin: 20px 0;
+
+    input {
+    background-color: #2F2B33;
+    border: none;
+    border-radius: 10px;
+  }
+  
+    input::placeholder {
+        color: #6c757d;
+    }
+}    
+
+.form-group p {
+  margin: 10px 0 6px;
+  text-align: left;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon .form-control {
+  padding-right: 40px;
+}
+
+.form-control:not(:focus):not(:placeholder-shown) {
+  color: #B7EF00;
+}
+
+.input-with-icon .input-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.2s;
+}
+
+.sign-btn {
+    border-radius: 30px;
+    text-align: center;
+}
+
+.input-with-icon .input-icon:hover {
+  color: #B7EF00;
+}
