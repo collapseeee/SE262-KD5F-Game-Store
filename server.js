@@ -9,16 +9,16 @@ const sessionStore = require('./models/session');
 const app = express();
 // App setup
 app.use(
-session({
-    secret: 'my-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore,
-    cookie: {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60   // 1 hour
-    }
-})
+    session({
+        secret: 'my-secret-key',
+        resave: false,
+        saveUninitialized: false,
+        store: sessionStore,
+        cookie: {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60   // 1 hour
+        }
+    })
 );
 
 app.use(express.static('public'));
@@ -38,15 +38,18 @@ app.set('views', './views');
 app.get('/', (req, res) => {
     console.log('Session before rendering:', req.session);
     if (req.session.username) {
-    res.render('index', {
+        res.render('index', {
 
-        username: req.session.username,
-        role: req.session.role
-    });
-} else {
-    console.log('No user logged in, rendering identification page.');
-    res.render('identification');
-}});
+            username: req.session.username,
+            role: req.session.role
+        });
+    } else {
+        console.log('No user logged in, rendering identification page.');
+        res.render('index', {
+            categories: categories
+        });
+    }
+});
 
 
 app.post('/loginBuyer', (req, res) => {
@@ -62,7 +65,7 @@ app.post('/loginBuyer', (req, res) => {
             console.error(error);
             res.status(500).send('Error during login');
         });
-    
+
 });
 
 app.post('/loginSeller', (req, res) => {
@@ -71,7 +74,7 @@ app.post('/loginSeller', (req, res) => {
         .then(() => {
             req.session.username = username;
             req.session.role = role;
-            
+
             res.redirect('/');
             console.log('Session after login:', req.session);
         })
@@ -79,7 +82,7 @@ app.post('/loginSeller', (req, res) => {
             console.error(error);
             res.status(500).send('Error during login');
         });
-    
+
 });
 
 app.post('/signup', (req, res) => {
@@ -88,7 +91,7 @@ app.post('/signup', (req, res) => {
         .then(() => {
             req.session.username = username;
             req.session.role = role;
-            
+
             res.redirect('/');
             console.log('Session after signup:', req.session);
         })
@@ -96,7 +99,7 @@ app.post('/signup', (req, res) => {
             console.error(error);
             res.status(500).send('Error during signup');
         });
-    
+
 });
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
@@ -107,13 +110,13 @@ app.get('/logout', (req, res) => {
             res.send('Logout successful');
             res.redirect('/');
         }
-        
-        
+
+
 
     });
 });
-// Data here
-categories: ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
+
+let categories = ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
 app.get('/login', (req, res) => {
     res.render('identification', {
         // Data here
@@ -148,8 +151,24 @@ app.get('/checkout', (req, res) => {
     });
 });
 app.get('/wishlist', (req, res) => {
-    res.render('wishlist', {
+
+    // Get product where user.id = wishlist.user_id DISTINCT product_id
+    const games = [{
+        name: "HELLDIVER 2",
+        categories: ['Action', 'Shooter'],
+        price: 999.99,
+        wishlisted_date: Date.now()
+    }, {
+        name: "Phasmophobia",
+        categories: ['Horror'],
+        price: 0.99,
+        wishlisted_date: Date.now()
+    }];
+
+    res.render('buyer/wishlist', {
         // Data here
+        categories: categories,
+        games: games
     });
 });
 app.get('/contact', (req, res) => {
