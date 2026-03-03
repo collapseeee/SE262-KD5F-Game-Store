@@ -22,18 +22,24 @@ session({
 );
 
 app.use(express.static('public'));
+
 app.use(express.json());
+
+app.use(express.static('node_modules/bootstrap'));
+app.use(express.static('node_modules/bootstrap-icons'));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-// Endpoints
+// Webpage endpoints
 
 app.get('/', (req, res) => {
     console.log('Session before rendering:', req.session);
     if (req.session.username) {
     res.render('index', {
+
         username: req.session.username,
         role: req.session.role
     });
@@ -101,9 +107,62 @@ app.get('/logout', (req, res) => {
             res.send('Logout successful');
             res.redirect('/');
         }
+        
+        
+
+    });
+});
+// Data here
+categories: ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
+app.get('/login', (req, res) => {
+    res.render('identification', {
+        // Data here
     });
 });
 
+app.get('/account', (req, res) => {
+    res.render('personalInformation', {
+        // Data here
+    });
+});
+
+app.get('/result', (req, res) => {
+    res.render('searchResult', {
+        // Data here
+    });
+});
+
+app.get('/productdetail', (req, res) => {
+    res.render('productDetail', {
+        // Data here
+    });
+});
+app.get('/cart', (req, res) => {
+    res.render('shoppingCart', {
+        // Data here
+    });
+});
+app.get('/checkout', (req, res) => {
+    res.render('checkout', {
+        // Data here
+    });
+});
+app.get('/wishlist', (req, res) => {
+    res.render('wishlist', {
+        // Data here
+    });
+});
+app.get('/contact', (req, res) => {
+    res.render('contact', {
+        // Data here
+    });
+});
+
+// API endpoints
+
+app.get('/product', (req, res) => {
+    // GET all products
+})
 
 
 app.listen(3000, () => {

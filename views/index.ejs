@@ -4,9 +4,68 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KD5F - Homepage</title>
+
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
   </head>
   <body>
     <!-- Navbar -->
     <%-include('buyer/partials/navbar');%>
+    <main class="container my-4">
+      <!-- Carousel -->
+      <%-include('buyer/partials/carousel');%>
+
+      <!-- Game Cards Grid -->
+      <div class="container">
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+        <div class="row justify-content-center justify-content-sm-evenly">
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+          <%-include('buyer/partials/gameCard');%>
+        </div>
+      </div>
+
+      <!-- Explore more Text -->
+      <p id="explore">
+        Explore more: <span id="login-text">Log in</span> or
+        <span id="register-text">Register</span>
+      </p>
+    </main>
+
+    <%-include('buyer/partials/footer')%>
+    <script src="/dist/js/bootstrap.bundle.min.js"></script>
   </body>
+  <style>
+    #explore {
+      margin: 25px;
+      text-align: center;
+      font-size: 2rem;
+    }
+    #login-text,
+    #register-text {
+      color: #b7ef00;
+      text-decoration: underline;
+    }
+  </style>
 </html>
