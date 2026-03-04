@@ -141,6 +141,7 @@ app.get('/productdetail', (req, res) => {
     });
 });
 app.get('/cart', (req, res) => {
+    // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
         name: "HELLDIVER 2",
         categories: ['Action', 'Shooter'],
@@ -153,8 +154,10 @@ app.get('/cart', (req, res) => {
         added_date: Date.now()
     }];
 
-    res.render('shoppingCart', {
-        games: games
+    res.render('buyer/shoppingCart', {
+        // Data here (Currently mock data)
+        games: games,
+        categories: categories
     });
 });
 app.get('/checkout', (req, res) => {
