@@ -141,8 +141,20 @@ app.get('/productdetail', (req, res) => {
     });
 });
 app.get('/cart', (req, res) => {
+    const games = [{
+        name: "HELLDIVER 2",
+        categories: ['Action', 'Shooter'],
+        price: 999.99,
+        added_date: Date.now()
+    }, {
+        name: "Phasmophobia",
+        categories: ['Horror'],
+        price: 0.99,
+        added_date: Date.now()
+    }];
+
     res.render('shoppingCart', {
-        // Data here
+        games: games
     });
 });
 app.get('/checkout', (req, res) => {

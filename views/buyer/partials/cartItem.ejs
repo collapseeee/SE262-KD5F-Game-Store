@@ -13,9 +13,9 @@
             <%=game.name%>
           </p>
           <p class="fs-4">
-            <% game.categories.forEach((category)=> { %>
-              <%=category%>
-                <%})%>
+            <% game.categories.forEach((category, index) => { %>
+              <%= index > 0 ? ' | ' : '' %><%= category %>
+            <% }) %>
           </p>
         </div>
         <div class="col-12 col-sm-6">
