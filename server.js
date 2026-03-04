@@ -143,12 +143,12 @@ app.get('/productdetail', (req, res) => {
 app.get('/cart', (req, res) => {
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
-        name: "HELLDIVER 2",
+        name: "HELLDIVER 9",
         categories: ['Action', 'Shooter'],
         price: 999.99,
         added_date: Date.now()
     }, {
-        name: "Phasmophobia",
+        name: "Mangophobia",
         categories: ['Horror'],
         price: 0.99,
         added_date: Date.now()
