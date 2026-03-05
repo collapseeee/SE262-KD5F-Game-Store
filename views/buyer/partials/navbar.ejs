@@ -27,7 +27,7 @@
     </div>
     <ul class="navbar-nav flex-grow-1">
       <!-- Search bar -->
-      <li class="nav-item search-bar mx-4 flex-grow-1 order-4 order-md-1">
+      <li class="nav-item search-bar mx-4 flex-grow-1 ">
         <form class="d-flex h-100 w-100 align-items-center" action="/" method="post">
           <!-- Search Button -->
           <button class="rounded-start-5" id="search-button" type="submit">
@@ -63,21 +63,23 @@
         </form>
       </li>
       <!-- End of search bar -->
-      <a href="/cart" class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle order-1 order-md-2">
-        <svg class="bi" width="32" height="32" fill="currentColor">
-          <use xlink:href="bootstrap-icons.svg#cart3" />
-        </svg>
-      </a>
-      <a href="/wishlist" class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle order-2 order-md-3">
-        <svg class="bi" width="32" height="32" fill="currentColor">
-          <use xlink:href="bootstrap-icons.svg#heart" />
-        </svg>
-      </a>
-      <a href="/account" class="nav-item nav-button mx-2 p-3 d-flex align-self-center rounded-circle order-3 order-md-4">
-        <svg class="bi" width="32" height="32" fill="currentColor">
-          <use xlink:href="bootstrap-icons.svg#person" />
-        </svg>
-      </a>
+       <div class="d-flex justify-content-end mx-3">
+          <a href="/cart" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle order-3 order-md-1">
+            <svg class="bi" width="32" height="32" fill="currentColor">
+              <use xlink:href="bootstrap-icons.svg#cart3" />
+            </svg>
+          </a>
+          <a href="/wishlist" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle order-4 order-md-2">
+            <svg class="bi" width="32" height="32" fill="currentColor">
+              <use xlink:href="bootstrap-icons.svg#heart" />
+            </svg>
+          </a>
+          <a href="/account" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle order-5 order-md-3">
+            <svg class="bi" width="32" height="32" fill="currentColor">
+              <use xlink:href="bootstrap-icons.svg#person" />
+            </svg>
+          </a>
+       </div>
     </ul>
   </div>
 </nav>
