@@ -124,8 +124,9 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/account', (req, res) => {
-    res.render('personalInformation', {
+    res.render('buyer/personalInformation', {
         // Data here
+        categories: categories
     });
 });
 
@@ -141,7 +142,7 @@ app.get('/productdetail', (req, res) => {
     });
 });
 app.get('/cart', (req, res) => {
-    res.render('shoppingCart', {
+    res.render('buyer/shoppingCart', {
         // Data here
     });
 });
