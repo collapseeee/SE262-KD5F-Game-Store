@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-
+const { getAllProduct } = require('./models/product');
 
 const app = express();
 // App setup
@@ -35,8 +35,10 @@ app.set('views', './views');
 
 // Webpage endpoints
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     console.log('Session before rendering:', req.session);
+    const games = await getAllProduct();
+    console.log(games);
     if (req.session.username) {
         res.render('index', {
 
@@ -46,7 +48,8 @@ app.get('/', (req, res) => {
     } else {
         console.log('No user logged in, rendering identification page.');
         res.render('index', {
-            categories: categories
+            categories: categories,
+            games: games
         });
     }
 });
@@ -123,6 +126,10 @@ app.get('/login', (req, res) => {
     });
 });
 
+app.get('/register', (req, res) => {
+    res.render('register');
+})
+
 app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
         // Data here
@@ -182,8 +189,15 @@ app.get('/contact', (req, res) => {
 
 // API endpoints
 
-app.get('/product', (req, res) => {
+app.get('/api/product', async (req, res) => {
     // GET all products
+    try {
+        const data = await getAllProduct();
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.log(err)
+    }
 })
 
 
