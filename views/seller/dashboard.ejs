@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Wishlist</title>
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <%-include('partials/navbar')%>
+    <main class="container my-4">
+    <div class="section-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title">CATEGORY LIST</h2>
+            <button class="btn btn-add">ADD</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table w-100">
+                <thead>
+                    <tr style="background-color: rgba(0,0,0,0.2);">
+                        <th class="ps-3 py-3">Category Name</th>
+                        <th class="text-end pe-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% categories.forEach((cat, index) => { %>
+                        <tr class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
+                            <td class="ps-3 py-3 text-white">Category <%= index + 1 %></td>
+                            <td class="text-end pe-3">
+                                <button class="btn btn-action-edit">Rename</button>
+                                <button class="btn btn-action-delete">Delete</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title">GAMES</h2>
+            <button class="btn btn-add">ADD</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table w-100">
+                <thead>
+                    <tr style="background-color: rgba(0,0,0,0.2);">
+                        <th class="ps-3 py-3">Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th class="text-end pe-3"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% games.forEach((game, index) => { %>
+                        <tr class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
+                            <td class="ps-3 py-3 text-white">Game <%= index + 1 %></td>
+                            <td class="text-white">Category <%= game.category_id %></td>
+                            <td class="text-white">$<%= game.price %></td>
+                            <td class="text-end pe-3">
+                                <button class="btn btn-action-edit">Edit</button>
+                                <button class="btn btn-action-delete">Delete</button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+    <%- include('partials/footer')%>
+    <script src="/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+<style>
+    /* กำหนดพื้นหลังหลักของหน้าเว็บ */
+body {
+    background-color: #8122C9; /* สีม่วงหลักตามภาพ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container ของแต่ละส่วน (Category / Games) */
+.section-container {
+    background-color: #8B00F5; /* ม่วงสว่างขึ้นเล็กน้อยสำหรับตัว Card */
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    width: 1340px;
+    height: 448;
+}
+
+/* หัวข้อ Section */
+.section-title {
+    color: white;
+    font-weight: 800;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* ปุ่ม ADD สีเขียวนีออน */
+.btn-add {
+    background-color: #B7EF00;
+    color: #4b0082;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 45px;
+    transition: transform 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #96db00;
+    transform: scale(1.05);
+}
+
+/* การจัดการตาราง */
+.custom-table {
+    width: 100%;
+    color: white;
+    border-collapse: separate;
+    border-spacing: 0 5px; /* เว้นระยะระหว่างแถว */
+}
+
+.custom-table thead tr {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.custom-table th {
+    padding: 15px;
+    font-weight: 600;
+    border: none;
+}
+
+.custom-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* สลับสีแถวเข้ม-อ่อน */
+.custom-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+/* ปุ่ม Rename / Edit */
+.btn-action-edit {
+    background-color: #8c00ff;
+    color: white;
+    border: 1.5px solid #bd70ff;
+    border-radius: 20px;
+    padding: 4px 18px;
+    font-size: 0.9rem;
+}
+
+.btn-action-edit:hover {
+    background-color: #bd70ff;
+    color: white;
+}
+
+/* ปุ่ม Delete */
+.btn-action-delete {
+    background-color: #e60000;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 18px;
+    font-size: 0.9rem;
+    margin-left: 5px;
+}
+/* สีแถวที่ 1 (#3F324A) */
+.row-color-1 {
+    background-color: #3F324A !important;
+}
+
+/* สีแถวที่ 2 (#5C3B75) */
+.row-color-2 {
+    background-color: #5C3B75 !important;
+}
+
+/* ปรับให้ขอบมนเฉพาะแถวแรกและแถวสุดท้ายในตาราง */
+.custom-table tbody tr:first-child td:first-child { border-top-left-radius: 10px; }
+.custom-table tbody tr:first-child td:last-child { border-top-right-radius: 10px; }
+.custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 10px; }
+.custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 10px; }
+
+/* จัดการระยะห่างเล็กน้อย */
+.custom-table {
+    border-spacing: 0;
+    overflow: hidden;
+}
+</style>

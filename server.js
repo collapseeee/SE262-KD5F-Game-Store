@@ -184,7 +184,28 @@ app.get('/contact', (req, res) => {
 
 app.get('/product', (req, res) => {
     // GET all products
-})
+});
+
+app.get('/dashboard', (req, res) => {
+    const categories = [
+        { id: 1, name: "Category 1" },
+        { id: 2, name: "Category 2" },
+        { id: 3, name: "Category 3" },
+        { id: 4, name: "Category 4" }
+    ];
+
+    const games = [
+        { id: 1, name: "Game 1", category: "Category 1 | Category 2", price: "999.01" },
+        { id: 2, name: "Game 2", category: "Category 5", price: "0.99" },
+        { id: 3, name: "Game 3", category: "Category 3", price: "19.99" },
+        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" }
+    ];
+    res.render('seller/dashboard', {
+        // Data here
+        categories: categories,
+        games: games
+    });
+});
 
 
 app.listen(3000, () => {
