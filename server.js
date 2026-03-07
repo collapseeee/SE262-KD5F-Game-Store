@@ -221,6 +221,57 @@ app.get('/contact', (req, res) => {
 
 app.get('/api/product', async (req, res) => {
     // GET all products
+});
+    categories = [
+        { id: 1, name: "Category 1" },
+        { id: 2, name: "Category 2" },
+        { id: 3, name: "Category 3" },
+        { id: 4, name: "Category 4" },
+        { id: 5, name: "Category 5" }
+    ];
+
+    let games = [
+        { id: 1, name: "Game 1", category: "Category 1 | Category 2", price: "999.01" },
+        { id: 2, name: "Game 2", category: "Category 5", price: "0.99" },
+        { id: 3, name: "Game 3", category: "Category 3", price: "19.99" },
+        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" },
+        { id: 5, name: "Game 5", category: "Category 4", price: "29.99" }
+    ];
+app.get('/dashboard', (req, res) => {
+    res.render('seller/dashboard', {
+        // Data here
+        categories: categories,
+        games: games
+    });
+});
+
+app.delete('/categories/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
+    categories = categories.filter(cat => cat.id !== targetId);
+    res.json({ success: true });
+    console.log(`Deleted category with ID: ${targetId}`);
+});
+app.put('/categories/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    const newName = req.body.name;
+    const category = categories.find(cat => cat.id === targetId);
+    if (category) {
+        category.name = newName;
+        res.json({ success: true });
+        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
+    } else {
+        res.status(404).json({ success: false, message: 'Category not found' });
+    }
+});
+
+
+app.delete('/api/games/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    games = games.filter(game => game.id !== targetId);
+    res.json({ success: true });
+    console.log(`Deleted game with ID: ${targetId}`);
+});
     try {
         const data = await getAllProduct();
         res.json(data);
