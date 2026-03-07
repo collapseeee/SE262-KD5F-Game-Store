@@ -21,7 +21,7 @@ const searchProduct = async (gameName, filteredIds) => {
         INNER JOIN products p ON p.product_id = pl.product_id
         INNER JOIN categories c ON c.category_id = pl.category_id
         WHERE p.name LIKE ?`;
-    let payload = [`%${gameName}%`]
+    let payload = [`%${gameName ? gameName : ''}%`]
 
     if (filteredIds) {
         sql += ` AND pl.category_id IN (?)`;
