@@ -1,7 +1,7 @@
 const db = require('./db');
 
 const getAllCategory = async () => {
-    const sql = `SELECT category_id, name FROM categories`;
+    const sql = `SELECT category_id, name FROM categories ORDER BY name ASC`;
     try {
         const [rows] = await db.promise().execute(sql);
         return rows;
