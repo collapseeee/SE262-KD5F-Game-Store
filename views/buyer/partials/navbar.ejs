@@ -15,14 +15,16 @@
               <p>Category</p>
             </a>
             <!-- Dropdown menu -->
-            <ul class="dropdown-menu">
+            <form action="/result" method="get" class="dropdown-menu">
               <% categories.forEach(category=> { %>
-                <li><a class="dropdown-item" href="#">
+                <li>
+                  <button type="submit" name="category" value="<%=category.category_id%>" class="dropdown-item">
                     <%=category.name%>
-                  </a></li>
+                  </button>
+                </li>
 
                 <%});%>
-            </ul>
+            </form>
           </div>
       </div>
     </div>
