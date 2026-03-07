@@ -5,6 +5,8 @@ const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
 const { getAllProduct } = require('./models/product');
+const { getAllCategory } = require('./models/category');
+const { getImageByGameProductId } = require('./models/image');
 
 const app = express();
 // App setup
@@ -27,17 +29,22 @@ app.use(express.json());
 
 app.use(express.static('node_modules/bootstrap'));
 app.use(express.static('node_modules/bootstrap-icons'));
+app.use(express.static('node_modules/bootstrap-multiselect'));
+app.use(express.static('node_modules/jquery'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
+
 
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
     console.log('Session before rendering:', req.session);
     const games = await getAllProduct();
+    const categories = await getAllCategory();
     console.log(games);
     if (req.session.username) {
         res.render('index', {
@@ -118,8 +125,6 @@ app.get('/logout', (req, res) => {
 
     });
 });
-
-let categories = ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
 app.get('/login', (req, res) => {
     res.render('identification', {
         // Data here
@@ -137,8 +142,9 @@ app.get('/account', (req, res) => {
     });
 });
 
-app.get('/result', (req, res) => {
-    res.render('searchResult', {
+app.post('/search', (req, res) => {
+    console.log(req.body.gameName);
+    res.render('buyer/searchResult', {
         // Data here
     });
 });
@@ -200,6 +206,15 @@ app.get('/api/product', async (req, res) => {
     }
 })
 
+app.get('/api/image/:id', async (req, res) => {
+    try {
+        const data = await getImageByGameProductId(req.params.id);
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+})
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
