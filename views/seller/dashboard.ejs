@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KD5F - Wishlist</title>
+    <title>KD5F - Dashboard</title>
     <!-- Link Bootstrap -->
     <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
@@ -150,7 +150,7 @@ function toggleVisibility(id) {
         // change to hidden state
         icon.innerText = 'visibility_off';
         icon.style.opacity = '0.5';
-        row.style.opacity = '0.5'; // ทำให้ทั้งแถวดูจางลง
+        row.style.opacity = '0.5'; //
         row.style.transition = '0.3s';
     } else {
         // change back to visible state
@@ -174,11 +174,11 @@ async function deleteItem(type, id) {
                 
                 window.location.reload();
             } else {
-                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+                alert("Error in database");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("ไม่สามารถติดต่อ Server ได้");
+            alert("cannot connect Server");
         }
     }
 
