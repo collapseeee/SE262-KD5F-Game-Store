@@ -21,21 +21,16 @@
       <!-- Game Cards Grid -->
       <div class="container">
         <div class="row gap-4 justify-content-center align-items-start">
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
-          <%-include('buyer/partials/gameCard');%>
+          <% games.forEach((game) => { %>
+            <%-include('buyer/partials/gameCard', { game: game});%>
+          <%})%>
         </div>
       </div>
 
       <!-- Explore more Text -->
       <p id="explore">
-        Explore more: <span id="login-text">Log in</span> or
-        <span id="register-text">Register</span>
+        Explore more: <a href="/login" id="login-text">Log in</a> or
+        <a href="/register" id="register-text">Register</a>
       </p>
     </main>
 

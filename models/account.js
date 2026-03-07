@@ -1,4 +1,4 @@
-const connection = require( './db');
+const connection = require('./db');
 
 // Execute SQL command method
 const executeQuery = (sql, args) => {
@@ -16,7 +16,7 @@ const executeQuery = (sql, args) => {
 const Account = {
   // Get user by ID
   getUserById: async (userId) => {
-    const sql = 'SELECT * FROM Account WHERE user_id = ?';
+    const sql = 'SELECT * FROM accounts WHERE user_id = ?';
     try {
       const results = await executeQuery(sql, [userId]);
       return results;
@@ -28,7 +28,7 @@ const Account = {
 
   // Create new user
   createUser: async (userData) => {
-    const sql = 'INSERT INTO Account (username, password) VALUES (?, ?)';
+    const sql = 'INSERT INTO accounts (username, password) VALUES (?, ?)';
     try {
       const results = await executeQuery(sql, [userData.username, userData.password]);
       return results;
@@ -38,7 +38,7 @@ const Account = {
     }
   },
   getUserByName: async (username) => {
-    const sql = 'SELECT * FROM Account WHERE username = ?';
+    const sql = 'SELECT * FROM accounts WHERE username = ?';
     try {
       const results = await executeQuery(sql, [username]);
       return results;
