@@ -138,8 +138,8 @@ app.get('/result', (req, res) => {
 });
 
 app.get('/productdetail', (req, res) => {
-    res.render('productDetail', {
-        // Data here
+    res.render('buyer/productDetail', {
+        categories: categories
     });
 });
 app.get('/cart', (req, res) => {
