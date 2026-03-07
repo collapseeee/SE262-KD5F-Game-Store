@@ -8,6 +8,7 @@ CREATE TABLE products (
     name VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(1024) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
+    poster_url VARCHAR(255) NOT NULL,
     PRIMARY KEY (product_id)
 ) ENGINE=InnoDB;
 
@@ -23,7 +24,7 @@ CREATE TABLE accounts (
     password VARCHAR(255) NOT NULL,
     created_date DATE NOT NULL,
     isBuyer BOOLEAN DEFAULT FALSE,
-    total_spend DECIMAL(16,2) DEFAULT 0,
+    total_spend DECIMAL(10,2) DEFAULT 0,
     total_game INT DEFAULT 0,
     isSeller BOOLEAN DEFAULT FALSE,
     total_sale DECIMAL(10,2) DEFAULT 0,
@@ -92,6 +93,7 @@ CREATE TABLE carts (
 ) ENGINE=InnoDB;
 
 CREATE TABLE product_lists (
+	list_id INT UNIQUE NOT NULL AUTO_INCREMENT,
 	product_id INT NOT NULL,
     category_id INT DEFAULT NULL,
     user_id INT NOT NULL,
@@ -100,5 +102,5 @@ CREATE TABLE product_lists (
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES accounts(user_id) ON DELETE RESTRICT,
-    PRIMARY KEY (product_id)
+    PRIMARY KEY (list_id)
 )ENGINE=InnoDB
