@@ -45,7 +45,7 @@ app.get('/', async (req, res) => {
     console.log('Session before rendering:', req.session);
     const games = await getAllProduct();
     const categories = await getAllCategory();
-    console.log(games);
+    console.log(games, "\n\n\nThis print log is at line 48 of server.js");
     if (req.session.username) {
         res.render('index', {
 
@@ -144,8 +144,12 @@ app.get('/account', (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
-    const { gameName, categories } = req.query;
+    const { gameName, categories, category } = req.query;
     let filteredIds = ''
+
+    if (category) {
+        filteredIds += category;
+    }
     // If the category is selected
     if (categories) {
         const [filterCategory] = Array.isArray(categories) ? [categories] : categories;
@@ -161,9 +165,7 @@ app.get('/result', async (req, res) => {
             filteredIds = categories;
         }
     }
-    console.log(filteredIds)
     const results = await searchProduct(gameName, filteredIds);
-    console.log(results);
 
     res.render('buyer/searchResult', {
         games: results
@@ -223,7 +225,7 @@ app.get('/api/product', async (req, res) => {
         res.json(data);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
-        console.log(err)
+        console.error(err)
     }
 })
 
