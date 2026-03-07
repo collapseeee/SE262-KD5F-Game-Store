@@ -45,7 +45,8 @@ app.get('/', (req, res) => {
         });
     } else {
         console.log('No user logged in, rendering identification page.');
-        res.render('buyer/productDetail', {
+        // Want to see ejs page change? edit here
+        res.render('index', {
             categories: categories
         });
     }
