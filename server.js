@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-
+const { getAllProduct, searchProduct } = require('./models/product');
+const { getAllCategory } = require('./models/category');
+const { getImageByGameProductId } = require('./models/image');
 
 const app = express();
 // App setup
@@ -27,16 +29,23 @@ app.use(express.json());
 
 app.use(express.static('node_modules/bootstrap'));
 app.use(express.static('node_modules/bootstrap-icons'));
+app.use(express.static('node_modules/bootstrap-multiselect'));
+app.use(express.static('node_modules/jquery'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+
 // Webpage endpoints
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     console.log('Session before rendering:', req.session);
+    const games = await getAllProduct();
+    const categories = await getAllCategory();
+    console.log(games, "\n\n\nThis print log is at line 48 of server.js");
     if (req.session.username) {
         res.render('index', {
 
@@ -45,8 +54,10 @@ app.get('/', (req, res) => {
         });
     } else {
         console.log('No user logged in, rendering identification page.');
+        // Want to see ejs page change? edit here
         res.render('index', {
-            categories: categories
+            categories: categories,
+            games: games
         });
     }
 });
@@ -115,13 +126,15 @@ app.get('/logout', (req, res) => {
 
     });
 });
-
-let categories = ['All Category', 'FPS', 'Soul-Like', 'Family'] // Mock-up Data
 app.get('/login', (req, res) => {
     res.render('identification', {
         // Data here
     });
 });
+
+app.get('/register', (req, res) => {
+    res.render('register');
+})
 
 app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
@@ -130,15 +143,39 @@ app.get('/account', (req, res) => {
     });
 });
 
-app.get('/result', (req, res) => {
-    res.render('searchResult', {
-        // Data here
+// SEARCH PRODUCTS
+app.get('/result', async (req, res) => {
+    const { gameName, categories, category } = req.query;
+    let filteredIds = ''
+
+    if (category) {
+        filteredIds += category;
+    }
+    // If the category is selected
+    if (categories) {
+        const [filterCategory] = Array.isArray(categories) ? [categories] : categories;
+        // If multiple categories selected
+        if (categories.length > 1) {
+            filterCategory.forEach(categoryId => {
+                filteredIds += categoryId + ',';
+            });
+            // Remove the last comma sign
+            filteredIds = filteredIds.substring(0, filteredIds.length - 1)
+        }
+        if (categories.length === 1) {
+            filteredIds = categories;
+        }
+    }
+    const results = await searchProduct(gameName, filteredIds);
+
+    res.render('buyer/searchResult', {
+        games: results
     });
 });
 
 app.get('/productdetail', (req, res) => {
-    res.render('productDetail', {
-        // Data here
+    res.render('buyer/productDetail', {
+        categories: categories
     });
 });
 app.get('/cart', (req, res) => {
@@ -182,7 +219,7 @@ app.get('/contact', (req, res) => {
 
 // API endpoints
 
-app.get('/product', (req, res) => {
+app.get('/api/product', async (req, res) => {
     // GET all products
 });
     categories = [
@@ -235,6 +272,24 @@ app.delete('/api/games/:id', (req, res) => {
     res.json({ success: true });
     console.log(`Deleted game with ID: ${targetId}`);
 });
+    try {
+        const data = await getAllProduct();
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err)
+    }
+})
+
+app.get('/api/image/:id', async (req, res) => {
+    try {
+        const data = await getImageByGameProductId(req.params.id);
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+})
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
