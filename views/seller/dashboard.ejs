@@ -32,40 +32,32 @@
                 </thead>
                 <tbody>
                     <% categories.forEach((cat, index) => { %>
-                        <tr class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
-                            <td class="ps-3 py-3 text-white">Category <%= index + 1 %></td>
-                            <td class="text-end pe-3">
-                            <div class="dropdown d-lg-none">
-                                <button class="btn text-white border-0 p-0"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        data-bs-offset="0,2"
-                                        data-bs-display="static"
-                                        data-bs-popper-config='{"placement":"bottom-end","modifiers":[{"name":"flip","enabled":false}]}'
-                                        aria-expanded="false">
-                                    <i class="bi bi-three-dots fs-2"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
-                                    <li class="px-3 py-2"><a class="btn btn-popover-edit w-100" href="#">Rename</a></li>
-                                    <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-
-                           <div class="d-none d-lg-flex justify-content-end align-items-center gap-3">
+                        <tr id="row-cat-<%= index %>" class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
+                        <td class="ps-3 py-3 text-white">
+                            <span class="view-mode"><%= cat.name %></span>
+                            <input type="text" 
+                                    class="form-control edit-mode d-none custom-input" 
+                                    value="<%= cat.name %>"
+                                    onkeyup="if(event.key === 'Enter') saveEdit('<%= index %>', <%= cat.id %>)">
+                        </td>
+                        <td class="text-end pe-3">
+                            <div class="d-none d-lg-flex justify-content-end align-items-center gap-3">
                                 <span class="material-symbols-outlined icon-visibility"
                                     id="vis-cat-<%= index %>"
-                                    style="cursor: pointer; color: white;"
                                     onclick="toggleVisibility('vis-cat-<%= index %>')">
                                     visibility
                                 </span>
                                 
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-action-edit">Rename</button>
-                                    <button class="btn btn-action-delete" onclick="deleteItem('categories', <%= cat.id %>)">Delete</button>
+                                    <button class="btn btn-action-edit view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
+                                    <button class="btn btn-action-delete view-mode" onclick="deleteItem('categories', <%= cat.id %>)">Delete</button>
+                                    
+                                    <button class="btn btn-action-done edit-mode d-none" onclick="saveEdit('<%= index %>', <%= cat.id %>)">Done</button>
+                                    <button class="btn btn-action-delete edit-mode d-none" onclick="disableEdit('<%= index %>')">Delete</button>
                                 </div>
                             </div>
                         </td>
-                        </tr>
+                    </tr>
                     <% }) %>
                 </tbody>
             </table>
@@ -136,16 +128,16 @@
 <script>
 function toggleVisibility(id) {
     const icon = document.getElementById(id);
-    const row = icon.closest('tr'); // หาแถว (tr) ที่ไอคอนนี้อยู่
+    const row = icon.closest('tr');
     
     if (icon.innerText === 'visibility') {
-        // เปลี่ยนเป็นสถานะ ปิด
+        // change to hidden state
         icon.innerText = 'visibility_off';
         icon.style.opacity = '0.5';
         row.style.opacity = '0.5'; // ทำให้ทั้งแถวดูจางลง
         row.style.transition = '0.3s';
     } else {
-        // เปลี่ยนเป็นสถานะ เปิด
+        // change back to visible state
         icon.innerText = 'visibility';
         icon.style.opacity = '1';
         row.style.opacity = '1';
@@ -155,7 +147,7 @@ function toggleVisibility(id) {
 
 async function deleteItem(type, id) {
         try {
-            // ส่ง Request ไปยัง Endpoint ที่เราสร้างไว้
+            
             const response = await fetch(`/${type}/${id}`, {
                 method: 'DELETE'
             });
@@ -163,7 +155,7 @@ async function deleteItem(type, id) {
             const result = await response.json();
 
             if (result.success) {
-                // ถ้า Server ลบสำเร็จ ให้รีโหลดหน้าเพื่ออัปเดตตาราง
+                
                 window.location.reload();
             } else {
                 alert("เกิดข้อผิดพลาดในการลบข้อมูล");
@@ -173,16 +165,53 @@ async function deleteItem(type, id) {
             alert("ไม่สามารถติดต่อ Server ได้");
         }
     }
+
+    function enableEdit(index) {
+    const row = document.getElementById(`row-cat-${index}`);
+    
+    // switch view mode and edit mode
+    row.querySelectorAll('.view-mode').forEach(el => el.classList.add('d-none'));
+    row.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('d-none'));
+    
+    const input = row.querySelector('input.edit-mode');
+    input.focus();
+    input.select(); // Highlight text for easy editing
+}
+
+function disableEdit(index) {
+    const row = document.getElementById(`row-cat-${index}`);
+    row.querySelectorAll('.view-mode').forEach(el => el.classList.remove('d-none'));
+    row.querySelectorAll('.edit-mode').forEach(el => el.classList.add('d-none'));
+}
+
+async function saveEdit(index, id) {
+    const row = document.getElementById(`row-cat-${index}`);
+    const newName = row.querySelector('input.edit-mode').value;
+
+    
+    try {
+        const response = await fetch(`/categories/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+        });
+        const result = await response.json();
+        if (result.success) {
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error("Save failed:", error);
+    }
+}
 </script>
 <style>
-    /* กำหนดพื้นหลังหลักของหน้าเว็บ */
+    
 body {
-    background-color: #8122C9; /* สีม่วงหลักตามภาพ */
+    background-color: #8122C9;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Container ของแต่ละส่วน (Category / Games) */
-/* Container: ปรับให้ยืดหยุ่นและไม่ตัดขอบเมนู */
+/* Container (Category / Games) */
 .section-container {
     background-color: #8B00F5;
     border-radius: 25px;
@@ -190,11 +219,11 @@ body {
     width: 100%;
     max-width: 1340px;
     margin: 0 auto 40px auto;
-    overflow: visible !important; /* ยอมให้เมนูลอยทับออกมาได้ */
+    overflow: visible !important;
     height: auto !important;
 }
 
-/* หัวข้อ Section */
+/*  Section */
 .section-title {
     color: white;
     font-weight: 800;
@@ -202,7 +231,7 @@ body {
     margin: 0;
 }
 
-/* ปุ่ม ADD สีเขียวนีออน */
+/*  ADD Button*/
 .btn-add {
     background-color: #B7EF00;
     color: #4b0082;
@@ -218,12 +247,12 @@ body {
     transform: scale(1.05);
 }
 
-/* การจัดการตาราง */
+
 .custom-table {
     width: 100%;
     color: white;
     border-collapse: separate;
-    border-spacing: 0 5px; /* เว้นระยะระหว่างแถว */
+    border-spacing: 0 5px;
 }
 
 .custom-table thead tr {
@@ -240,7 +269,7 @@ body {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* สลับสีแถวเข้ม-อ่อน */
+
 .custom-table tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -256,7 +285,7 @@ body {
 .custom-table tbody tr:has(.show) {
     z-index: 1050 !important;
 }
-/* ปุ่ม Rename / Edit */
+/* Rename / Edit */
 .btn-action-edit {
     background-color: #8c00ff;
     color: white;
@@ -271,7 +300,7 @@ body {
     color: white;
 }
 
-/* ปุ่ม Delete */
+/* Delete */
 .btn-action-delete {
     background-color: #e60000;
     color: white;
@@ -281,33 +310,31 @@ body {
     font-size: 0.9rem;
     margin-left: 5px;
 }
-/* สีแถวที่ 1 (#3F324A) */
+
 .row-color-1 {
     background-color: #3F324A !important;
 }
 
-/* สีแถวที่ 2 (#5C3B75) */
+
 .row-color-2 {
     background-color: #5C3B75 !important;
 }
 
-/* ปรับให้ขอบมนเฉพาะแถวแรกและแถวสุดท้ายในตาราง */
+
 .custom-table tbody tr:first-child td:first-child { border-top-left-radius: 10px; }
 .custom-table tbody tr:first-child td:last-child { border-top-right-radius: 10px; }
 .custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 10px; }
 .custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 10px; }
 
-/* จัดการระยะห่างเล็กน้อย */
 .custom-table {
     border-spacing: 0;
     overflow: visible !important;
 }
 
 /* --- Popover (Mobile) --- */
-/* แก้ไขจากของเดิม */
+
 .dropdown-menu.custom-popover {
     position: absolute !important;
-    /* บังคับให้ออกด้านล่างและชิดขวาเสมอ ป้องกันการดีดขึ้นบน */
     inset: 100% -6px auto auto !important;
     transform: none !important;
     margin-top: 1px !important;
@@ -318,7 +345,6 @@ body {
     height: auto !important;
     padding: 12px 0 !important;
     z-index: 9999 !important;
-    /* เพิ่มส่วนนี้เพื่อให้ทำงานร่วมกับ data-bs-display="static" ได้ดีขึ้น */
     display: none;
 }
 
@@ -331,20 +357,20 @@ body {
     content: "";
     position: absolute;
     top: -7px;
-    right: 8px; /* ค่าที่ทำให้ตรงจุดที่ 2 ของไข่ปลา */
+    right: 8px;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
     border-bottom: 15px solid #8B00F5;
 }
 
-/* ปุ่มภายใน Popover */
+/* Button in Popover */
 .btn-popover-edit, .btn-popover-delete {
-    width: 80px !important;    /* กำหนดความกว้าง */
-    height: 35px !important;   /* กำหนดความสูง */
-    font-size: 0.9rem !important; /* ลดขนาดฟอนต์ลงเพื่อให้พอดีกับปุ่มที่เล็กลง */
+    width: 80px !important;
+    height: 35px !important;
+    font-size: 0.9rem !important;
     font-weight: 700 !important;
-    padding: 0 !important;      /* ล้าง padding เดิม */
-    margin: 5px auto !important; /* ปรับระยะห่างระหว่างปุ่ม */
+    padding: 0 !important;
+    margin: 5px auto !important;
     border-radius: 50px !important;
     border: none !important;
     display: flex !important;
@@ -356,7 +382,7 @@ body {
 .btn-popover-edit { background-color: #FFB338 !important; }
 .btn-popover-delete { background-color: #C91C1C !important; }
 
-/* ล้างสไตล์ Bootstrap */
+
 .dropdown-menu {
     --bs-dropdown-bg: transparent;
     --bs-dropdown-border-color: transparent;
@@ -369,19 +395,44 @@ body {
 .icon-visibility {
     user-select: none;
     transition: transform 0.2s ease;
-    /* เพิ่ม 2 บรรทัดนี้ครับ */
     position: relative;
-    top: 3px; /* ปรับค่านี้ (2px - 4px) จนกว่าจะดูตรงกลางตามสายตาคุณ */
+    top: 3px;
     font-size: 32px !important;
-    /* ให้แน่ใจว่าไอคอนไม่มี margin ล่างที่ดันตัวเองขึ้น */
-    margin-bottom: 0; 
+    margin-bottom: 0;
     display: inline-flex;
     align-items: center;
     
 }
 
 .icon-visibility:hover {
-    transform: scale(1.2); /* ขยายขนาดเล็กน้อยเวลา hover */
+    transform: scale(1.2);
 }
 
+.custom-input {
+    background-color: #C8B6D6 !important;
+    border: none !important;
+    border-radius: 5px;
+    color: #4b0082 !important;
+    font-weight: 600;
+    padding: 5px 10px;
+    width: 250px;
+}
+
+.btn-action-done {
+    background-color: #B7EF00 !important;
+    color: #4b0082 !important;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 25px;
+    font-size: 0.9rem;
+}
+
+.btn-action-done:hover {
+    background-color: #96db00;
+}
+
+.edit-mode.btn-action-delete {
+    background-color: #D32F2F !important;
+}
 </style>

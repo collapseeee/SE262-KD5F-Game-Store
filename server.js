@@ -215,6 +215,19 @@ app.delete('/categories/:id', (req, res) => {
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
 });
+app.put('/categories/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    const newName = req.body.name;
+    const category = categories.find(cat => cat.id === targetId);
+    if (category) {
+        category.name = newName;
+        res.json({ success: true });
+        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
+    } else {
+        res.status(404).json({ success: false, message: 'Category not found' });
+    }
+});
+
 
 app.delete('/api/games/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
