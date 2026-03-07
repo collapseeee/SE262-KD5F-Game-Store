@@ -4,11 +4,11 @@
       
       <a class="navbar-brand d-flex align-items-center m-0" href="/">
         <img class="rounded-circle me-2" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
-        <span class="text-white fw-bold fs-4">KD5F</span>
+        <span class="text-white fw-bold fs-4 name">KD5F</span>
       </a>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <div class="navbar-nav mx-auto gap-lg-5 gap-2 mt-3 mt-lg-0">
+        <div class="navbar-nav me-auto ms-lg-5 gap-lg-5 gap-2 mt-3 mt-lg-0">
           <a class="nav-link text-center" href="#">CATEGORY</a>
           <a class="nav-link text-center" href="#">PRODUCT</a>
         </div>
@@ -31,8 +31,8 @@
 <style>
   
   #brand-icon {
-    width: 45px;
-    height: 45px;
+    width: 68px;
+    height: 68px;
     object-fit: cover;
   }
   
@@ -65,17 +65,26 @@
   
   @media (min-width: 992px) {
     .nav-link {
-      font-size: 20px;
-    }
-    
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+    } 
+    .name {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+  }
     .navbar-collapse {
       flex-grow: 1;
-      margin-left: 0;
+      display: flex !important;
     }
     .navbar-nav {
         display: flex;
-        justify-content: center;
-        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+        justify-content: flex-start;
+        width: auto;
     }
   }
 
