@@ -1,37 +1,136 @@
-<nav class="navbar navbar-expand-lg bg-custom my-3">
-  <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center w-100">
-        <a class="navbar-expand-lg" href="/">
-            <img class="rounded-circle me-2" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
-            KD5F
-        </a>
-        <div class="d-flex gap-5">
-            <a class="nav-link" href="#">CATEGORY</a>
-            <a class="nav-link" href="#">PRODUCT</a>
+<nav class="navbar navbar-expand-lg bg-custom mt-0 mb-3 px-3">
+  <div class="container-fluid p-0">
+    <div class="d-flex align-items-center justify-content-between w-100">
+      
+      <a class="navbar-brand d-flex align-items-center m-0" href="/">
+        <img class="rounded-circle me-2" id="brand-icon" src="/assets/KD5FIcon.png" alt="KD5F icon" />
+        <span class="text-white fw-bold fs-4">KD5F</span>
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav mx-auto gap-lg-5 gap-2 mt-3 mt-lg-0">
+          <a class="nav-link text-center" href="#">CATEGORY</a>
+          <a class="nav-link text-center" href="#">PRODUCT</a>
         </div>
-        <a href="/account">
-            <img class="rounded-circle" src="/assets/user.png" alt="User icon" style="width: 64px; background-color: #FEFEFE;"/>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="/account" class="d-flex align-items-center order-lg-last">
+          <img class="rounded-circle user-avatar" src="/assets/user.png" alt="User icon" />
         </a>
+
+        <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon" style="width: 1.5em; height: 1.5em; filter: invert(1); color: #000000;"></span>
+        </button>
+      </div>
+
     </div>
   </div>
 </nav>
 
 <style>
-  a.navbar-expand-lg, .nav-link {
-    text-decoration: none;
-    color: #FEFEFE;
-  }
-  a.nav-link{
-    font-size: 30px;
-    font-weight: 700;
-  }
-
+  /* ขนาด Brand Logo ที่เล็กลง */
   #brand-icon {
-    size: auto;
-    max-width: 64px;
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+  }
+  /* ขนาด User Icon */
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #FEFEFE;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.3);
   }
 
   .bg-custom {
-    background-color: #8122c9;
+    background-color: #7235A1;
   }
+
+  .nav-link {
+    color: #FEFEFE !important;
+    font-weight: 700;
+  }
+  /* ลบขอบเส้นสีดำและเงาเวลาคลิกปุ่ม Toggle */
+.navbar-toggler,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none !important;      /* ลบเส้นขอบประ/ดำ */
+    box-shadow: none !important;   /* ลบเงาฟุ้งๆ รอบปุ่ม */
+    border: none !important;       /* ลบเส้นขอบปุ่ม */
+    -webkit-tap-highlight-color: transparent; /* ลบสี Highlight เวลาแตะบนมือถือ */
+}
+
+  /* ปรับแต่งเมนูเวลาแสดงในจอคอม */
+  @media (min-width: 992px) {
+    .nav-link {
+      font-size: 20px; /* ขนาดที่พอดีกับโลโก้ใหม่ */
+    }
+    /* ดันเมนูไปทางขวาเล็กน้อยเพื่อให้ห่างจาก Logo */
+    .navbar-collapse {
+      flex-grow: 1;
+      margin-left: 0;
+    }
+    .navbar-nav {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+  }
+
+  /* ปรับแต่งเมนูเวลาแสดงในจอมือถือ */
+  /* ปรับแต่งเมนูเวลาแสดงในจอมือถือ ให้เป็น Pop-up */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        right: 10px;
+        background-color: #8B00F5;
+        width: 108px;
+        min-height: 136px;
+        padding: 10px 5px;
+        border-radius: 15px;
+        margin-top: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        
+        /* แก้ไขตรงนี้: ยอมให้ติ่งโผล่ออกมานอกกรอบ */
+        overflow: visible !important; 
+    }
+
+    /* ติ่งสามเหลี่ยม */
+    .navbar-collapse::before {
+        content: "";
+        position: absolute;
+        top: -10px; /* ดันขึ้นไปเหนือกล่อง */
+        right: 15px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #8B00F5;
+        
+        /* ตรวจสอบให้แน่ใจว่าติ่งอยู่ชั้นบนสุด */
+        z-index: 1001; 
+        display: block !important;
+    }
+
+    /* จัดการเนื้อหาภายใน (คงเดิม) */
+    .navbar-nav {
+        margin-top: 0 !important;
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 116px;
+    }
+
+    /* ส่วนปุ่ม Toggle และ Link (คงเดิม) */
+    .nav-link {
+        font-size: 13px !important;
+        font-weight: 800;
+        color: white !important;
+        padding: 10px 0 !important;
+    }
+}
 </style>

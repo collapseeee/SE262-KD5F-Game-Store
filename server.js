@@ -185,21 +185,22 @@ app.get('/contact', (req, res) => {
 app.get('/product', (req, res) => {
     // GET all products
 });
-
-app.get('/dashboard', (req, res) => {
-    const categories = [
+    categories = [
         { id: 1, name: "Category 1" },
         { id: 2, name: "Category 2" },
         { id: 3, name: "Category 3" },
-        { id: 4, name: "Category 4" }
+        { id: 4, name: "Category 4" },
+        { id: 5, name: "Category 5" }
     ];
 
-    const games = [
+    let games = [
         { id: 1, name: "Game 1", category: "Category 1 | Category 2", price: "999.01" },
         { id: 2, name: "Game 2", category: "Category 5", price: "0.99" },
         { id: 3, name: "Game 3", category: "Category 3", price: "19.99" },
-        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" }
+        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" },
+        { id: 5, name: "Game 5", category: "Category 4", price: "29.99" }
     ];
+app.get('/dashboard', (req, res) => {
     res.render('seller/dashboard', {
         // Data here
         categories: categories,
@@ -207,6 +208,20 @@ app.get('/dashboard', (req, res) => {
     });
 });
 
+app.delete('/categories/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
+    categories = categories.filter(cat => cat.id !== targetId);
+    res.json({ success: true });
+    console.log(`Deleted category with ID: ${targetId}`);
+});
+
+app.delete('/api/games/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    games = games.filter(game => game.id !== targetId);
+    res.json({ success: true });
+    console.log(`Deleted game with ID: ${targetId}`);
+});
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
