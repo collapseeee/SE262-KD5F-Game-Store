@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct } = require('./models/product');
+const { getAllProduct, searchProduct } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 
@@ -142,10 +142,31 @@ app.get('/account', (req, res) => {
     });
 });
 
-app.post('/search', (req, res) => {
-    console.log(req.body.gameName);
+// SEARCH PRODUCTS
+app.get('/result', async (req, res) => {
+    const { gameName, categories } = req.query;
+    let filteredIds = ''
+    // If the category is selected
+    if (categories) {
+        const [filterCategory] = Array.isArray(categories) ? [categories] : categories;
+        // If multiple categories selected
+        if (categories.length > 1) {
+            filterCategory.forEach(categoryId => {
+                filteredIds += categoryId + ',';
+            });
+            // Remove the last comma sign
+            filteredIds = filteredIds.substring(0, filteredIds.length - 1)
+        }
+        if (categories.length === 1) {
+            filteredIds = categories;
+        }
+    }
+    console.log(filteredIds)
+    const results = await searchProduct(gameName, filteredIds);
+    console.log(results);
+
     res.render('buyer/searchResult', {
-        // Data here
+        games: results
     });
 });
 

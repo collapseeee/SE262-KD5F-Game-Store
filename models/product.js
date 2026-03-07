@@ -15,6 +15,30 @@ const getAllProduct = async () => {
     }
 };
 
+const searchProduct = async (gameName, filteredIds) => {
+    let sql =
+        `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
+        INNER JOIN products p ON p.product_id = pl.product_id
+        INNER JOIN categories c ON c.category_id = pl.category_id
+        WHERE p.name LIKE ?`;
+    let payload = [`%${gameName}%`]
+
+    if (filteredIds) {
+        sql += ` AND pl.category_id IN (?)`;
+        payload.push(filteredIds);
+    }
+
+    sql += ` GROUP BY pl.product_id`;
+
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 module.exports = {
-    getAllProduct
+    getAllProduct,
+    searchProduct
 }
