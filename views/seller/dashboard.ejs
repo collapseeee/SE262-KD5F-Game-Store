@@ -56,6 +56,22 @@
                                     <button class="btn btn-action-delete edit-mode d-none" onclick="disableEdit('<%= index %>')">Delete</button>
                                 </div>
                             </div>
+                            <div class="dropdown d-lg-none">
+                                    <button class="btn text-white border-0 p-0"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            data-bs-offset="0,2"
+                                            data-bs-display="static"
+                                            data-bs-popper-config='{"placement":"bottom-end","modifiers":[{"name":"flip","enabled":false}]}'
+                                            aria-expanded="false">
+                                        <i class="bi bi-three-dots fs-2"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
+                                        <button class="btn btn-popover-rename view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
+                                        <button class="btn btn-popover-delete view-mode" onclick="deleteItem('categories', <%= cat.id %>)">Delete</button>
+                    
+                                    </ul>
+                                </div>
                         </td>
                     </tr>
                     <% }) %>
@@ -364,7 +380,7 @@ body {
 }
 
 /* Button in Popover */
-.btn-popover-edit, .btn-popover-delete {
+.btn-popover-edit, .btn-popover-delete, .btn-popover-rename {
     width: 80px !important;
     height: 35px !important;
     font-size: 0.9rem !important;
@@ -381,7 +397,7 @@ body {
 
 .btn-popover-edit { background-color: #FFB338 !important; }
 .btn-popover-delete { background-color: #C91C1C !important; }
-
+.btn-popover-rename { background-color: #FFB338 !important; }
 
 .dropdown-menu {
     --bs-dropdown-bg: transparent;
