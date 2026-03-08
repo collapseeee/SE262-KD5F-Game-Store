@@ -45,7 +45,13 @@
                     </div>
                     <div class="mb-3">
                         <label for="category" class="form-label">Category:</label>
-                        <input type="text" class="form-control square-input" id="category" name="category" required>
+                        <select class="form-select square-input" id="category" name="category" required>
+                            <option value="" selected disabled>Select a category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="food">Food & Beverage</option>
+                            <option value="others">Others</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description:</label>
