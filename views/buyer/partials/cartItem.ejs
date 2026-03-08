@@ -1,23 +1,41 @@
 <div class="container cart-container rounded-4 mb-3">
-  <div class="p-4 row">
-    <div class="col-auto">
-      <img
-        class="game-poster w-100"
-        src="https://placehold.co/512x256"
-        alt=""
-      />
+  <div class="p-4 row shadow">
+    <div class="col-4 overflow-hidden">
+      <img class="game-poster w-100 rounded-4" src="https://placehold.co/512x256" alt="<%=game.name%>" style="
+      height: 256px; 
+      object-fit: cover; 
+      object-position: center;" />
     </div>
-    <div class="col d-flex flex-column my-lg-0 my-sm-2">
+    <div class="col-8 d-flex flex-column my-lg-0 my-sm-2">
       <div class="row">
-        <p class="fs-3 fw-medium col-6"><%=game.name%></p>
-        <p class="fs-3 col-6 text-end">$ <%=game.price%></p>
+        <div class="col-12 col-sm-6">
+          <p class="fs-3 fw-medium text-truncate">
+            <%=game.name%>
+          </p>
+          <p class="fs-4">
+            <% game.categories.forEach((category, index) => { %>
+              <%= index > 0 ? ' | ' : '' %><%= category %>
+            <% }) %>
+          </p>
+        </div>
+        <div class="col-12 col-sm-6">
+          <p class="fs-3 text-end">$ <%=game.price%>
+          </p>
+        </div>
       </div>
-      <p class="fs-4"><% game.categories.forEach((category) => { %>
-        <%=category%> 
-      <%})%></p>
-      <div class="row mt-auto">
-        <p class="opacity-75 col-10 text-start"><%=game.wishlisted_date%></p>
-        <a class="link-danger col-2 link-underline-danger text-end">Remove</a>
+      <div class="d-flex justify-content-between align-items-center mt-auto">
+        <p class="opacity-75 mb-0 text-truncate">
+          Added: 
+          <% if (game.wishlisted_date) { %> 
+            <!--For wishlist page.-->
+            <%=game.wishlisted_date%>
+          <% } else { %>
+            <!--For cart page.-->
+            <%=game.added_date %>
+          <% } %>
+        </p>
+        <!-- Add DELETE method later.-->
+        <a class="link-danger link-underline-danger">Remove</a>
       </div>
     </div>
   </div>
