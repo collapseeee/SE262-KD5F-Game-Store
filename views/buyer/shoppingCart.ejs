@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="items-container">
-                <div class="checkout-container rounded-4 mb-3 shadow p-4">
+                <div class="checkout-container rounded-4 mb-3 shadow p-4" id="coupon-container">
                     <p class="text-start fw-bold m-1">KaiDao Coupon</p>
                     <div class="input-group shadow-sm rounded-pill">
                         <input type="text" 
@@ -116,6 +116,7 @@
         const cartHeaderSpan = document.getElementById('cart-header-span');
         const checkoutHeaderSpan = document.getElementById('checkout-header-span');
         const checkoutBtn = document.getElementById("button-checkout")
+        const couponContainer = document.getElementById('coupon-container');
 
         const paymentContainer = document.getElementById("payment-container")
         const paymentPopup = document.getElementById('payment-popup-container');
@@ -132,6 +133,7 @@
                 cartHeaderSpan.style.color = '#fefefe7e'
                 checkoutHeaderSpan.style.display = 'block';
                 paymentContainer.style.display = 'block';
+                couponContainer.style.display = 'none'
             } else { // Second click, continue payment.
                 const selectedMethod = document.querySelector('input[name="payment-method"]:checked');
 
