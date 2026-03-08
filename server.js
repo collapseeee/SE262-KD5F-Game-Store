@@ -259,6 +259,9 @@ app.get('/dashboard', (req, res) => {
         games: games
     });
 });
+app.get('/api/product/add', (req, res) => {
+    res.render('seller/product');
+});
 
 app.delete('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
@@ -281,20 +284,19 @@ app.put('/categories/:id', (req, res) => {
 });
 
 
-app.delete('/api/games/:id', (req, res) => {
+app.delete('/api/games/:id', async(req, res) => {
     const targetId = parseInt(req.params.id);
     games = games.filter(game => game.id !== targetId);
     res.json({ success: true });
     console.log(`Deleted game with ID: ${targetId}`);
-});
     try {
         const data = await getAllProduct();
         res.json(data);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
-        console.error(err)
+        console.error(err);
     }
-})
+});
 
 app.get('/api/image/:id', async (req, res) => {
     try {
@@ -304,7 +306,7 @@ app.get('/api/image/:id', async (req, res) => {
         res.status(500).send('SERVER ERROR');
         console.error(err);
     }
-})
+});
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
