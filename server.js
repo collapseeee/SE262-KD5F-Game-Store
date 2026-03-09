@@ -62,8 +62,16 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.get('/buyerLogin', (req, res) => {
+    res.render('buyer/login');
+})
 
-app.post('/loginBuyer', (req, res) => {
+app.get('/sellerLogin', (req, res) => {
+    res.render('seller/login');
+})
+
+
+app.post('/buyerLogin', (req, res) => {
     const { username, password, role } = req.body;
     Auth.loginBuyer(username, password, role)
         .then(() => {
@@ -79,14 +87,14 @@ app.post('/loginBuyer', (req, res) => {
 
 });
 
-app.post('/loginSeller', (req, res) => {
+app.post('/sellerLogin', (req, res) => {
     const { username, password, role } = req.body;
     Auth.loginSeller(username, password, role)
         .then(() => {
             req.session.username = username;
             req.session.role = role;
 
-            res.redirect('/');
+            res.redirect('/dashboard');
             console.log('Session after login:', req.session);
         })
         .catch(error => {
@@ -136,7 +144,9 @@ app.get('/register', (req, res) => {
     res.render('register');
 })
 
-app.get('/account', (req, res) => {
+app.get('/account', async (req, res) => {
+
+    const categories = await getAllCategory();
     res.render('buyer/personalInformation', {
         // Data here
         categories: categories
@@ -173,12 +183,17 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', (req, res) => {
+app.get('/productdetail', async (req, res) => {
+
+    const categories = await getAllCategory();
     res.render('buyer/productDetail', {
         categories: categories
     });
 });
-app.get('/cart', (req, res) => {
+app.get('/cart', async (req, res) => {
+
+    const categories = await getAllCategory();
+
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
         name: "HELLDIVER 9",
@@ -203,8 +218,9 @@ app.get('/checkout', (req, res) => {
         // Data here
     });
 });
-app.get('/wishlist', (req, res) => {
+app.get('/wishlist', async (req, res) => {
 
+    const categories = await getAllCategory();
     // Get product where user.id = wishlist.user_id DISTINCT product_id
     const games = [{
         name: "HELLDIVER 2",
@@ -224,11 +240,12 @@ app.get('/wishlist', (req, res) => {
         games: games
     });
 });
-app.get('/contact', (req, res) => {
+app.get('/contact', async (req, res) => {
 
+    const categories = await getAllCategory();
     res.render('contact', {
         // Data here
-        categories: ['All Category', 'FPS', 'Soul-Like', 'Family']
+        categories: categories
     });
 });
 
@@ -236,23 +253,19 @@ app.get('/contact', (req, res) => {
 
 app.get('/api/product', async (req, res) => {
     // GET all products
+    try {
+        const data = await getAllProduct();
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err)
+    }
 });
-    categories = [
-        { id: 1, name: "Category 1" },
-        { id: 2, name: "Category 2" },
-        { id: 3, name: "Category 3" },
-        { id: 4, name: "Category 4" },
-        { id: 5, name: "Category 5" }
-    ];
 
-    let games = [
-        { id: 1, name: "Game 1", category: "Category 1 | Category 2", price: "999.01" },
-        { id: 2, name: "Game 2", category: "Category 5", price: "0.99" },
-        { id: 3, name: "Game 3", category: "Category 3", price: "19.99" },
-        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" },
-        { id: 5, name: "Game 5", category: "Category 4", price: "29.99" }
-    ];
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', async (req, res) => {
+
+    const categories = await getAllCategory();
+    const games = await getAllProduct();
     res.render('seller/dashboard', {
         // Data here
         categories: categories,
@@ -287,14 +300,6 @@ app.delete('/api/games/:id', (req, res) => {
     res.json({ success: true });
     console.log(`Deleted game with ID: ${targetId}`);
 });
-    try {
-        const data = await getAllProduct();
-        res.json(data);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err)
-    }
-})
 
 app.get('/api/image/:id', async (req, res) => {
     try {
