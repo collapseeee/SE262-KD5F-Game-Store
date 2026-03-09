@@ -10,19 +10,20 @@
     }
 }
 
-#sign {
+.sign {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 30px auto;
+    line-height: 0.7;
     font-size: 3em;
     animation: fadeInUp 0.6s ease-out both;
     letter-spacing: 2px;
 }
 
 @media (max-width: 576px) {
-    #sign {
+    .sign {
         font-size: 2em;
         margin: 20px auto;
     }
@@ -50,19 +51,16 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-top: 20px;
     align-items: center;
     color: black;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
 }
 
 .contentBox {
     width: 100%;
     background-color: #8B00F5;
-    border-radius: 12px;
     box-shadow: #B7EF00 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 8px 24px;
     animation: fadeInUp 0.7s ease-out 0.15s both;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
@@ -74,8 +72,7 @@
 }
 
 .contentBox>a {
-    padding: 20px 10px;
-    margin: 10px;
+    padding: 20px 10px
     color: #B7EF00;
     font-size: 1em;
     transition: opacity 0.2s ease;
@@ -91,7 +88,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: 20px 0;
 
     >i {
         font-size: 8em;
@@ -110,11 +106,8 @@
 
 .btn {
     padding: 10px 20px;
-    margin: 10px;
-    margin-bottom: 20px;
     color: #8B00F5;
     background-color: #B7EF00;
-    border-radius: 5px;
     font-size: 1.5em;
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
@@ -145,12 +138,10 @@
 
 .form-group {
     width: 80%;
-    margin: 20px 0;
 
     input {
     background-color: #2F2B33;
     border: none;
-    border-radius: 10px;
     transition: box-shadow 0.3s ease, transform 0.2s ease;
   }
 
@@ -165,7 +156,6 @@
 }    
 
 .form-group p {
-  margin: 10px 0 6px;
   text-align: left;
 }
 
@@ -193,7 +183,6 @@
 }
 
 .sign-btn {
-    border-radius: 30px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -207,7 +196,6 @@
     width: 0;
     height: 0;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: width 0.4s ease, height 0.4s ease;
 }
