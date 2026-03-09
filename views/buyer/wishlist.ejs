@@ -14,6 +14,7 @@
     <%-include('partials/navbar')%>
     <main class="container my-4">
       <h1>Wishlists</h1>
+      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
       <div class="items-container">
         <% games.forEach((game) => { %>
             <%- include('partials/cartItem',{game: game}) %>
