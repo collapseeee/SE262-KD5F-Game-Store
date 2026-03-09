@@ -16,7 +16,7 @@
     <%-include('partials/navbar')%>
     <main class="container my-4">
       <h1><span id="cart-header-span">Your Shopping Cart</span> <span id="checkout-header-span" style="display: none;"> > Checkout</span></h1>
-      <a href="/" id="back-to-home"><p>< Back to Home</p></a>
+      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
       <div class="row">
         <div class="items-container col-12 col-lg-8">
             <% games.forEach((game) => { %>
@@ -229,9 +229,5 @@
         background-color: #B7EF00;
         color: black;
         border-radius: 0 50px 50px 0;
-    }
-    #back-to-home {
-        color:#B7EF00;
-        font-size: larger;
     }
 </style>
