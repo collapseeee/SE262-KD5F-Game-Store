@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identification</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/styles/style.css">
-    <link rel="stylesheet" href="/styles/signPage.css">
-
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Identification</title>
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/signPage.css" />
+  </head>
+  <body>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-                <div>
-                    <h1 id="sign">Sign In</h1>
-                </div>
-                <div class="contentBox">
-                    <a href="#" class="hyperlink"><i class="bi bi-caret-left"></i> Back to Home</a>
-                    <div class="identification">
-                        <h1>Why are you here?</h1>
-                        <!-- button to buyer and seller page -->
-                        <div class="buttons">
-                            <a href="/buyer"><button class="btn">I'm here to buy a game!</button></a>
-                            <a href="/seller"><button class="btn">I'm here to sell a game!</button></a>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+          <div>
+            <h1 class="sign">Sign In</h1>
+          </div>
+          <div class="contentBox rounded-4 pt-3">
+            <a href="/" class="back-to-home"
+              ><i class="bi bi-caret-left"></i> Back to Home</a
+            >
+            <div class="identification">
+              <h1>Why are you here?</h1>
+              <!-- button to buyer and seller page -->
+              <div class="buttons rounded-4">
+                <a href="/buyerLogin"
+                  ><button class="btn rounded-4">
+                    I'm here to buy a game!
+                  </button></a
+                >
+                <a href="/sellerLogin"
+                  ><button class="btn rounded-4">
+                    I'm here to sell a game!
+                  </button></a
+                >
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+  <script src="/dist/js/bootstrap.bundle.min.js"></script>
 </html>
