@@ -1,13 +1,16 @@
-<div class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2">
+<div
+  data-game-id="<%=game.product_id%>"
+  class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2"
+>
   <img class="rounded-top-3 w-100 poster" src="<%=game.poster_url%>" alt="" />
   <div>
     <p class="game-category"><%=game.category%></p>
     <p class="game-name"><%=game.name%></p>
     <p class="game-price mt-auto">$ <%=game.price%></p>
     <form class="button-container d-flex w-100 mt-auto">
-      <button id="wishlist">
+      <button id="wishlist" data-game-id="<%=game.product_id%>">
         <svg
-          class="bi px-auto card-svg"
+          class="bi px-auto card-svg pe-none"
           width="32"
           height="32"
           fill="currentColor"
@@ -15,9 +18,9 @@
           <use xlink:href="bootstrap-icons.svg#heart" />
         </svg>
       </button>
-      <button id="add-to-cart">
+      <button id="add-to-cart" data-game-id="<%=game.product_id%>">
         <svg
-          class="bi px-auto card-svg"
+          class="bi px-auto card-svg pe-none"
           width="32"
           height="32"
           fill="currentColor"
@@ -40,6 +43,7 @@
     background-color: #5c3b75;
     color: #fefefe;
     box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+    cursor: pointer;
   }
 
   #wishlist,
