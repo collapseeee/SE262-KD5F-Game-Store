@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Results</title>
+
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <%-include('partials/navbar');%>
+    <main class="container my-4">
+        <!-- Search Specification -->
+         <div class="row">
+            <div class="col-6">
+                <p class="text-end mx-4 fs-4">Category: none</p>
+            </div>
+            <div class="col-6">
+                <p class="text-start mx-4 fs-4">Search: none</p>
+            </div>
+         </div>        
+      <!-- Game Cards Grid -->
+      <div class="container">
+        <div class="row gap-4 justify-content-center align-items-start">
+          <% games.forEach((game) => { %>
+            <%-include('partials/gameCard', { game: game});%>
+          <%})%>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+       <%-include('partials/pagination');%>
+
+    </main>
+
+    <%-include('partials/footer')%>
+    <script src="/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  <style>
+  </style>
+</html>

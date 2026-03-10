@@ -1,0 +1,43 @@
+<nav aria-label="...">
+  <ul class="pagination justify-content-center round-circle my-4">
+    <li class="page-item"><a href="#" class="page-link"><<</a></li>
+    <li class="page-item"><a href="#" class="page-link"><</a></li>
+    <li class="page-item active"><a class="page-link" href="#" aria-current="page">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item"><a class="page-link" href="#">></a></li>
+    <li class="page-item"><a class="page-link" href="#">>></a></li>
+  </ul> 
+</nav>
+<style>
+    .pagination.round-circle .page-item {
+        margin: 0 5px;
+    }
+
+    .pagination.round-circle .page-link {
+        font-size: large;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        padding: 0;
+        text-align: center;
+        border-radius: 50%;
+
+        background-color: #5C3B75;
+        color: #fefefe;
+        border: 1px solid #8122C9;
+        transition: all 0.3s ease;
+    }
+
+    .pagination.round-circle .page-item.active .page-link {
+        background-color: #8B00F5; 
+        color: #fefefe; 
+        border-color: #8122C9;
+    }
+
+    .pagination.round-circle .page-link:hover {
+        background-color: #B7EF00; /* Primary Purple */
+        color: #000000;
+        border-color: #8122C9;
+    }
+</style>

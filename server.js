@@ -157,6 +157,7 @@ app.get('/result', async (req, res) => {
     const results = await searchProduct(gameName, filteredIds);
 
     res.render('buyer/searchResult', {
+        categories: await getAllCategory(),
         games: results
     });
 });
