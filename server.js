@@ -42,6 +42,7 @@ app.set('views', './views');
 
 
 // Webpage endpoints
+
 app.get('/', async (req, res) => {
     if (req.session.username) {
         res.render('index', {
@@ -53,7 +54,8 @@ app.get('/', async (req, res) => {
         // Want to see ejs page change? edit here
         res.render('index', {
             categories: await getAllCategory(),
-            games: await getAllProduct()
+            games: await getAllProduct(),
+            username: null
         });
     }
 });
@@ -134,12 +136,15 @@ app.get('/cart', async (req, res) => {
         price: 0.99,
         added_date: Date.now()
     }];
-
-    res.render('buyer/shoppingCart', {
-        // Data here (Currently mock data)
-        games: games,
-        categories: await getAllCategory()
-    });
+    if (req.session.username) {
+        res.render('buyer/shoppingCart', {
+            // Data here (Currently mock data)
+            games: games,
+            categories: await getAllCategory()
+        });
+    } else {
+        res.redirect('/identification');
+    }
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
