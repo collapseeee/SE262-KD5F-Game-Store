@@ -59,7 +59,6 @@ app.get('/', async (req, res) => {
     }
 });
 
-
 app.post('/loginBuyer', (req, res) => {
     const { username, password } = req.body;
     Auth.loginBuyer(username, password)
@@ -75,37 +74,6 @@ app.post('/loginBuyer', (req, res) => {
 
 });
 
-app.post('/loginSeller', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginSeller(username, password)
-        .then(() => {
-            req.session.username = username;
-
-            res.redirect('/');
-            console.log('Session after login:', req.session);
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during login');
-        });
-
-});
-
-app.post('/signup', (req, res) => {
-    const { username, password } = req.body;
-    Auth.signup(username, password)
-        .then(() => {
-            req.session.username = username;
-
-            res.redirect('/');
-            console.log('Session after signup:', req.session);
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during signup');
-        });
-
-});
 app.get('/signout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
@@ -124,10 +92,10 @@ app.get('/register', (req, res) => {
     res.render('register');
 })
 
-app.get('/account', async (req, res) => {
+app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
         // Data here
-        categories: await getAllCategory()
+        categories: categories
     });
 });
 
@@ -161,9 +129,9 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', async (req, res) => {
+app.get('/productdetail', (req, res) => {
     res.render('buyer/productDetail', {
-        categories: await getAllCategory()
+        categories: categories
     });
 });
 app.get('/cart', async (req, res) => {
@@ -214,14 +182,47 @@ app.get('/contact', (req, res) => {
 
 // API endpoints
 
+
+app.post('/loginSeller', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginSeller(username, password)
+        .then(() => {
+            req.session.username = username;
+
+            res.redirect('/');
+            console.log('Session after login:', req.session);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).send('Error during login');
+        });
+
+});
+
+app.post('/signup', (req, res) => {
+    const { username, password } = req.body;
+    Auth.signup(username, password)
+        .then(() => {
+            req.session.username = username;
+
+            res.redirect('/');
+            console.log('Session after signup:', req.session);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).send('Error during signup');
+        });
+
+});
+
 app.get('/api/product', async (req, res) => {
     // GET all products
 });
 
-app.get('/dashboard', async (req, res) => {
+app.get('/dashboard', (req, res) => {
     res.render('seller/dashboard', {
         // Data here
-        categories: await getAllCategory(),
+        categories: categories,
         games: games
     });
 });
