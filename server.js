@@ -43,9 +43,6 @@ app.set('views', './views');
 
 app.get('/', async (req, res) => {
     console.log('Session before rendering:', req.session);
-    const games = await getAllProduct();
-    const categories = await getAllCategory();
-    console.log(games, "\n\n\nThis print log is at line 48 of server.js");
     if (req.session.username) {
         res.render('index', {
 
@@ -56,8 +53,8 @@ app.get('/', async (req, res) => {
         console.log('No user logged in, rendering identification page.');
         // Want to see ejs page change? edit here
         res.render('index', {
-            categories: categories,
-            games: games
+            categories: await getAllCategory(),
+            games: await getAllProduct()
         });
     }
 });
@@ -146,10 +143,9 @@ app.get('/register', (req, res) => {
 
 app.get('/account', async (req, res) => {
 
-    const categories = await getAllCategory();
     res.render('buyer/personalInformation', {
         // Data here
-        categories: categories
+        categories: await getAllCategory()
     });
 });
 
@@ -184,15 +180,11 @@ app.get('/result', async (req, res) => {
 });
 
 app.get('/productdetail', async (req, res) => {
-
-    const categories = await getAllCategory();
     res.render('buyer/productDetail', {
-        categories: categories
+        categories: await getAllCategory()
     });
 });
 app.get('/cart', async (req, res) => {
-
-    const categories = await getAllCategory();
 
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
@@ -210,7 +202,7 @@ app.get('/cart', async (req, res) => {
     res.render('buyer/shoppingCart', {
         // Data here (Currently mock data)
         games: games,
-        categories: categories
+        categories: await getAllCategory()
     });
 });
 app.get('/checkout', (req, res) => {
@@ -280,10 +272,10 @@ app.delete('/categories/:id', (req, res) => {
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
 });
-app.put('/categories/:id', (req, res) => {
+app.put('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
-    const category = categories.find(cat => cat.id === targetId);
+    const category = await getAllCategory().find(cat => cat.id === targetId);
     if (category) {
         category.name = newName;
         res.json({ success: true });
