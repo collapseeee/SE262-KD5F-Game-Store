@@ -17,49 +17,42 @@
     <%-include('partials/navbar')%>
     <main class="container my-4">
     <h2 class="section-title">ADD PRODUCT</h2>
-    <div class="section-container">
-        <form action="/api/product/add" method="POST" enctype="multipart/form-data">
-            <div class="row"> <div class="col-md-5 d-flex justify-content-start align-items-start mb-3">
-                    <div class="card custom-upload-card text-center shadow-lg border-0 p-4 w-100" style="height: 400px;">
-                        <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-3" aria-label="Close"></button>
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <div class="icon-wrapper mb-3">
-                                <img src="/picture.png" alt="Upload Poster" class="img-fluid upload-placeholder-img">
-                            </div>
-                            <p class="card-text text-white fw-light fs-5">Click to upload the poster</p>
-                            <input type="file" class="d-none" id="posterUpload" name="image">
-                        </div>
+        <div class="section-container">
+                <div class="row g-4">
+        <div class="col-auto">
+            <div class="card custom-upload-card main-poster-card text-center shadow-lg border-0 p-4">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="icon-wrapper mb-3">
+                        <img src="/picture.png" alt="Upload Poster" class="img-fluid upload-placeholder-img">
                     </div>
+                    <p class="card-text text-white fw-light fs-5">Click to upload the poster</p>
+                    <input type="file" class="d-none" id="posterUpload" name="image">
                 </div>
+            </div>
+        </div>
 
-                <div class="col-md-7">
-                    <div class = "row">
-                        <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">Name:</label>
-                            <input type="text" class="form-control square-input" id="name" name="name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Price:</label>
-                            <input type="number" step="0.01" class="form-control square-input" id="price" name="price" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category:</label>
-                        <select class="form-select square-input" id="category" name="category" required>
-                            <option value="" selected disabled>Select a category</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="clothing">Clothing</option>
-                            <option value="food">Food & Beverage</option>
-                            <option value="others">Others</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description:</label>
-                        <textarea class="form-control square-input" id="description" name="description" rows="3" required></textarea>
-                    </div>
+        <div class="col d-flex flex-column" style="height: 469px;"> 
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control square-input" id="name" name="name" required>
                 </div>
-
-            </div> </form>
+                <div class="col-md-6 mb-3">
+                    <label for="price" class="form-label">Price:</label>
+                    <input type="number" step="0.01" class="form-control square-input" id="price" name="price" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category:</label>
+                <select class="form-select square-input" id="category" name="category" required>
+                    <option value="" selected disabled>Select a category</option>
+                    </select>
+            </div>
+            <div class="mb-0 flex-grow-1 d-flex flex-column">
+                <label for="description" class="form-label">Description:</label>
+                <textarea class="form-control square-input flex-grow-1" id="description" name="description" required style="resize: none;"></textarea>
+            </div>
+        </div>
     </div>
     <div class="section-container Gallery-container">
     <h2 class="text-white fw-bold mb-4">Gallery (Optional)</h2>
@@ -311,7 +304,15 @@ body {
     width: auto;
     object-fit: contain;
 }
+.col.d-flex.flex-column {
+    height: 469px !important;
+}
 
+/* บังคับให้ช่อง Description ยืดเต็มพื้นที่ที่เหลือ */
+#description {
+    height: 100% !important; /* ยืดตาม container */
+    min-height: 50px; /* กันเบียดเมื่อจอเล็ก */
+}
 /* คุมขนาดภาพรวมไม่ให้ใหญ่เกิน 256px แต่ยืดหยุ่นตาม Grid ได้ */
 .gallery-item-wrapper {
     max-width: 256px;
@@ -356,6 +357,40 @@ body {
     background-color: white !important; /* แถบ Progress สีขาว */
 }
 
+/* ล็อคขนาด Poster Card หลักเป็น 327x469 */
+.main-poster-card {
+    width: 327px !important;
+    height: 469px !important;
+    min-width: 327px;
+    min-height: 469px;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 25px !important; /* ปรับมุมโค้งให้มนขึ้นตามความสูง */
+}
+
+/* ปรับแต่งพื้นที่ Icon ภายในการ์ดหลักให้ใหญ่ขึ้นตามสัดส่วนการ์ด */
+.main-poster-card .icon-wrapper {
+    width: 240px; /* ขยายความกว้าง Icon wrapper */
+    height: 180px; /* ขยายความสูง Icon wrapper */
+    background-color: #f8f9fa;
+    border-radius: 15px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* ปรับขนาดรูปภาพ PNG ภายใน */
+.main-poster-card .upload-placeholder-img {
+    max-height: 120px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ปรับแต่งตัวอักษร Click to upload */
+.main-poster-card .card-text {
+    font-size: 1.25rem;
+    margin-top: 10px;
+}
 /* --- Video URL (Capsule Design) --- */
 .video-input {
     border-radius: 50px !important; /* ทรงแคปซูลมน */
