@@ -7,6 +7,8 @@ const sessionStore = require('./models/session');
 const { getAllProduct, searchProduct } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
+const { getWishlistByUserId } = require('./models/wishlist');
+const { getUserByName } = require('./models/account');
 
 const app = express();
 // App setup
@@ -42,15 +44,13 @@ app.set('views', './views');
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
-    console.log('Session before rendering:', req.session);
     if (req.session.username) {
         res.render('index', {
-
-            username: req.session.username,
-            role: req.session.role
+            games: await getAllProduct(),
+            categories: await getAllCategory(),
+            username: req.session.username
         });
     } else {
-        console.log('No user logged in, rendering identification page.');
         // Want to see ejs page change? edit here
         res.render('index', {
             categories: await getAllCategory(),
@@ -59,21 +59,12 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.get('/buyerLogin', (req, res) => {
-    res.render('buyer/login');
-})
 
-app.get('/sellerLogin', (req, res) => {
-    res.render('seller/login');
-})
-
-
-app.post('/buyerLogin', (req, res) => {
-    const { username, password, role } = req.body;
-    Auth.loginBuyer(username, password, role)
+app.post('/loginBuyer', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginBuyer(username, password)
         .then(() => {
             req.session.username = username;
-            req.session.role = role;
             console.log('Session after login:', req.session);
             return res.redirect('/');
         })
@@ -84,14 +75,13 @@ app.post('/buyerLogin', (req, res) => {
 
 });
 
-app.post('/sellerLogin', (req, res) => {
-    const { username, password, role } = req.body;
-    Auth.loginSeller(username, password, role)
+app.post('/loginSeller', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginSeller(username, password)
         .then(() => {
             req.session.username = username;
-            req.session.role = role;
 
-            res.redirect('/dashboard');
+            res.redirect('/');
             console.log('Session after login:', req.session);
         })
         .catch(error => {
@@ -102,11 +92,10 @@ app.post('/sellerLogin', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
-    const { username, password, role } = req.body;
-    Auth.signup(username, password, role)
+    const { username, password } = req.body;
+    Auth.signup(username, password)
         .then(() => {
             req.session.username = username;
-            req.session.role = role;
 
             res.redirect('/');
             console.log('Session after signup:', req.session);
@@ -117,7 +106,7 @@ app.post('/signup', (req, res) => {
         });
 
 });
-app.get('/logout', (req, res) => {
+app.get('/signout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error(err);
@@ -131,21 +120,14 @@ app.get('/logout', (req, res) => {
 
     });
 });
-app.get('/login', (req, res) => {
-    res.render('identification', {
-        // Data here
-    });
-});
-
 app.get('/register', (req, res) => {
     res.render('register');
 })
 
-app.get('/account', async (req, res) => {
-
+app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
         // Data here
-        categories: await getAllCategory()
+        categories: categories
     });
 });
 
@@ -179,13 +161,12 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', async (req, res) => {
+app.get('/productdetail', (req, res) => {
     res.render('buyer/productDetail', {
-        categories: await getAllCategory()
+        categories: categories
     });
 });
 app.get('/cart', async (req, res) => {
-
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
         name: "HELLDIVER 9",
@@ -211,33 +192,23 @@ app.get('/checkout', (req, res) => {
     });
 });
 app.get('/wishlist', async (req, res) => {
+    if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        res.render('buyer/wishlist', {
+            // Data here
+            categories: await getAllCategory(),
+            games: await getWishlistByUserId(user.user_id)
+        });
+    } else {
+        res.render('identification');
+    }
 
-    const categories = await getAllCategory();
-    // Get product where user.id = wishlist.user_id DISTINCT product_id
-    const games = [{
-        name: "HELLDIVER 2",
-        categories: ['Action', 'Shooter'],
-        price: 999.99,
-        wishlisted_date: Date.now()
-    }, {
-        name: "Phasmophobia",
-        categories: ['Horror'],
-        price: 0.99,
-        wishlisted_date: Date.now()
-    }];
-
-    res.render('buyer/wishlist', {
-        // Data here
-        categories: categories,
-        games: games
-    });
 });
-app.get('/contact', async (req, res) => {
+app.get('/contact', (req, res) => {
 
-    const categories = await getAllCategory();
     res.render('contact', {
         // Data here
-        categories: categories
+        categories: ['All Category', 'FPS', 'Soul-Like', 'Family']
     });
 });
 
@@ -245,19 +216,9 @@ app.get('/contact', async (req, res) => {
 
 app.get('/api/product', async (req, res) => {
     // GET all products
-    try {
-        const data = await getAllProduct();
-        res.json(data);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err)
-    }
 });
 
-app.get('/dashboard', async (req, res) => {
-
-    const categories = await getAllCategory();
-    const games = await getAllProduct();
+app.get('/dashboard', (req, res) => {
     res.render('seller/dashboard', {
         // Data here
         categories: categories,
@@ -272,10 +233,10 @@ app.delete('/categories/:id', (req, res) => {
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
 });
-app.put('/categories/:id', async (req, res) => {
+app.put('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
-    const category = await getAllCategory().find(cat => cat.id === targetId);
+    const category = categories.find(cat => cat.id === targetId);
     if (category) {
         category.name = newName;
         res.json({ success: true });
@@ -302,6 +263,15 @@ app.get('/api/image/:id', async (req, res) => {
         console.error(err);
     }
 })
+
+app.post('/api/wishlist/:id', async (req, res) => {
+    try {
+        res.send("")
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
