@@ -124,10 +124,10 @@ app.get('/register', (req, res) => {
     res.render('register');
 })
 
-app.get('/account', (req, res) => {
+app.get('/account', async (req, res) => {
     res.render('buyer/personalInformation', {
         // Data here
-        categories: categories
+        categories: await getAllCategory()
     });
 });
 
@@ -161,9 +161,9 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', (req, res) => {
+app.get('/productdetail', async (req, res) => {
     res.render('buyer/productDetail', {
-        categories: categories
+        categories: await getAllCategory()
     });
 });
 app.get('/cart', async (req, res) => {
@@ -218,10 +218,10 @@ app.get('/api/product', async (req, res) => {
     // GET all products
 });
 
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', async (req, res) => {
     res.render('seller/dashboard', {
         // Data here
-        categories: categories,
+        categories: await getAllCategory(),
         games: games
     });
 });
