@@ -42,7 +42,6 @@ app.set('views', './views');
 
 
 // Webpage endpoints
-
 app.get('/', async (req, res) => {
     if (req.session.username) {
         res.render('index', {
@@ -59,15 +58,23 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.get('/identification', (req, res) => {
+    res.render('identification');
+});
+
 app.get('/register', (req, res) => {
     res.render('register');
 })
 
-app.get('/account', (req, res) => {
-    res.render('buyer/personalInformation', {
-        // Data here
-        categories: categories
-    });
+app.get('/account', async (req, res) => {
+    if (req.session.username) {
+        res.render('buyer/personalInformation', {
+            // Data here
+            categories: await getAllCategory()
+        });
+    } else {
+        res.redirect('/identification');
+    }
 });
 
 app.get('/dashboard', (req, res) => {
@@ -109,9 +116,9 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', (req, res) => {
+app.get('/productdetail', async (req, res) => {
     res.render('buyer/productDetail', {
-        categories: categories
+        categories: await getAllProduct()
     });
 });
 app.get('/cart', async (req, res) => {
@@ -148,15 +155,14 @@ app.get('/wishlist', async (req, res) => {
             games: await getWishlistByUserId(user.user_id)
         });
     } else {
-        res.render('identification');
+        res.redirect('/identification');
     }
 
 });
-app.get('/contact', (req, res) => {
-
+app.get('/contact', async (req, res) => {
     res.render('contact', {
         // Data here
-        categories: ['All Category', 'FPS', 'Soul-Like', 'Family']
+        categories: await getAllCategory()
     });
 });
 
