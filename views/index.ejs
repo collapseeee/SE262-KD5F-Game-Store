@@ -28,10 +28,14 @@
       </div>
 
       <!-- Explore more Text -->
-      <p id="explore">
+      <% if (username !== null) { %>
+        <a href="/result">Explore more</a>
+      <%} else {%>
+        <p id="explore">
         Explore more: <a href="/identification" id="login-text">Log in</a> or
         <a href="/register" id="register-text">Register</a>
       </p>
+      <%}%>
     </main>
 
     <%-include('buyer/partials/footer')%>
