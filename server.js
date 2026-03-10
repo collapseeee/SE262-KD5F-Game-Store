@@ -99,6 +99,15 @@ app.get('/account', (req, res) => {
     });
 });
 
+app.get('/dashboard', (req, res) => {
+    res.render('seller/dashboard', {
+        // Data here
+        categories: categories,
+        games: games
+    });
+});
+
+
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
     const { gameName, categories, category } = req.query;
@@ -219,13 +228,6 @@ app.get('/api/product', async (req, res) => {
     // GET all products
 });
 
-app.get('/dashboard', (req, res) => {
-    res.render('seller/dashboard', {
-        // Data here
-        categories: categories,
-        games: games
-    });
-});
 
 app.delete('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
