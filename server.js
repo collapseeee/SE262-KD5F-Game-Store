@@ -59,35 +59,6 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.post('/loginBuyer', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginBuyer(username, password)
-        .then(() => {
-            req.session.username = username;
-            console.log('Session after login:', req.session);
-            return res.redirect('/');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during login');
-        });
-
-});
-
-app.get('/signout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error during logout');
-        } else {
-            res.send('Logout successful');
-            res.redirect('/');
-        }
-
-
-
-    });
-});
 app.get('/register', (req, res) => {
     res.render('register');
 })
@@ -206,6 +177,32 @@ app.post('/loginSeller', (req, res) => {
             res.status(500).send('Error during login');
         });
 
+});
+
+app.post('/loginBuyer', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginBuyer(username, password)
+        .then(() => {
+            req.session.username = username;
+            console.log('Session after login:', req.session);
+            return res.redirect('/');
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).send('Error during login');
+        });
+
+});
+app.get('/signout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error during logout');
+        } else {
+            res.send('Logout successful');
+            res.redirect('/');
+        }
+    });
 });
 
 app.post('/signup', (req, res) => {
