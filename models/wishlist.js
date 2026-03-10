@@ -15,10 +15,16 @@ const getWishlistByUserId = async (id) => {
     return rows;
 }
 
-const addToWishlist = async (id) => {
-    const sql = `INSERT INTO wishlists (user_id, product_id, wishlist_date) VALUES (5, 5, '2026-12-3');`
+const addToWishlist = async (userId, productId) => {
+    const sql = `INSERT INTO wishlists (user_id, product_id, wishlist_date) VALUES (?, ?, ?);`
+    const date = `${new Date().getFullYear}-${new Date().getMonth}-${new Date().getDate()}`;
+    const payload = [userId, productId, date];
+
+    const [rows] = await db.promise().execute(sql, payload);
+    return rows;
 }
 
 module.exports = {
-    getWishlistByUserId
+    getWishlistByUserId,
+    addToWishlist
 }
