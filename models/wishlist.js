@@ -2,7 +2,7 @@ const db = require('./db');
 
 const getWishlistByUserId = async (id) => {
     const sql =
-        `SELECT w.product_id, p.name, GROUP_CONCAT(c.name SEPARATOR ', ') as categories, w.wishlist_date FROM wishlists w
+        `SELECT w.product_id, p.name, p.price, p.poster_url, GROUP_CONCAT(c.name SEPARATOR ', ') as categories, w.wishlist_date FROM wishlists w
         INNER JOIN products p ON p.product_id = w.product_id
         INNER JOIN product_lists pl ON pl.product_id = p.product_id
         INNER JOIN categories c ON c.category_id = pl.category_id
