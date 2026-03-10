@@ -1,7 +1,7 @@
 <div class="container cart-container rounded-4 mb-3">
   <div class="p-4 row shadow">
     <div class="col-4 overflow-hidden">
-      <img class="game-poster w-100 rounded-4" src="https://placehold.co/512x256" alt="<%=game.name%>" style="
+      <img class="game-poster w-100 rounded-4" src="<%=game.poster_url%>" alt="<%=game.name%>" style="
       height: 256px; 
       object-fit: cover; 
       object-position: center;" />
@@ -13,9 +13,7 @@
             <%=game.name%>
           </p>
           <p class="fs-4">
-            <% game.categories.forEach((category, index) => { %>
-              <%= index > 0 ? ' | ' : '' %><%= category %>
-            <% }) %>
+            <%=game.categories%>
           </p>
         </div>
         <div class="col-12 col-sm-6">
@@ -26,9 +24,9 @@
       <div class="d-flex justify-content-between align-items-center mt-auto">
         <p class="opacity-75 mb-0 text-truncate">
           Added: 
-          <% if (game.wishlisted_date) { %> 
+          <% if (game.wishlist_date) { %> 
             <!--For wishlist page.-->
-            <%=game.wishlisted_date%>
+            <%=game.wishlist_date%>
           <% } else { %>
             <!--For cart page.-->
             <%=game.added_date %>
