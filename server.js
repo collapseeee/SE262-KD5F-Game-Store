@@ -31,6 +31,7 @@ app.use(express.static('node_modules/bootstrap'));
 app.use(express.static('node_modules/bootstrap-icons'));
 app.use(express.static('node_modules/bootstrap-multiselect'));
 app.use(express.static('node_modules/jquery'));
+app.use(express.static('public/assets/'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

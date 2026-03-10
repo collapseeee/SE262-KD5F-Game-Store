@@ -24,7 +24,7 @@
                         <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-3" aria-label="Close"></button>
                         <div class="card-body d-flex flex-column align-items-center justify-content-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="bi bi-image" style="font-size: 5rem; color: #ccc;"></i>
+                                <img src="/picture.png" alt="Upload Poster" class="img-fluid upload-placeholder-img">
                             </div>
                             <p class="card-text text-white fw-light fs-5">Click to upload the poster</p>
                             <input type="file" class="d-none" id="posterUpload" name="image">
@@ -57,52 +57,417 @@
                         <label for="description" class="form-label">Description:</label>
                         <textarea class="form-control square-input" id="description" name="description" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Add Product</button>
                 </div>
 
             </div> </form>
     </div>
+    <div class="section-container Gallery-container">
+    <h2 class="text-white fw-bold mb-4">Gallery (Optional)</h2>
+    
+    <div class="row g-4 justify-content-center"> 
+        <div class="col-12 col-sm-6 col-lg-3"> 
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 70%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3"> 
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3"> 
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 90%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3"> 
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 20%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <label for="videoUrl" class="form-label text-white">Video URL (Optional):</label>
+        <input type="text" class="form-control video-input mb-2" id="videoUrl" name="videoUrl">
+        <input type="text" class="form-control video-input" id="videoUrl2" name="videoUrl2">
+    </div>
+</div>
+    
+        <div class="section-container System-Requirements-container">
+            <h2 class="text-white fw-bold mb-4">System Requirements</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h4 class="text-white mb-3">Minimum:</h4>
+                    <div class="requirement-box p-3">
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">OS:</label>
+                            <input type="text" class="form-control req-input" placeholder="[Window/MacOS/Linux]">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Processor:</label>
+                            <input type="text" class="form-control req-input" placeholder="AMD64/ARM64">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Memory:</label>
+                            <input type="text" class="form-control req-input" placeholder="1/2/4/8/12/16 GB RAM">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Graphic:</label>
+                            <input type="text" class="form-control req-input" placeholder="Intel/NVIDIA/Radeon">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">DirectX:</label>
+                            <input type="text" class="form-control req-input" placeholder="Version 10/Version 11">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Network:</label>
+                            <input type="text" class="form-control req-input" placeholder="Broadband Internet Connection">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Storage:</label>
+                            <input type="text" class="form-control req-input" placeholder="100GB available space">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Soundcard:</label>
+                            <input type="text" class="form-control req-input" placeholder="DX11 compatible">
+                        </div>
+                        <div class="mb-2 d-flex flex-column">
+                            <label class="req-label mb-1">Additional notes:</label>
+                            <textarea class="form-control req-input" rows="3" placeholder="Additional requirements/Suggestion"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h4 class="text-white mb-3">Recommended:</h4>
+                    <div class="requirement-box p-3">
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">OS:</label>
+                            <input type="text" class="form-control req-input" placeholder="[Window/MacOS/Linux]">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Processor:</label>
+                            <input type="text" class="form-control req-input" placeholder="AMD64/ARM64">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Memory:</label>
+                            <input type="text" class="form-control req-input" placeholder="1/2/4/8/12/16 GB RAM">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Graphic:</label>
+                            <input type="text" class="form-control req-input" placeholder="Intel/NVIDIA/Radeon">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">DirectX:</label>
+                            <input type="text" class="form-control req-input" placeholder="Version 10/Version 11">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Network:</label>
+                            <input type="text" class="form-control req-input" placeholder="Broadband Internet Connection">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Storage:</label>
+                            <input type="text" class="form-control req-input" placeholder="100GB available space">
+                        </div>
+                        <div class="mb-2 d-flex align-items-center">
+                            <label class="req-label">Soundcard:</label>
+                            <input type="text" class="form-control req-input" placeholder="DX11 compatible">
+                        </div>
+                        <div class="mb-2 d-flex flex-column">
+                            <label class="req-label mb-1">Additional notes:</label>
+                            <textarea class="form-control req-input" rows="3" placeholder="Additional requirements/Suggestion"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5 mb-5">
+            <div class="col-12 d-flex justify-content-center justify-content-md-end gap-3">
+                <button type="button" class="btn btn-cancel responsive-btn">CANCEL</button>
+                <button type="submit" class="btn btn-save responsive-btn">SAVE</button>
+            </div>
+        </div>
+</div>
 </main>
 </body>
 </html>
 <style>
-    body {
-    background-color: #8122C9;
+   /* --- Global Styles --- */
+/* --- Global Styles --- */
+body {
+    background-color: #8122C9; /* สีพื้นหลังม่วงเข้ม */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
 }
+
 .section-container {
-    background-color: #8B00F5;
+    background-color: #8B00F5; /* สีม่วงสว่างสำหรับ Container */
     border-radius: 25px;
-    padding: 25px;
+    padding: 30px;
     width: 100%;
-    max-width: 1340px;
+    max-width: 1200px;
     margin: 0 auto 40px auto;
-    overflow: visible !important;
-    height: auto !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-/* กำหนดสีพื้นหลังและลักษณะของ Card */
+
+.section-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* --- Form Inputs (Square Design) --- */
+.square-input {
+    border-radius: 0 !important; /* บังคับเป็นสี่เหลี่ยมมุมฉาก */
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.form-label {
+    color: white;
+    font-weight: 500;
+}
+
+/* --- Card & Upload Styles (General) --- */
 .custom-upload-card {
-  background-color: #8a2be2; /* สีม่วงตามภาพ */
-  width: 350px;
-  height: 500px;
-  border-radius: 25px; /* มุมโค้งมน */
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.15); 
+    border-radius: 20px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .custom-upload-card:hover {
-  transform: scale(1.02); /* เอฟเฟกต์เวลาเอาเมาส์วาง */
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* ปรับแต่งส่วน Icon (หากใช้ภาพ Placeholder) */
 .icon-wrapper {
-  background-color: #f8f9fa;
-  border-radius: 0 !important; /* ลบความโค้งมนออกทั้งหมด */
-  padding: 30px;
-  width: 80%;
+    background-color: #f8f9fa;
+    border-radius: 10px !important;
+    padding: 20px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
-.square-input {
-    border-radius: 0 !important; /* ลบความโค้งมนออกทั้งหมด */
-    border: 1px solid #ced4da; /* ปรับสีเส้นขอบตามต้องการ */
+
+.upload-placeholder-img {
+    max-height: 140px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* คุมขนาดภาพรวมไม่ให้ใหญ่เกิน 256px แต่ยืดหยุ่นตาม Grid ได้ */
+.gallery-item-wrapper {
+    max-width: 256px;
+    margin: 0 auto; /* จัดกลางในคอลัมน์ตัวเองเมื่อจอเล็ก */
+}
+
+/* ปรับการ์ดให้เป็นสี่เหลี่ยมจตุรัสและยืดหยุ่น */
+.gallery-card {
+    width: 100% !important;
+    aspect-ratio: 1 / 1; /* บังคับเป็นสี่เหลี่ยมจตุรัสเสมอโดยไม่ต้องระบุความสูง */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+}
+
+/* ปรับแต่งส่วน Icon Wrapper ด้านใน */
+.gallery-card .icon-wrapper {
+    width: 80%;
+    height: 50%; /* ปรับสัดส่วนตามความสูงของการ์ด */
+    background-color: #f8f9fa;
+    border-radius: 15px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-placeholder-img {
+    max-height: 80%;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ปรับแต่ง Progress bar ให้กว้างเท่าการ์ดเสมอ */
+.gallery-item-wrapper .progress {
+    width: 100%;
+}
+.progress {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+.progress-bar {
+    background-color: white !important; /* แถบ Progress สีขาว */
+}
+
+/* --- Video URL (Capsule Design) --- */
+.video-input {
+    border-radius: 50px !important; /* ทรงแคปซูลมน */
+    border: none !important;
+    padding: 10px 20px;
+    background-color: white !important;
+    color: #333;
+    margin-bottom: 10px;
+    max-height: 22px !important;
+    max-width: 256px !important;
+
+}
+
+/* --- System Requirements Section --- */
+.requirement-box {
+    background-color: #5a189a; /* สีม่วงเข้มสำหรับกล่องย่อย */
+    border-radius: 15px;
+}
+
+.req-label {
+    color: white;
+    font-size: 0.9rem;
+    min-width: 95px; /* จัดตำแหน่ง Label ให้ตรงกัน */
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.req-input {
+    border-radius: 0 !important; /* Input เป็นสี่เหลี่ยมสีขาว */
+    border: none;
+    background-color: white !important;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+}
+
+.req-input::placeholder {
+    color: #ccc;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background-color: #00d1b2;
+    border: none;
+    border-radius: 0;
+    padding: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+/* กำหนดขนาดและฟอนต์พื้นฐานของปุ่ม */
+.custom-btn-size {
+    width: 220px; /* ปรับความกว้างตามความเหมาะสม */
+    height: 65px;
+    border-radius: 20px !important; /* ขอบมนตามรูป */
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.custom-btn-size:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+/* ปรับแต่งปุ่มให้เป็นแบบ Responsive */
+.responsive-btn {
+    width: 100%; /* เต็มความกว้างคอลัมน์ในจอเล็ก */
+    max-width: 250px; /* ขนาดสูงสุดในจอใหญ่ */
+    height: 70px;
+    border-radius: 20px !important; /* ขอบมนตามรูปภาพ */
+    font-size: 1.8rem;
+    font-weight: bold;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+/* เอฟเฟกต์เมื่อเอาเมาส์วาง */
+.responsive-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-3px);
+}
+
+/* สีปุ่ม CANCEL (แดง) */
+.btn-cancel {
+    background-color: #C11212 !important;
+    color: white !important;
+}
+
+/* สีปุ่ม SAVE (เขียวมะนาว ตัวอักษรม่วง) */
+.btn-save {
+    background-color: #CCF500 !important;
+    color: #8B00F5 !important;
+}
+
+/* ปรับแต่งระยะห่างสำหรับจอเล็ก */
+@media (max-width: 576px) {
+    .responsive-btn {
+        max-width: 160px; /* ปรับให้เล็กลงเมื่ออยู่บนมือถือ */
+        font-size: 1.2rem;
+        height: 55px;
+    }
+    
+    /* ให้ปุ่มเรียงต่อกันแนวตั้งถ้าจอมือถือแคบมาก (Optional) */
+    /* .d-flex { flex-direction: column; align-items: center; } */
 }
 </style>
