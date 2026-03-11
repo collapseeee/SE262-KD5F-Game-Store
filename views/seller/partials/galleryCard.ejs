@@ -1,0 +1,141 @@
+<div class="section-container Gallery-container">
+    <h2 class="text-white fw-bold mb-4">Gallery (Optional)</h2>
+    
+    <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 70%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3"> 
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 90%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <div class="progress-bar bg-white" style="width: 20%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <label for="videoUrl" class="form-label text-white">Video URL (Optional):</label>
+        <input type="text" class="form-control video-input mb-2" id="videoUrl" name="videoUrl">
+        <input type="text" class="form-control video-input" id="videoUrl2" name="videoUrl2">
+    </div>
+</div>
+</main>
+<style>
+    /* คุมขนาดภาพรวมไม่ให้ใหญ่เกิน 256px แต่ยืดหยุ่นตาม Grid ได้ */
+.gallery-item-wrapper {
+    max-width: 256px;
+    margin: 0 auto; /* จัดกลางในคอลัมน์ตัวเองเมื่อจอเล็ก */
+}
+
+/* ปรับการ์ดให้เป็นสี่เหลี่ยมจตุรัสและยืดหยุ่น */
+.gallery-card {
+    width: 100% !important;
+    aspect-ratio: 1 / 1; /* บังคับเป็นสี่เหลี่ยมจตุรัสเสมอโดยไม่ต้องระบุความสูง */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+}
+
+/* ปรับแต่งส่วน Icon Wrapper ด้านใน */
+.gallery-card .icon-wrapper {
+    width: 80%;
+    height: 50%; /* ปรับสัดส่วนตามความสูงของการ์ด */
+    background-color: #f8f9fa;
+    border-radius: 15px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-placeholder-img {
+    max-height: 80%;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ปรับแต่ง Progress bar ให้กว้างเท่าการ์ดเสมอ */
+.gallery-item-wrapper .progress {
+    width: 100%;
+}
+.progress {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+.progress-bar {
+    background-color: white !important; /* แถบ Progress สีขาว */
+}
+/* --- Video URL (Capsule Design) --- */
+.video-input {
+    border-radius: 50px !important; /* ทรงแคปซูลมน */
+    border: none !important;
+    padding: 10px 20px;
+    background-color: white !important;
+    color: #333;
+    margin-bottom: 10px;
+    max-height: 22px !important;
+    max-width: 256px !important;
+
+}
+</style>
