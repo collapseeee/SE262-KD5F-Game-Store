@@ -148,7 +148,7 @@ app.get('/account', (req, res) => {
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
     const { gameName, categories, category } = req.query;
-    let filteredIds = ''
+    let filteredIds = '';
 
     if (category) {
         filteredIds += category;
@@ -162,7 +162,7 @@ app.get('/result', async (req, res) => {
                 filteredIds += categoryId + ',';
             });
             // Remove the last comma sign
-            filteredIds = filteredIds.substring(0, filteredIds.length - 1)
+            filteredIds = filteredIds.substring(0, filteredIds.length - 1);
         }
         if (categories.length === 1) {
             filteredIds = categories;
@@ -274,16 +274,18 @@ app.post('/api/product/add', upload.fields([
     { name: 'gallery_image[]', maxCount: 4 }
 ]),
 async(req, res) =>
-    {
-    if (!req.body.gallery || !req.body.videoUrl || !req.body.systemRequirements) {
+{
+    try {
     const posterFile = req.files['poster'] ? req.files['poster'][0] : null;
-    const { name, category, price, description } = req.body;
-    addProduct(name, description, price, posterFile.path);
-    console.log("ข้อมูลสินค้า:", name, category, price);
-    console.log("ชื่อไฟล์รูปหลัก:", posterFile ? posterFile.filename : "ไม่มีไฟล์");
-    } else {
-    const { name, category, price, description, poster, gallery, videoUrl, systemRequirements } = req.body;
-    console.log(name, category, price, description, poster, gallery, videoUrl, systemRequirements);
+        const { name, category, price, description } = req.body;
+        const productId = await addProduct(name, description, price, posterFile.path);
+        addSystemRequirements(productId, req.body);
+        console.log("ข้อมูลสินค้า:", name, category, price, productId);
+        console.log("ชื่อไฟล์รูปหลัก:", posterFile ? posterFile.filename : "ไม่มีไฟล์");
+    }
+     catch (err) {
+        console.error(err);
+        res.status(500).send('Error adding product');
     }
 });
 
