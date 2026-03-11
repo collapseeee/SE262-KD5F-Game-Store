@@ -155,13 +155,12 @@ app.get('/checkout', (req, res) => {
     });
 });
 app.get('/wishlist', async (req, res) => {
-    req.session.username = 'gerryexpress';
     if (req.session.username) {
         const user = await getUserByName('gerryexpress');
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user[0].user_id)
+            games: await getWishlistByUserId(user.user_id)
         });
     } else {
         res.redirect('/identification');
