@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const { getAllProduct, searchProduct } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { getWishlistByUserId } = require('./models/wishlist');
+// const { getWishlistByUserId } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
 
 const app = express();
@@ -91,9 +91,17 @@ app.post('/loginSeller', (req, res) => {
 
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    Auth.signup(username, password)
+    const confirmPassword = req.body['confirm-pasword'];
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+    const existingUser = await getUserByName(username);
+    if (existingUser.length > 0) {
+        return res.status(400).send('Username already exists');
+    }
+    Auth.signup(username, password, 'buyer')
         .then(() => {
             req.session.username = username;
 
@@ -106,6 +114,7 @@ app.post('/signup', (req, res) => {
         });
 
 });
+
 app.get('/signout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
@@ -191,6 +200,19 @@ app.get('/checkout', (req, res) => {
         // Data here
     });
 });
+
+app.get('/login', (req, res) => {
+    res.render('identification', {
+        // Data here
+    });
+});
+
+app.get('/register', (req, res) => {
+    res.render('register', {
+        // Data here
+    });
+});
+
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
