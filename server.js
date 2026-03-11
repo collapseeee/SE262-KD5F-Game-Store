@@ -70,7 +70,7 @@ app.post('/loginBuyer', (req, res) => {
         })
         .catch(error => {
             console.error(error);
-            res.status(500).send('Error during login');
+            res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.', username });
         });
 
 });
@@ -86,7 +86,7 @@ app.post('/loginSeller', (req, res) => {
         })
         .catch(error => {
             console.error(error);
-            res.status(500).send('Error during login');
+            res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.', username });
         });
 
 });
@@ -129,9 +129,18 @@ app.get('/signout', (req, res) => {
 
     });
 });
+
 app.get('/register', (req, res) => {
     res.render('register');
 })
+
+app.get('/sellerLogin', (req, res) => {
+    res.render('seller/login');
+});
+
+app.get('/buyerLogin', (req, res) => {
+    res.render('buyer/login');
+});
 
 app.get('/account', async (req, res) => {
     res.render('buyer/personalInformation', {
