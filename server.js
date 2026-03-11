@@ -219,9 +219,17 @@ app.get('/signout', (req, res) => {
     });
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    Auth.signup(username, password)
+    const confirmPassword = req.body['confirm-pasword'];
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+    const existingUser = await getUserByName(username);
+    if (existingUser.length > 0) {
+        return res.status(400).render('register', { error: 'Username already exists', username });
+    }
+    Auth.signup(username, password, 'buyer')
         .then(() => {
             req.session.username = username;
 
