@@ -17,7 +17,7 @@ const getWishlistByUserId = async (id) => {
 
 const addToWishlist = async (userId, productId) => {
     const sql = `INSERT INTO wishlists (user_id, product_id, wishlist_date) VALUES (?, ?, ?);`
-    const date = `${new Date().getFullYear}-${new Date().getMonth}-${new Date().getDate()}`;
+    const date = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
     const payload = [userId, productId, date];
 
     const [rows] = await db.promise().execute(sql, payload);
@@ -26,7 +26,7 @@ const addToWishlist = async (userId, productId) => {
 
 const deleteFromWishlist = async (userId, productId) => {
     const sql = `DELETE FROM wishlists WHERE user_id = ? AND product_id = ?`
-    const payload = [userId, productId];
+    const payload = [userId, Number(productId)];
     const [rows] = await db.promise().execute(sql, payload);
     return rows;
 }
