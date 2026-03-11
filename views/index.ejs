@@ -14,7 +14,7 @@
   <body>
     <!-- Navbar -->
     <%-include('buyer/partials/navbar');%>
-    <main class="container my-4">
+    <main data-username="<%=username%>" class="container my-4">
       <!-- Carousel -->
       <%-include('buyer/partials/carousel');%>
 
@@ -28,14 +28,20 @@
       </div>
 
       <!-- Explore more Text -->
-      <p id="explore">
-        Explore more: <a href="/login" id="login-text">Log in</a> or
+      <% if (username !== null) { %>
+        <a href="/result">Explore more</a>
+      <%} else {%>
+        <p id="explore">
+        Explore more: <a href="/identification" id="login-text">Log in</a> or
         <a href="/register" id="register-text">Register</a>
       </p>
+      <%}%>
     </main>
 
     <%-include('buyer/partials/footer')%>
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/dist/axios.min.js"></script>
+    <script src="/scripts/product.js" defer></script>
   </body>
   <style>
     #explore {
