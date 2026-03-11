@@ -32,8 +32,12 @@
                     type="text"
                     class="form-control rounded-4 mt-1 my-2"
                     placeholder="Username"
+                    value="<%= typeof username !== 'undefined' ? username : '' %>"
                   />
-
+                  <% if (typeof error !== 'undefined' && error) { %>
+                    <small class="text-danger"><%= error %></small>
+                  <% } %>
+                  <br/>
                   <label for="password">
                     Password:
                     <i class="bi bi-info-circle" style="color: #2f2b33"></i>

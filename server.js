@@ -99,7 +99,7 @@ app.post('/signup', async (req, res) => {
     }
     const existingUser = await getUserByName(username);
     if (existingUser.length > 0) {
-        return res.status(400).send('Username already exists');
+        return res.status(400).render('register', { error: 'Username already exists', username });
     }
     Auth.signup(username, password, 'buyer')
         .then(() => {
