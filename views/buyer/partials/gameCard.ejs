@@ -15,7 +15,11 @@
           height="32"
           fill="currentColor"
         >
-          <use xlink:href="bootstrap-icons.svg#heart" />
+          <% if (wishlists.includes(game.product_id)) {%>
+            <use xlink:href="bootstrap-icons.svg#heart-fill" />
+          <%} else {%>
+            <use xlink:href="bootstrap-icons.svg#heart" />
+          <%}%>
         </svg>
       </button>
       <button id="add-to-cart" data-game-id="<%=game.product_id%>">
@@ -31,7 +35,6 @@
     </form>
   </div>
 </div>
-
 <style>
   .card-svg {
     color: #5c3b75;
@@ -45,7 +48,6 @@
     box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
     cursor: pointer;
   }
-
   #wishlist,
   #add-to-cart {
     background-color: #b7ef00;
