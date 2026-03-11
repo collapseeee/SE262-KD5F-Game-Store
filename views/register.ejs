@@ -24,51 +24,52 @@
             <div class="identification">
               <i class="bi bi-person-fill-add"></i>
               <!-- User Registration field -->
-              <div class="form-group">
-                <label for="username">Username:</label>
-                <input
-                  name="username"
-                  type="text"
-                  class="form-control rounded-4 mt-1 my-2"
-                  placeholder="Username"
-                />
-
-                <label for="password">
-                  Password:
-                  <i class="bi bi-info-circle" style="color: #2f2b33"></i>
-                </label>
-                <div class="input-with-icon">
+              <form action="/signup" method="POST">
+                <div class="form-group">
+                  <label for="username">Username:</label>
                   <input
-                    name="password"
-                    type="password"
+                    name="username"
+                    type="text"
                     class="form-control rounded-4 mt-1 my-2"
-                    placeholder="password"
+                    placeholder="Username"
                   />
-                  <i class="bi bi-eye input-icon"></i>
+
+                  <label for="password">
+                    Password:
+                    <i class="bi bi-info-circle" style="color: #2f2b33"></i>
+                  </label>
+                  <div class="input-with-icon">
+                    <input
+                      name="password"
+                      type="password"
+                      class="form-control rounded-4 mt-1 my-2"
+                      placeholder="password"
+                    />
+                    <i class="bi bi-eye input-icon"></i>
+                  </div>
+
+                  <label for="confirm-pasword">Confirm Password:</label>
+                  <div class="input-with-icon">
+                    <input
+                      name="confirm-pasword"
+                      type="password"
+                      class="form-control rounded-4 mt-1 my-2"
+                      placeholder="Confirm Password"
+                    />
+                    <i class="bi bi-eye input-icon"></i>
+                  </div>
+                  <small id="password-error" class="text-danger" style="display: none;">Passwords do not match</small>
                 </div>
 
-                <label for="confirm-pasword">Confirm Password:</label>
-                <div class="input-with-icon">
-                  <input
-                    name="confirm-pasword"
-                    type="password"
-                    class="form-control rounded-4 mt-1 my-2"
-                    placeholder="Confirm Password"
-                  />
-                  <i class="bi bi-eye input-icon"></i>
+                <p class="text-center py-2">
+                  Already have an account?
+                  <a href="/login" style="color: #b7ef00">Sign in here</a>
+                </p>
+                <!-- button to buyer and seller page -->
+                <div class="buttons">
+                  <button type="submit" class="btn sign-btn rounded-4">Sign up</button>
                 </div>
-              </div>
-
-              <p class="text-center py-2">
-                Already have an account?
-                <a href="/login" style="color: #b7ef00">Sign in here</a>
-              </p>
-              <!-- button to buyer and seller page -->
-              <div class="buttons">
-                <a href="#"
-                  ><button class="btn sign-btn rounded-4">Sign up</button></a
-                >
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -76,4 +77,17 @@
     </div>
   </body>
   <script src="/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const password = document.querySelector('input[name="password"]').value;
+      const confirmPassword = document.querySelector('input[name="confirm-pasword"]').value;
+      const errorMsg = document.getElementById('password-error');
+      if (password !== confirmPassword) {
+        e.preventDefault();
+        errorMsg.style.display = 'block';
+      } else {
+        errorMsg.style.display = 'none';
+      }
+    });
+  </script>
 </html>

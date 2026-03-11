@@ -28,9 +28,9 @@ const Account = {
 
   // Create new user
   createUser: async (userData) => {
-    const sql = 'INSERT INTO accounts (username, password) VALUES (?, ?)';
+    const sql = 'INSERT INTO Accounts (username, password, created_date, isBuyer, isSeller) VALUES (?, ?, NOW(), ?, ?)';
     try {
-      const results = await executeQuery(sql, [userData.username, userData.password]);
+      const results = await executeQuery(sql, [userData.username, userData.password, userData.isBuyer, userData.isSeller]);
       return results;
     } catch (error) {
       error.message = 'Error creating user: ' + error.message;
