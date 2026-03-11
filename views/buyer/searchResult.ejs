@@ -17,11 +17,11 @@
     <main class="container my-4">
         <!-- Search Specification -->
          <div class="row">
-            <div class="col-6">
-                <p class="text-end mx-4 fs-4">Category: none</p>
+            <div class="col-12 col-md-6">
+                <p class="text-end mx-4 fs-4">Category: <%= searchedCategory %></p>
             </div>
-            <div class="col-6">
-                <p class="text-start mx-4 fs-4">Search: none</p>
+            <div class="col-12 col-md-6">
+                <p class="text-start mx-4 fs-4">Search: <%= searchedName %></p>
             </div>
          </div>        
       <!-- Game Cards Grid -->
@@ -40,7 +40,11 @@
 
     <%-include('partials/footer')%>
     <script src="/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/result.js"></script>
   </body>
   <style>
+    .game-name {
+      height: 48px !important;
+    }
   </style>
 </html>

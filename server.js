@@ -155,10 +155,34 @@ app.get('/result', async (req, res) => {
         }
     }
     const results = await searchProduct(gameName, filteredIds);
+    const allCategories = await getAllCategory();
+
+    let categoriesName = "All Categories"
+
+    // Mapping CategoryId with its Name
+    if (categories) {
+        if (categories.length == 1) {
+            const found = allCategories.find(c => c.category_id == categories);
+        categoriesName = found ? found.name : null;
+        };
+        
+        if (categories.length > 1) {
+        const nameList = categories.map(id => {
+            const found = allCategories.find(c => c.category_id == id);
+            return found ? found.name : null;
+        }).filter(Boolean);
+
+        categoriesName = nameList.join(" | ");
+        };
+    };
+    
 
     res.render('buyer/searchResult', {
-        categories: await getAllCategory(),
-        games: results
+        categories: allCategories,
+        games: results,
+        // for displaying in result page
+        searchedName: gameName || "All Games",
+        searchedCategory: categoriesName
     });
 });
 
