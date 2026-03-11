@@ -33,12 +33,11 @@
           <% } %>
         </p>
         <!-- Add DELETE method later.-->
-        <a class="link-danger link-underline-danger fs-4" href="/api/wishlist">Remove</a>
+        <a data-item-id="<%=game.product_id%>" class="link-danger link-underline-danger fs-4" id="remove" type="submit">Remove</a>
       </div>
     </div>
   </div>
 </div>
-
 <style>
   .cart-container {
     background-color: #8b00f5;
