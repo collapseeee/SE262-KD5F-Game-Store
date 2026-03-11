@@ -8,21 +8,21 @@
     </div>
     <div class="col-8 d-flex flex-column my-lg-0 my-sm-2">
       <div class="row">
-        <div class="col-12 col-sm-6">
-          <p class="fs-3 fw-medium text-truncate">
+        <div class="col-12 col-sm-6 col-lg-10">
+          <p class="fs-2 fw-medium text-truncate">
             <%=game.name%>
           </p>
-          <p class="fs-4">
+          <p class="fs-3">
             <%=game.categories%>
           </p>
         </div>
-        <div class="col-12 col-sm-6">
-          <p class="fs-3 text-end">$ <%=game.price%>
+        <div class="col-12 col-sm-6 col-lg-2">
+          <p class="fs-2 text-end">$ <%=game.price%>
           </p>
         </div>
       </div>
       <div class="d-flex justify-content-between align-items-center mt-auto">
-        <p class="opacity-75 mb-0 text-truncate">
+        <p class="opacity-75 mb-0 text-truncate fs-4">
           Added: 
           <% if (game.wishlist_date) { %> 
             <!--For wishlist page.-->
@@ -33,7 +33,7 @@
           <% } %>
         </p>
         <!-- Add DELETE method later.-->
-        <a class="link-danger link-underline-danger">Remove</a>
+        <a class="link-danger link-underline-danger fs-4" href="/api/wishlist">Remove</a>
       </div>
     </div>
   </div>
