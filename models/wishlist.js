@@ -24,7 +24,15 @@ const addToWishlist = async (userId, productId) => {
     return rows;
 }
 
+const deleteFromWishlist = async (userId, productId) => {
+    const sql = `DELETE FROM wishlists WHERE user_id = ? AND product_id = ?`
+    const payload = [userId, productId];
+    const [rows] = await db.promise().execute(sql, payload);
+    return rows;
+}
+
 module.exports = {
     getWishlistByUserId,
-    addToWishlist
+    addToWishlist,
+    deleteFromWishlist
 }
