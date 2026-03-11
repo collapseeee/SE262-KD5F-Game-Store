@@ -14,11 +14,10 @@ const Auth = {
     },
     loginBuyer: async (username, password) => {
         try {
-            const users = await Account.getUserByName(username);
-            if (users.length === 0) {
+            const user = await Account.getUserByName(username);
+            if (user === undefined) {
                 throw new Error('User not found');
             }
-            const user = users[0];
             const isPasswordValid = await encrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 throw new Error('Invalid password');
@@ -31,11 +30,10 @@ const Auth = {
     },
     loginSeller: async (username, password) => {
         try {
-            const users = await Account.getUserByName(username);
-            if (users.length === 0) {
+            const user = await Account.getUserByName(username);
+            if (user === undefined) {
                 throw new Error('User not found');
             }
-            const user = users[0];
             const isPasswordValid = await encrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 throw new Error('Invalid password');

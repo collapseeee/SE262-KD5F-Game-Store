@@ -154,14 +154,26 @@ app.get('/checkout', (req, res) => {
         // Data here
     });
 });
+
+app.get('/login', (req, res) => {
+    res.render('identification', {
+        // Data here
+    });
+});
+
+app.get('/register', (req, res) => {
+    res.render('register', {
+        // Data here
+    });
+});
+
 app.get('/wishlist', async (req, res) => {
-    req.session.username = 'gerryexpress';
     if (req.session.username) {
         const user = await getUserByName('gerryexpress');
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user[0].user_id)
+            games: await getWishlistByUserId(user.user_id)
         });
     } else {
         res.redirect('/identification');
@@ -220,9 +232,17 @@ app.get('/signout', (req, res) => {
     });
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    Auth.signup(username, password)
+    const confirmPassword = req.body['confirm-pasword'];
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+    const existingUser = await getUserByName(username);
+    if (existingUser) {
+        return res.status(400).render('register', { error: 'Username already exists', username });
+    }
+    Auth.signup(username, password, 'buyer')
         .then(() => {
             req.session.username = username;
 
