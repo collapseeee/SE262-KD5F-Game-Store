@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const { getAllProduct, searchProduct } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { getWishlistByUserId } = require('./models/wishlist');
+const { getWishlistByUserId, deleteFromWishlist } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
 
 const app = express();
@@ -33,6 +33,7 @@ app.use(express.static('node_modules/bootstrap'));
 app.use(express.static('node_modules/bootstrap-icons'));
 app.use(express.static('node_modules/bootstrap-multiselect'));
 app.use(express.static('node_modules/jquery'));
+app.use(express.static('node_modules/axios'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -118,9 +119,11 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', async (req, res) => {
+app.get('/product/:id', async (req, res) => {
+    const gameId = req.params.id;
     res.render('buyer/productDetail', {
-        categories: await getAllProduct()
+        categories: await getAllCategory()/* ,
+        game: await getProductById(gameId) */
     });
 });
 app.get('/cart', async (req, res) => {
@@ -152,12 +155,13 @@ app.get('/checkout', (req, res) => {
     });
 });
 app.get('/wishlist', async (req, res) => {
+    req.session.username = 'gerryexpress';
     if (req.session.username) {
-        const user = await getUserByName(req.session.username);
+        const user = await getUserByName('gerryexpress');
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user.user_id)
+            games: await getWishlistByUserId(user[0].user_id)
         });
     } else {
         res.redirect('/identification');
@@ -275,6 +279,8 @@ app.get('/api/image/:id', async (req, res) => {
     }
 })
 
+// Webstore APIs
+
 app.post('/api/wishlist/:id', async (req, res) => {
     try {
         res.send("")
@@ -286,4 +292,16 @@ app.post('/api/wishlist/:id', async (req, res) => {
 
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
+});
+
+app.delete('/api/wishlist/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName('gerryexpress');
+        const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
 });
