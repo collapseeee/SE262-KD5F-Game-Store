@@ -15,7 +15,7 @@ const Auth = {
     loginBuyer: async (username, password) => {
         try {
             const user = await Account.getUserByName(username);
-            if (user.length === 0) {
+            if (user === undefined) {
                 throw new Error('User not found');
             }
             const isPasswordValid = await encrypt.compare(password, user.password);
@@ -31,7 +31,7 @@ const Auth = {
     loginSeller: async (username, password) => {
         try {
             const user = await Account.getUserByName(username);
-            if (user.length === 0) {
+            if (user === undefined) {
                 throw new Error('User not found');
             }
             const isPasswordValid = await encrypt.compare(password, user.password);
