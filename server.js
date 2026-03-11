@@ -239,7 +239,7 @@ app.post('/signup', async (req, res) => {
         return res.status(400).send('Passwords do not match');
     }
     const existingUser = await getUserByName(username);
-    if (existingUser.length > 0) {
+    if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
     Auth.signup(username, password, 'buyer')
