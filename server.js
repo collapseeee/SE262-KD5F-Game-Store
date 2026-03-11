@@ -154,6 +154,19 @@ app.get('/checkout', (req, res) => {
         // Data here
     });
 });
+
+app.get('/login', (req, res) => {
+    res.render('identification', {
+        // Data here
+    });
+});
+
+app.get('/register', (req, res) => {
+    res.render('register', {
+        // Data here
+    });
+});
+
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName('gerryexpress');
