@@ -16,6 +16,7 @@
 <body>
     <%-include('partials/navbar')%>
     <main class="container my-4">
+        <form action="/api/product/add" method="POST" enctype="multipart/form-data">
     <h2 class="section-title">ADD PRODUCT</h2>
         <div class="section-container">
                 <div class="row g-4">
@@ -26,7 +27,7 @@
                         <img src="/picture.png" alt="Upload Poster" class="img-fluid upload-placeholder-img">
                     </div>
                     <p class="card-text text-white fw-light fs-5">Click to upload the poster</p>
-                    <input type="file" class="d-none" id="posterUpload" name="image">
+                    <input type="file" class="d-none" id="posterUpload" name="poster">
                 </div>
             </div>
         </div>
@@ -147,9 +148,13 @@
                 <button type="button" class="btn btn-cancel responsive-btn">CANCEL</button>
                 <button type="submit" class="btn btn-save responsive-btn">SAVE</button>
             </div>
+            </div>
+        </div>
+    </form>
         </div>
 </div>
 </main>
+<%- include('partials/footer')%>
 </body>
 </html>
 <style>
@@ -369,3 +374,71 @@ body {
     /* .d-flex { flex-direction: column; align-items: center; } */
 }
 </style>
+<script>
+    // สำหรับ Gallery (ถ้ามีหลายใบ)
+    document.querySelectorAll('.gallery-card').forEach(card => {
+        card.addEventListener('click', function() {
+            // หา input file ที่อยู่ภายในการ์ดใบนั้นๆ
+            const input = this.querySelector('input[type="file"]');
+            if (input) input.click();
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('category');
+
+        // เรียกไปยัง Endpoint ที่คุณสร้างไว้
+        fetch('/api/categories')
+            .then(response => response.json())
+            .then(categories => {
+                // ล้างข้อความ Loading
+                categorySelect.innerHTML = '<option value="" selected disabled>Select a category</option>';
+                
+                // วนลูปสร้าง Option
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.category_id; // หรือ cat.name ตาม Database ของคุณ
+                    option.textContent = cat.name;
+                    categorySelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                categorySelect.innerHTML = '<option value="" selected disabled>Error loading categories</option>';
+            });
+    });
+</script>
+<script>
+    const posterInput = document.getElementById('posterUpload');
+    const posterImg = document.querySelector('.upload-placeholder-img');
+    const mainCard = document.querySelector('.main-poster-card');
+
+    // 1. ทำให้คลิกที่ Card แล้วเปิดหน้าต่างเลือกไฟล์
+    if (mainCard) {
+        mainCard.addEventListener('click', () => posterInput.click());
+    }
+
+    // 2. เมื่อเลือกไฟล์เสร็จแล้ว ให้แสดงรูป Preview
+    if (posterInput) {
+        posterInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                // สร้าง FileReader เพื่ออ่านข้อมูลไฟล์ภาพ
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // เปลี่ยน src ของรูปภาพเป็นข้อมูลที่อ่านได้จากไฟล์
+                    posterImg.src = e.target.result;
+                    
+                    // ปรับแต่ง CSS เล็กน้อยเพื่อให้รูปที่โหลดมาแสดงเต็มสวยงาม
+                    posterImg.style.maxHeight = '100%';
+                    posterImg.style.width = '100%';
+                    posterImg.style.objectFit = 'cover';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>

@@ -15,6 +15,42 @@ const getAllProduct = async () => {
     }
 };
 
+const addProduct = async (name, description, price, posterUrl) => {
+    const sql = `INSERT INTO products (name, description, price, poster_url) VALUES (?, ?, ?, ?)`;
+    try {
+        const [result] = await db.promise().execute(sql, [name, description, price, posterUrl]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const addGallery = async (productId, imageUrl) => {
+    const sql = `INSERT INTO galleries (product_id, image_url) VALUES (?, ?)`;
+    try {
+        const [result] = await db.promise().execute(sql, [productId, imageUrl]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const addVideo = async (productId, videoUrl) => {
+    const sql = `INSERT INTO videos (product_id, video_url) VALUES (?, ?)`;
+    try {
+        const [result] = await db.promise().execute(sql, [productId, videoUrl]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const addSystemRequirements = async (productId, systemRequirements) => {
+    const sql = `INSERT INTO system_requirements (product_id, requirements) VALUES (?, ?)`;
+    try {
+        const [result] = await db.promise().execute(sql, [productId, systemRequirements]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
 const searchProduct = async (gameName, filteredIds) => {
     let sql =
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
@@ -36,9 +72,13 @@ const searchProduct = async (gameName, filteredIds) => {
     } catch (err) {
         console.error(err);
     }
-}
+};
 
 module.exports = {
     getAllProduct,
-    searchProduct
-}
+    searchProduct,
+    addProduct,
+    addGallery,
+    addVideo,
+    addSystemRequirements
+};

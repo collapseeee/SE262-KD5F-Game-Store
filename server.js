@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct } = require('./models/product');
+const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSystemRequirements} = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-
+const multer = require('multer');
+const upload = multer({ dest: 'public/assets' });
 const app = express();
 // App setup
 app.use(
@@ -135,7 +136,7 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render('register');
-})
+});
 
 app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
@@ -262,6 +263,28 @@ app.get('/dashboard', (req, res) => {
 });
 app.get('/api/product/add', (req, res) => {
     res.render('seller/product');
+});
+
+app.get('/api/categories', async (req, res) => {
+    const categories = await getAllCategory();;
+    res.json(categories);
+});
+app.post('/api/product/add', upload.fields([
+    { name: 'poster', maxCount: 1 },
+    { name: 'gallery_image[]', maxCount: 4 }
+]),
+async(req, res) =>
+    {
+    if (!req.body.gallery || !req.body.videoUrl || !req.body.systemRequirements) {
+    const posterFile = req.files['poster'] ? req.files['poster'][0] : null;
+    const { name, category, price, description } = req.body;
+    addProduct(name, description, price, posterFile.path);
+    console.log("ข้อมูลสินค้า:", name, category, price);
+    console.log("ชื่อไฟล์รูปหลัก:", posterFile ? posterFile.filename : "ไม่มีไฟล์");
+    } else {
+    const { name, category, price, description, poster, gallery, videoUrl, systemRequirements } = req.body;
+    console.log(name, category, price, description, poster, gallery, videoUrl, systemRequirements);
+    }
 });
 
 app.delete('/categories/:id', (req, res) => {
