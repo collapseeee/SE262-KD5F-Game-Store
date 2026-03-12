@@ -79,7 +79,11 @@
             </button>
             <!-- add to wishlist button -->
             <button class="btn wishlist-btn">
+            <% if (isWishlisted) { %>
+              <i class="bi-heart-fill"></i>
+            <%} else { %>
               <i class="bi-heart"></i>
+            <%}%>
             </button>
           </div>
         </div>
