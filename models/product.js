@@ -16,11 +16,31 @@ const getAllProduct = async () => {
 };
 
 const getProductById = async (id) => {
-    const sql = ``;
+    const sql =
+        `SELECT p.product_id, a.username, p.name, p.price, p.description, GROUP_CONCAT(c.name SEPARATOR ' | ') as category, p.poster_url FROM products p
+        INNER JOIN product_lists pl ON pl.product_id = p.product_id
+        INNER JOIN categories c ON pl.category_id = c.category_id
+        INNER JOIN accounts a ON a.user_id = pl.user_id
+        WHERE p.product_id = ?
+        GROUP BY p.product_id, a.username, p.name, p.price, p.description, p.poster_url`;
     const payload = [id];
     try {
         const [rows] = await db.promise().execute(sql, payload);
         return rows[0];
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getProductRequirementById = async (id) => {
+    const sql = `
+         SELECT operating_system, processor, memory, graphics_card, directx_version, network, storage, soundcard, additional_note, product_id FROM hardware_requirement
+        WHERE product_id = ?
+        ORDER BY type ASC`;
+    const payload = [id]
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows;
     } catch (err) {
         console.error(err);
     }
@@ -52,5 +72,6 @@ const searchProduct = async (gameName, filteredIds) => {
 module.exports = {
     getAllProduct,
     searchProduct,
-    getProductById
+    getProductById,
+    getProductRequirementById
 }
