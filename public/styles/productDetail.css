@@ -17,7 +17,6 @@ html {
 
 .contentBox {
     background-color: #8B00F5;
-    border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     animation: fadeInUp 0.5s ease-out both;
     transition: box-shadow 0.3s ease;
@@ -38,12 +37,11 @@ html {
 /* Main image section */
 .image-gallery {
     display: flex;
-    gap: 12px;
 }
 
 .side-thumbnail img {
-    width: 300px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 300px;
     height: 350px;
     object-fit: contain;
     border-radius: 8px;
@@ -56,11 +54,10 @@ html {
 }
 
 .main-image img {
-    width: 600px;
+    width: 512px;
     max-width: 100%;
     height: 350px;
     object-fit: contain;
-    border-radius: 8px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -105,12 +102,8 @@ html {
     color: #FEFEFE;
     background-color: rgba(255, 255, 255, 0.15);
     border: none;
-    border-radius: 50%;
     width: 32px;
     height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -130,7 +123,6 @@ html {
     font-weight: 700;
     color: #FEFEFE;
     position: relative;
-    padding-left: 20px;
     border-left: 5px solid #b7ef00;
     transition: border-color 0.3s ease;
 }
@@ -139,14 +131,11 @@ html {
     color: #cfcfcf;
     font-size: 0.9rem;
     letter-spacing: 1px;
-    margin-top: 0.5rem;
 }
 
 .seller-info {
     font-size: 1.1rem;
     color: #FEFEFE;
-    margin-top: 1rem;
-    padding-left: 20px;
     border-left: 5px solid #b7ef00;
     transition: border-color 0.3s ease;
 }
@@ -154,7 +143,6 @@ html {
 .price-text {
     font-size: 1.3rem;
     color: #FEFEFE;
-    margin-top: 1rem;
 }
 
 .price-value {
@@ -167,8 +155,6 @@ html {
     background-color: #b7ef00;
     color: #1a1a1a;
     font-weight: 700;
-    padding: 10px 30px;
-    border-radius: 8px;
     border: none;
     font-size: 1rem;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
@@ -190,8 +176,6 @@ html {
     background-color: transparent;
     border: 2px solid #FEFEFE;
     color: #FEFEFE;
-    border-radius: 8px;
-    padding: 10px 14px;
     font-size: 1.2rem;
     transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -213,8 +197,6 @@ html {
     color: #FEFEFE;
     font-weight: 700;
     font-size: 1.2rem;
-    padding: 12px 20px;
-    border-radius: 8px;
     letter-spacing: 1px;
     transition: background-color 0.3s ease;
 }
@@ -226,9 +208,6 @@ html {
 /* Section body */
 .section-body {
     border: 2px solid #5c3b75;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 10px;
     color: #e0e0e0;
     line-height: 1.7;
     transition: border-color 0.3s ease;
@@ -244,7 +223,6 @@ html {
 .dot {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -291,11 +269,9 @@ html {
     /* Adjust game info spacing */
     .game-title {
         font-size: 1.8rem;
-        margin-top: 1rem;
     }
 
     .add-to-cart-btn {
-        padding: 8px 20px;
         font-size: 0.9rem;
     }
 }
