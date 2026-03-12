@@ -9,35 +9,22 @@
     <p class="game-price mt-auto">$ <%=game.price%></p>
     <form class="button-container d-flex w-100 mt-auto">
       <button id="wishlist" data-game-id="<%=game.product_id%>">
-        <svg
-          class="bi px-auto card-svg pe-none"
-          width="32"
-          height="32"
-          fill="currentColor"
-        >
           <% if (wishlists.includes(game.product_id)) {%>
-            <use xlink:href="bootstrap-icons.svg#heart-fill" />
+            <i class="bi-heart-fill fs-2"></i>
           <%} else {%>
-            <use xlink:href="bootstrap-icons.svg#heart" />
+            <i class="bi-heart fs-2"></i>
           <%}%>
-        </svg>
       </button>
       <button id="add-to-cart" data-game-id="<%=game.product_id%>">
-        <svg
-          class="bi px-auto card-svg pe-none"
-          width="32"
-          height="32"
-          fill="currentColor"
-        >
-          <use xlink:href="bootstrap-icons.svg#cart-plus" />
-        </svg>
+        <i class="bi-cart-plus fs-2"></i>
       </button>
     </form>
   </div>
 </div>
 <style>
-  .card-svg {
+  button >[class*="bi-"] {
     color: #5c3b75;
+    pointer-events: none;
   }
 
   .card {
