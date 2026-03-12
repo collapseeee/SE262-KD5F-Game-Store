@@ -8,10 +8,8 @@
       <div class="category-container px-3">
           <!-- Brand Category Dropdown -->
           <div class="nav-item dropdown">
-            <a class="dropdown-toggle-custom text-decoration-none link-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <svg class="bi" width="32" height="32" fill="currentColor">
-                <use xlink:href="bootstrap-icons.svg#tags-fill" />
-              </svg>
+            <a class="dropdown-toggle-custom text-decoration-none link-light d-block" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-tags-fill fs-3"></i>
               <p>Category</p>
             </a>
             <!-- Dropdown menu -->
@@ -34,9 +32,7 @@
         <form class="d-flex h-100 w-100 align-items-center" action="/result" method="get">
           <!-- Search Button -->
           <button class="rounded-start-5" id="search-button" type="submit">
-            <svg class="bi px-2" width="32" height="32" fill="currentColor">
-              <use xlink:href="bootstrap-icons.svg#search" />
-            </svg>
+            <i class="bi bi-search fs-4"></i>
           </button>
 
           <!-- Search Input -->
@@ -53,20 +49,14 @@
       </li>
       <!-- End of search bar -->
        <div class="d-flex justify-content-end align-self-end me-4 me-lg-0 mb-2 gap-1 gap-lg-0 order-lg-2">
-          <a href="/cart" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle">
-            <svg class="bi" width="32" height="32" fill="currentColor">
-              <use xlink:href="bootstrap-icons.svg#cart3" />
-            </svg>
+          <a href="/cart" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
+            <i class="bi bi-cart3 fs-3"></i>
           </a>
-          <a href="/wishlist" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle">
-            <svg class="bi" width="32" height="32" fill="currentColor">
-              <use xlink:href="bootstrap-icons.svg#heart" />
-            </svg>
+          <a href="/wishlist" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
+            <i class="bi bi-heart fs-3"></i>
           </a>
-          <a href="/account" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-flex align-self-center rounded-circle">
-            <svg class="bi" width="32" height="32" fill="currentColor">
-              <use xlink:href="bootstrap-icons.svg#person" />
-            </svg>
+          <a href="/account" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
+            <i class="bi bi-person fs-3"></i>
           </a>
        </div>
     </ul>
@@ -92,8 +82,9 @@
     });
 </script>
 <style>
-  svg {
+  i {
     color: #FEFEFE;
+    line-height: 1;
   }
 
   .navbar-brand {
