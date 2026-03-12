@@ -241,7 +241,6 @@ app.get('/signout', (req, res) => {
             console.error(err);
             res.status(500).send('Error during logout');
         } else {
-            res.send('Logout successful');
             res.redirect('/');
         }
     });
