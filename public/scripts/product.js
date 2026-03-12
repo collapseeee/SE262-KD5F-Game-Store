@@ -13,8 +13,7 @@ cards.forEach((card) => {
                 const id = event.target.getAttribute('data-game-id');
                 console.log('add to cart', id);
                 return;
-            }
-            if (event.target.id === 'wishlist') {
+            } else if (event.target.id === 'wishlist') {
                 const svg = event.target.querySelector('use')
                 if (svg.getAttribute('xlink:href') === 'bootstrap-icons.svg#heart') {
                     axios.post(`/api/wishlist/${event.target.dataset.gameId}`);
@@ -24,8 +23,9 @@ cards.forEach((card) => {
                     svg.setAttribute('xlink:href', 'bootstrap-icons.svg#heart')
                 }
                 return;
+            } else {
+                window.location.href = `/product/${event.target.parentElement.dataset.gameId}`;
             }
-            window.location.href = `/product/${event.target.dataset.gameId}`;
         }
     });
 });
