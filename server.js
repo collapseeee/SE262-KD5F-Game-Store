@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist } = require('./models/wishlist');
@@ -136,8 +136,9 @@ app.get('/result', async (req, res) => {
 app.get('/product/:id', async (req, res) => {
     const gameId = req.params.id;
     res.render('buyer/productDetail', {
-        categories: await getAllCategory()/* ,
-        game: await getProductById(gameId) */
+        categories: await getAllCategory(),
+        game: await getProductById(gameId),
+        requirements: await getProductRequirementById(gameId)
     });
 });
 app.get('/cart', async (req, res) => {
