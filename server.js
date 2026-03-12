@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { getWishlistByUserId, deleteFromWishlist, addToWishlist } = require('./models/wishlist');
+const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
 
 const app = express();
@@ -26,14 +26,10 @@ app.use(
 );
 
 app.use(express.static('public'));
+app.use(express.static('node_modules'));
 
 app.use(express.json());
 
-app.use(express.static('node_modules/bootstrap'));
-app.use(express.static('node_modules/bootstrap-icons'));
-app.use(express.static('node_modules/bootstrap-multiselect'));
-app.use(express.static('node_modules/jquery'));
-app.use(express.static('node_modules/axios'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -135,12 +131,23 @@ app.get('/result', async (req, res) => {
 
 app.get('/product/:id', async (req, res) => {
     const gameId = req.params.id;
+    console.log(gameId)
+    const user = await getUserByName(req.session.username);
+    const game = await getProductById(gameId);
+    console.log(game)
+    const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+    if (!game) {
+        console.error(`Product with id ${gameId} is not found`)
+    }
+
     res.render('buyer/productDetail', {
         categories: await getAllCategory(),
-        game: await getProductById(gameId),
+        gameDetails: game,
+        isWishlisted: isWishlisted,
         requirements: await getProductRequirementById(gameId)
     });
 });
+
 app.get('/cart', async (req, res) => {
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{

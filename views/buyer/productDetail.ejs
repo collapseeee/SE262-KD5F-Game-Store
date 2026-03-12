@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product details</title>
-    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="/styles/style.css" />
     <link rel="stylesheet" href="/styles/productDetail.css" />
   </head>
-  <body>
+  <body data-game-id="<%=gameDetails.product_id%>">
     <%- include('partials/navbar') %>
     <main class="container my-4">
       <a href="/" class="back-to-home"><p>< Back to Home</p></a>
@@ -19,7 +19,7 @@
         <div class="col-md-8 align-items-center">
           <div class="image-gallery">
             <div class="side-thumbnail mx-auto">
-              <img src="<%=game.poster_url%>" alt="Thumbnail" class="rounded" />
+              <img src="<%=gameDetails.poster_url%>" alt="game poster" class="rounded" />
             </div>
             <div class="main-image mx-auto">
               <img
@@ -66,11 +66,11 @@
         <div
           class="container col-md-4 d-flex flex-column justify-content-center"
         >
-          <h1 class="game-title ps-3"><%=game.name%></h1>
-          <p class="breadcrumb-text"><%=game.category%></p>
-          <p class="seller-info ps-3">Seller: <%=game.username%></p>
+          <h1 class="game-title ps-3"><%=gameDetails.name%></h1>
+          <p class="breadcrumb-text"><%=gameDetails.category%></p>
+          <p class="seller-info ps-3">Seller: <%=gameDetails.username%></p>
           <p class="price-text">
-            Price: <span class="price-value">$<%=game.price%></span>
+            Price: <span class="price-value">$<%=gameDetails.price%></span>
           </p>
           <div class="d-flex align-items-center gap-3">
             <!-- add to cart button -->
@@ -79,7 +79,7 @@
             </button>
             <!-- add to wishlist button -->
             <button class="btn wishlist-btn">
-              <i class="bi bi-heart"></i>
+              <i class="bi-heart"></i>
             </button>
           </div>
         </div>
@@ -89,7 +89,7 @@
       <div class="contentBox mt-4 container-fluid rounded-4 px-5 py-5">
         <div class="fs-3 fw-bold mb-3">DESCRIPTION</div>
         <div class="section p-3 rounded-4">
-          <p><%=game.description%></p>
+          <p><%=gameDetails.description%></p>
         </div>
       </div>
 
@@ -133,5 +133,7 @@
     </style>
     <%- include('partials/footer') %>
   </body>
-  <script src="/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/axios/dist/axios.min.js"></script>
+  <script src="/scripts/detail.js"></script>
 </html>

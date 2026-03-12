@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/jquery/dist/jquery.min.js"></script>
 <nav class="navbar navbar-expand-lg bg-custom my-3">
   <div class="container align-items-start justify-content-center">
     <div class="navbar-brand rounded-5 d-flex px-2">
@@ -9,7 +9,7 @@
           <!-- Brand Category Dropdown -->
           <div class="nav-item dropdown">
             <a class="dropdown-toggle-custom text-decoration-none link-light d-block" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-tags-fill fs-3"></i>
+              <i class="bi-tags-fill fs-3"></i>
               <p>Category</p>
             </a>
             <!-- Dropdown menu -->
@@ -31,8 +31,8 @@
       <li class="nav-item search-bar mx-4 mt-lg-0 mt-sm-2 mt-md-2 flex-grow-1 order-1 order-sm-4 order-md-4 order-lg-1">
         <form class="d-flex h-100 w-100 align-items-center" action="/result" method="get">
           <!-- Search Button -->
-          <button class="rounded-start-5" id="search-button" type="submit">
-            <i class="bi bi-search fs-4"></i>
+          <button class="ps-3 rounded-start-5" id="search-button" type="submit">
+            <i class="bi-search fs-4"></i>
           </button>
 
           <!-- Search Input -->
@@ -50,21 +50,21 @@
       <!-- End of search bar -->
        <div class="d-flex justify-content-end align-self-end me-4 me-lg-0 mb-2 gap-1 gap-lg-0 order-lg-2">
           <a href="/cart" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
-            <i class="bi bi-cart3 fs-3"></i>
+            <i class="bi-cart3 fs-3"></i>
           </a>
           <a href="/wishlist" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
-            <i class="bi bi-heart fs-3"></i>
+            <i class="bi-heart fs-3"></i>
           </a>
           <a href="/account" class="nav-item nav-button mx-lg-2 mx-md-1 mx-sm-1 p-3 d-block align-self-center rounded-circle">
-            <i class="bi bi-person fs-3"></i>
+            <i class="bi-person fs-3"></i>
           </a>
        </div>
     </ul>
   </div>
 </nav>
 <!-- Include the plugin's CSS and JS: -->
-<script type="text/javascript" src="/dist/js/bootstrap-multiselect.js"></script>
-<link rel="stylesheet" href="/dist/css/bootstrap-multiselect.css">
+<script type="text/javascript" src="/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
 <script type="text/javascript">
     $(document).ready(() => {
         $('#category-selection').multiselect({
@@ -82,8 +82,8 @@
     });
 </script>
 <style>
-  i {
-    color: #FEFEFE;
+  a > i, .bi-search {
+    color: #FEFEFE !important;
     line-height: 1;
   }
 
