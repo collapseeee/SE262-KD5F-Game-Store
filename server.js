@@ -130,22 +130,22 @@ app.get('/result', async (req, res) => {
 });
 
 app.get('/product/:id', async (req, res) => {
-    const gameId = req.params.id;
-    console.log(gameId)
-    const user = await getUserByName(req.session.username);
-    const game = await getProductById(gameId);
-    console.log(game)
-    const isWishlisted = await getIsWishlisted(user.user_id, gameId);
-    if (!game) {
-        console.error(`Product with id ${gameId} is not found`)
-    }
+    try {
+        const gameId = req.params.id;
+        const game = await getProductById(gameId);
+        const user = await getUserByName(req.session.username);
+        const isWishlisted = await getIsWishlisted(user.user_id, gameId);
 
-    res.render('buyer/productDetail', {
-        categories: await getAllCategory(),
-        gameDetails: game,
-        isWishlisted: isWishlisted,
-        requirements: await getProductRequirementById(gameId)
-    });
+        res.render('buyer/productDetail', {
+            categories: await getAllCategory(),
+            gameDetails: game,
+            isWishlisted: isWishlisted,
+            requirements: await getProductRequirementById(gameId)
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("SERVER ERROR");
+    }
 });
 
 app.get('/cart', async (req, res) => {
