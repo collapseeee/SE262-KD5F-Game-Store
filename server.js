@@ -8,7 +8,7 @@ const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSyste
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
-const upload = multer({ dest: 'public/assets' });
+const upload = multer({ dest: 'public/assets/picture' });
 const app = express();
 // App setup
 app.use(
