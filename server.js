@@ -8,6 +8,7 @@ const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSyste
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
+const Account = require('./models/account');
 const upload = multer({ dest: 'public/assets/picture' });
 const app = express();
 // App setup
@@ -137,7 +138,19 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
     res.render('register');
 });
+app.get('/sellerInformation', async (req, res) => {
+    try {
+        // สมมติว่า getUserById เป็นฟังก์ชันที่ดึงข้อมูลจาก DB
+        const rows = await Account.getUserById("1");
+        const sellerData = (rows && rows.length > 0) ? rows[0] : null;
 
+        res.render('seller/personalInformation', {seller: sellerData});
+        console.log('Seller data fetched for personal information page:', sellerData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error fetching seller info");
+    }
+});
 app.get('/account', (req, res) => {
     res.render('buyer/personalInformation', {
         // Data here
