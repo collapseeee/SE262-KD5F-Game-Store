@@ -43,12 +43,21 @@
                     <input type="number" step="0.01" class="form-control square-input" id="price" name="price" required>
                 </div>
             </div>
-            <div class="mb-3">
-                <label for="category" class="form-label">Category:</label>
-                <select class="form-select square-input" id="category" name="category" required>
-                    <option value="" selected disabled>Select a category</option>
-                    </select>
+                    <div class="mb-3">
+            <label class="form-label text-white">Category:</label>
+            <div class="dropdown">
+                <button class="btn btn-outline-light dropdown-toggle w-100 text-start square-input"
+                        type="button" id="categoryDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                    Select categories
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-dark w-100 p-3" id="categoryList"
+                    style="max-height: 250px; overflow-y: auto;">
+                    <li class="text-center text-muted">Loading categories...</li>
+                </ul>
             </div>
+        </div>
             <div class="mb-0 flex-grow-1 d-flex flex-column">
                 <label for="description" class="form-label">Description:</label>
                 <textarea class="form-control square-input flex-grow-1" id="description" name="description" required style="resize: none;"></textarea>
@@ -375,38 +384,53 @@ body {
 }
 </style>
 <script>
-    // สำหรับ Gallery (ถ้ามีหลายใบ)
-    document.querySelectorAll('.gallery-card').forEach(card => {
-        card.addEventListener('click', function() {
-            // หา input file ที่อยู่ภายในการ์ดใบนั้นๆ
-            const input = this.querySelector('input[type="file"]');
-            if (input) input.click();
-        });
-    });
-</script>
-<script>
     document.addEventListener('DOMContentLoaded', function() {
-        const categorySelect = document.getElementById('category');
+        const categoryList = document.getElementById('categoryList');
+        const dropdownBtn = document.getElementById('categoryDropdownBtn');
 
-        // เรียกไปยัง Endpoint ที่คุณสร้างไว้
+        // ป้องกัน Dropdown ปิดเมื่อคลิกเลือกข้างใน
+        categoryList.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // ดึงข้อมูลจาก API
         fetch('/api/categories')
             .then(response => response.json())
             .then(categories => {
-                // ล้างข้อความ Loading
-                categorySelect.innerHTML = '<option value="" selected disabled>Select a category</option>';
-                
-                // วนลูปสร้าง Option
+                categoryList.innerHTML = ''; // ล้างคำว่า Loading
+
                 categories.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.category_id; // หรือ cat.name ตาม Database ของคุณ
-                    option.textContent = cat.name;
-                    categorySelect.appendChild(option);
+                    const li = document.createElement('li');
+                    li.className = 'mb-2';
+                    li.innerHTML = `
+                        <div class="form-check">
+                            <input class="form-check-input category-checkbox" type="checkbox" 
+                                   name="category[]" value="${cat.category_id}" id="cat${cat.category_id}">
+                            <label class="form-check-label text-white" for="cat${cat.category_id}">
+                                ${cat.name}
+                            </label>
+                        </div>
+                    `;
+                    categoryList.appendChild(li);
                 });
+
+                // เพิ่ม Event ตรวจสอบการเลือกเพื่อแสดงจำนวนบนปุ่ม
+                attachCheckboxEvents();
             })
             .catch(error => {
-                console.error('Error fetching categories:', error);
-                categorySelect.innerHTML = '<option value="" selected disabled>Error loading categories</option>';
+                console.error('Error:', error);
+                categoryList.innerHTML = '<li class="p-2 text-danger">Error loading data</li>';
             });
+
+        function attachCheckboxEvents() {
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const checkedCount = document.querySelectorAll('.category-checkbox:checked').length;
+                    dropdownBtn.textContent = checkedCount > 0 ? `Selected (${checkedCount})` : 'Select categories';
+                });
+            });
+        }
     });
 </script>
 <script>
@@ -441,4 +465,24 @@ body {
             }
         });
     }
+</script>
+<script>
+    // ป้องกันไม่ให้ Dropdown ปิดเมื่อคลิกเลือก Checkbox
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    if (dropdownMenu) {
+        dropdownMenu.addEventListener('click', function (e) {
+            e.stopPropagation(); // หยุดการส่งต่อ Event ทำให้เมนูไม่ปิด
+        });
+    }
+
+    // (Option) แสดงจำนวนที่เลือกบนปุ่ม
+    const checkboxes = document.querySelectorAll('.category-checkbox');
+    const btn = document.getElementById('dropdownMenuButton');
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            const checkedCount = document.querySelectorAll('.category-checkbox:checked').length;
+            btn.textContent = checkedCount > 0 ? `Selected (${checkedCount})` : 'Select Categories';
+        });
+    });
 </script>

@@ -276,14 +276,36 @@ app.post('/api/product/add', upload.fields([
 async(req, res) =>
 {
     try {
+    let categories = req.body['category[]'] || [];
     const posterFile = req.files['poster'] ? req.files['poster'][0] : null;
+    const galleryFiles = req.files['gallery_image[]'] || [];
+    const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
         const { name, category, price, description } = req.body;
         const productId = await addProduct(name, description, price, posterFile.path);
-        addSystemRequirements(productId, req.body);
-        console.log("ข้อมูลสินค้า:", name, category, price, productId);
-        console.log("ชื่อไฟล์รูปหลัก:", posterFile ? posterFile.filename : "ไม่มีไฟล์");
+        if (!Array.isArray(categories)) {
+            categories = [categories];
+        }
+        if (productId) {
+            for (const categoryId of categories) {
+                await addProductCategory(productId, categoryId);
+            }
+        // 2. วนลูปบันทึก Gallery (ถูกต้องแล้ว)
+        for (const file of galleryFiles) {
+            await addGallery(file.path, productId);
+        }
+
+        // 3. วนลูปบันทึก Video (ใช้ชื่อตัวแปรที่รวมมาแล้ว)
+        for (const video of videoUrls) {
+            await addVideo(video, productId);
+        }
+
+        // ส่วนของ System Requirements...
+        await addSystemRequirements(productId, req.body);
+        
+        res.status(200).send("เพิ่มข้อมูลสำเร็จ");
+        }
     }
-     catch (err) {
+    catch (err) {
         console.error(err);
         res.status(500).send('Error adding product');
     }
