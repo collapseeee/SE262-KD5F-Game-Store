@@ -148,13 +148,14 @@ app.get('/result', async (req, res) => {
         };
     };
     
-
+    const user = await getUserByName(req.session.username);
     res.render('buyer/searchResult', {
         categories: allCategories,
         games: results,
         // for displaying in result page
         searchedName: gameName || "All Games",
-        searchedCategory: categoriesName
+        searchedCategory: categoriesName,
+        wishlists: await getWishlistByUserId(user.user_id)
     });
 });
 
