@@ -4,10 +4,10 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { getWishlistByUserId, deleteFromWishlist, addToWishlist } = require('./models/wishlist');
+const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
 
 const app = express();
@@ -26,14 +26,10 @@ app.use(
 );
 
 app.use(express.static('public'));
+app.use(express.static('node_modules'));
 
 app.use(express.json());
 
-app.use(express.static('node_modules/bootstrap'));
-app.use(express.static('node_modules/bootstrap-icons'));
-app.use(express.static('node_modules/bootstrap-multiselect'));
-app.use(express.static('node_modules/jquery'));
-app.use(express.static('node_modules/axios'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -134,12 +130,31 @@ app.get('/result', async (req, res) => {
 });
 
 app.get('/product/:id', async (req, res) => {
-    const gameId = req.params.id;
-    res.render('buyer/productDetail', {
-        categories: await getAllCategory()/* ,
-        game: await getProductById(gameId) */
-    });
+    try {
+        const gameId = req.params.id;
+        if (gameId.includes('.')) {
+            console.log(`The ${gameId} does not exist.`)
+            return res.status(404).send(`${gameId} is Not Found`);
+        }
+        const game = await getProductById(gameId);
+        const user = await getUserByName(req.session.username);
+        const images = await getImageByGameProductId(gameId);
+        const exportImage = images.map(image => image.image_url);
+        const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+
+        res.render('buyer/productDetail', {
+            categories: await getAllCategory(),
+            gameDetails: game,
+            isWishlisted: isWishlisted,
+            images: exportImage,
+            requirements: await getProductRequirementById(gameId)
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("SERVER ERROR");
+    }
 });
+
 app.get('/cart', async (req, res) => {
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{

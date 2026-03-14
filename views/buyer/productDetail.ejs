@@ -1,92 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product details</title>
-    <link rel="stylesheet" href="/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="/styles/style.css">
-    <link rel="stylesheet" href="/styles/productDetail.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - <%=gameDetails.name%></title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/productDetail.css" />
+  </head>
+  <body data-game-id="<%=gameDetails.product_id%>" data-images="<%=images%>">
     <%- include('partials/navbar') %>
-
     <main class="container my-4">
-        <!-- detail -->
-        <div class="row contentBox p-4">
-            <!-- Left: Images -->
-            <div class="col-md-8">
-                <div class="image-gallery">
-                    <div class="side-thumbnail">
-                        <img src="https://placehold.co/200x350" alt="Thumbnail" class="rounded">
-                    </div>
-                    <div class="main-image flex-grow-1">
-                        <img src="https://placehold.co/600x350" alt="Game Image" class="rounded">
-                    </div>
-                </div>
-                <!-- Thumbnail carousel (desktop) -->
-                <div class="d-flex align-items-center gap-2 mt-3 thumbnail-carousel">
-                    <button class="btn btn-sm carousel-arrow flex-shrink-0"><i class="bi bi-arrow-left"></i></button>
-                    <div class="d-flex gap-2 flex-grow-1 thumb-container">
-                        <img src="https://placehold.co/120x70" alt="Thumb 1" class="img-fluid rounded thumb-item active">
-                        <img src="https://placehold.co/120x70" alt="Thumb 2" class="img-fluid rounded thumb-item">
-                        <img src="https://placehold.co/120x70" alt="Thumb 3" class="img-fluid rounded thumb-item">
-                    </div>
-                    <button class="btn btn-sm carousel-arrow flex-shrink-0"><i class="bi bi-arrow-right"></i></button>
-                </div>
-                <!-- Dot indicators (mobile) -->
-                <div class="dot-indicators mt-3">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
+      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
+      <!-- detail -->
+      <div class="row contentBox p-4 pt-5 rounded-4">
+        <!-- Left: Images -->
+        <div class="col-md-8 align-items-center">
+          <div class="image-gallery">
+            <div class="side-thumbnail mx-auto">
+              <img src="<%=gameDetails.poster_url%>" alt="game poster" class="rounded" />
             </div>
-            <!-- Right: Info -->
-            <div class="col-md-4 d-flex flex-column justify-content-center ps-md-5 Gameinfo">
-                <h1 class="game-title">GAME #1</h1>
-                <p class="breadcrumb-text">HOME / GAME / RPG</p>
-                <p class="seller-info">Seller: Mr.A</p>
-                <p class="price-text">Price <span class="price-value">$999.99</span></p>
-                <div class="d-flex align-items-center gap-3 mt-3">
-                    <!-- add to cart button -->
-                    <form action="" method="POST">
-                        <button class="btn add-to-cart-btn">
-                            <i class="bi bi-cart-plus"></i> ADD TO CART
-                        </button>
-                    </form>
-                    <!-- add to wishlist button -->
-                    <form action="" method="POST">
-                        <button class="btn wishlist-btn">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                    </form>
+            <div id="main-image" class="mx-auto">
+              <img
+                src=""
+                alt="Game Image"
+                class="rounded-3"
+              />
+            </div>
+          </div>
+          <!-- Thumbnail carousel (desktop) -->
+          <div class="d-flex align-items-center mt-3 thumbnail-carousel my-lg-0 my-3">
+            <button type="button" id="left-arrow" class="btn btn-sm carousel-arrow rounded-circle">
+              <i class="bi bi-arrow-left"></i>
+            </button>
+            <div class="d-flex gap-2 thumb-container flex-grow-1">
+              <% images.forEach((image, index) => { %>
+              <img
+                src="<%=image%>"
+                alt="thumbnail <%=index%>"
+                class="img-fluid rounded thumb-item"
+                data-index="<%=index%>"
+              />
+              <%})%>
+            </div>
+            <button type="button" id="right-arrow" class="btn btn-sm carousel-arrow rounded-circle">
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+          <!-- Dot indicators (mobile) -->
+          <div class="dot-indicators my-3">
+            <% images.forEach((image, index) => { %>
+              <span class="dot rounded-circle" 
+                data-index="<%=index%>"></span>
+            <% }) %>
+          </div>
+        </div>
+        <!-- Right: Info -->
+        <div
+          class="container col-md-4 d-flex flex-column justify-content-center"
+        >
+          <h1 class="game-title ps-3"><%=gameDetails.name%></h1>
+          <p class="breadcrumb-text"><%=gameDetails.category%></p>
+          <p class="seller-info ps-3">Seller: <%=gameDetails.username%></p>
+          <p class="price-text">
+            Price: <span class="price-value">$<%=gameDetails.price%></span>
+          </p>
+          <div class="d-flex align-items-center gap-3">
+            <!-- add to cart button -->
+            <button class="btn add-to-cart-btn w-100 h-100">
+              <i class="bi bi-cart-plus"></i> ADD TO CART
+            </button>
+            <!-- add to wishlist button -->
+            <button class="btn wishlist-btn">
+            <% if (isWishlisted) { %>
+              <i class="bi-heart-fill"></i>
+            <%} else { %>
+              <i class="bi-heart"></i>
+            <%}%>
+            </button>
+          </div>
+        </div>
+      </div>
 
-                </div>
-            </div>
+      <!-- description -->
+      <div class="contentBox mt-4 container-fluid rounded-4 px-5 py-5">
+        <div class="fs-3 fw-bold mb-3">DESCRIPTION</div>
+        <div class="section p-3 rounded-4">
+          <p><%=gameDetails.description%></p>
+        </div>
+      </div>
+
+      <!-- system requirements -->
+      <div class="contentBox mt-4 container-fluid rounded-4 px-5 py-5">
+        <div class="fs-3 fw-bold mb-3">SYSTEM REQUIREMENTS</div>
+        <div class="row section p-3 rounded-4">
+          <div class="col-lg-6">
+            <p class="fs-5 lh-sm fw-bold">Minimum</p>
+            OS: <%=requirements[0].operating_system%> <br>
+            Processor: <%=requirements[0].processor%> <br>
+            Memory: <%=requirements[0].memory%> <br>
+            Graphic: <%=requirements[0].graphics_card%> <br>
+            DirectX: <%=requirements[0].directx_version%> <br>
+            Network: <%=requirements[0].network%> <br>
+            Storage: <%=requirements[0].storage%> <br>
+            Soundcard: <%=requirements[0].soundcard%> <br>
+            Additional notes: <%=requirements[0].additional_note%></p>
+          </div>
+          <div class="col-lg-6">
+            <p class="fs-5 lh-sm fw-bold">Recommended</p>
+            OS: <%=requirements[1].operating_system%> <br>
+            Processor: <%=requirements[1].processor%> <br>
+            Memory: <%=requirements[1].memory%> <br>
+            Graphic: <%=requirements[1].graphics_card%> <br>
+            DirectX: <%=requirements[1].directx_version%> <br>
+            Network: <%=requirements[1].network%> <br>
+            Storage: <%=requirements[1].storage%> <br>
+            Soundcard: <%=requirements[1].soundcard%> <br>
+            Additional notes: <%=requirements[1].additional_note%></p>
+          </div>
         </div>
 
-        <!-- description -->
-        <div class="contentBox p-4 mt-4">
-            <div class="section-header mb-3">DESCRIPTION</div>
-            <div class="section-body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-        </div>
-
-        <!-- system requirements -->
-        <div class="contentBox p-4 mt-4">
-            <div class="section-header mb-3">SYSTEM REQUIREMENTS</div>
-            <div class="section-body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-        </div>
+      </div>
     </main>
 
+    <style>
+        .section {
+            background-color: #8122C9;
+        }
+    </style>
     <%- include('partials/footer') %>
-    
-</body>
-    <script src="/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/axios/dist/axios.min.js"></script>
+  <script src="/scripts/detail.js"></script>
 </html>

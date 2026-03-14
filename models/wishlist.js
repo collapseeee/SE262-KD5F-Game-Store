@@ -9,10 +9,25 @@ const getWishlistByUserId = async (id) => {
         WHERE w.user_id = ?
         GROUP BY w.product_id, p.name, w.wishlist_date;`;
 
-    const payload = [id]
+    const payload = [id];
 
-    const [rows] = await db.promise().execute(sql, payload)
+    const [rows] = await db.promise().execute(sql, payload);
     return rows;
+}
+
+const getIsWishlisted = async (userId, productId) => {
+    const sql =
+        `SELECT w.product_id, a.user_id FROM wishlists w
+        INNER JOIN accounts a ON a.user_id = w.user_id
+        WHERE a.user_id = ? AND w.product_id = ?`;
+    const payload = [userId, productId];
+
+    const [rows] = await db.promise().execute(sql, payload);
+
+    if (rows.length === 0) {
+        return false;
+    }
+    return true;
 }
 
 const addToWishlist = async (userId, productId) => {
@@ -34,5 +49,6 @@ const deleteFromWishlist = async (userId, productId) => {
 module.exports = {
     getWishlistByUserId,
     addToWishlist,
-    deleteFromWishlist
+    deleteFromWishlist,
+    getIsWishlisted
 }
