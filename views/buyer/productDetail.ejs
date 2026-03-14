@@ -30,7 +30,7 @@
             </div>
           </div>
           <!-- Thumbnail carousel (desktop) -->
-          <div class="d-flex align-items-center mt-3 thumbnail-carousel">
+          <div class="d-flex align-items-center mt-3 thumbnail-carousel my-lg-0 my-3">
             <button type="button" id="left-arrow" class="btn btn-sm carousel-arrow rounded-circle">
               <i class="bi bi-arrow-left"></i>
             </button>
@@ -49,10 +49,11 @@
             </button>
           </div>
           <!-- Dot indicators (mobile) -->
-          <div class="dot-indicators mt-3">
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+          <div class="dot-indicators my-3">
+            <% images.forEach((image, index) => { %>
+              <span class="dot rounded-circle" 
+                data-index="<%=index%>"></span>
+            <% }) %>
           </div>
         </div>
         <!-- Right: Info -->
