@@ -1,8 +1,6 @@
-<div class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2 scroll-reveal" style="--reveal-delay: <%= (typeof index !== 'undefined' ? index * 100 : 0) %>ms">
-<div
-  data-game-id="<%=game.product_id%>"
-  class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2"
->
+<div class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2 scroll-reveal"
+  data-game-id="<%=game.product_id%>" style="--reveal-delay: <%= (typeof index !== 'undefined' ? index * 100 : 0) %>ms">
+
   <img class="rounded-top-3 w-100 poster" src="<%=game.poster_url%>" alt="" />
   <div>
     <p class="game-category"><%=game.category%></p>
