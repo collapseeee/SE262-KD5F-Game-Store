@@ -139,14 +139,14 @@ app.get('/product/:id', async (req, res) => {
         const game = await getProductById(gameId);
         const user = await getUserByName(req.session.username);
         const images = await getImageByGameProductId(gameId);
-        console.log(images);
+        const exportImage = images.map(image => image.image_url);
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
             gameDetails: game,
             isWishlisted: isWishlisted,
-            images: images,
+            images: exportImage,
             requirements: await getProductRequirementById(gameId)
         });
     } catch (error) {
