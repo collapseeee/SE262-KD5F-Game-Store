@@ -3,27 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product details</title>
+    <title>KD5F - <%=gameDetails.name%></title>
     <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="/styles/style.css" />
     <link rel="stylesheet" href="/styles/productDetail.css" />
   </head>
-  <body data-game-id="<%=gameDetails.product_id%>">
+  <body data-game-id="<%=gameDetails.product_id%>" data-images="<%=images%>">
     <%- include('partials/navbar') %>
     <main class="container my-4">
       <a href="/" class="back-to-home"><p>< Back to Home</p></a>
       <!-- detail -->
-      <div class="row contentBox p-4 rounded-4">
+      <div class="row contentBox p-4 pt-5 rounded-4">
         <!-- Left: Images -->
         <div class="col-md-8 align-items-center">
           <div class="image-gallery">
             <div class="side-thumbnail mx-auto">
               <img src="<%=gameDetails.poster_url%>" alt="game poster" class="rounded" />
             </div>
-            <div class="main-image mx-auto">
+            <div id="main-image" class="mx-auto">
               <img
-                src="https://placehold.co/600x350"
+                src=""
                 alt="Game Image"
                 class="rounded-3"
               />
@@ -31,27 +31,20 @@
           </div>
           <!-- Thumbnail carousel (desktop) -->
           <div class="d-flex align-items-center mt-3 thumbnail-carousel">
-            <button class="btn btn-sm carousel-arrow rounded-circle">
+            <button type="button" id="left-arrow" class="btn btn-sm carousel-arrow rounded-circle">
               <i class="bi bi-arrow-left"></i>
             </button>
             <div class="d-flex gap-2 thumb-container flex-grow-1">
+              <% images.forEach((image, index) => { %>
               <img
-                src="https://placehold.co/120x70"
-                alt="Thumb 1"
-                class="img-fluid rounded thumb-item active"
-              />
-              <img
-                src="https://placehold.co/120x70"
-                alt="Thumb 2"
+                src="<%=image%>"
+                alt="thumbnail <%=index%>"
                 class="img-fluid rounded thumb-item"
+                data-index="<%=index%>"
               />
-              <img
-                src="https://placehold.co/120x70"
-                alt="Thumb 3"
-                class="img-fluid rounded thumb-item"
-              />
+              <%})%>
             </div>
-            <button class="btn btn-sm carousel-arrow rounded-circle">
+            <button type="button" id="right-arrow" class="btn btn-sm carousel-arrow rounded-circle">
               <i class="bi bi-arrow-right"></i>
             </button>
           </div>
