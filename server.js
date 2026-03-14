@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSystemRequirements} = require('./models/product');
+const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSystemRequirements, getProductById, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId,getCategoriesByProductId } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -252,32 +252,59 @@ app.get('/contact', (req, res) => {
 app.get('/api/product', async (req, res) => {
     // GET all products
 });
-    categories = [
-        { id: 1, name: "Category 1" },
-        { id: 2, name: "Category 2" },
-        { id: 3, name: "Category 3" },
-        { id: 4, name: "Category 4" },
-        { id: 5, name: "Category 5" }
-    ];
-
-    let games = [
-        { id: 1, name: "Game 1", category: "Category 1 | Category 2", price: "999.01" },
-        { id: 2, name: "Game 2", category: "Category 5", price: "0.99" },
-        { id: 3, name: "Game 3", category: "Category 3", price: "19.99" },
-        { id: 4, name: "Game 4", category: "Category 2", price: "45.00" },
-        { id: 5, name: "Game 5", category: "Category 4", price: "29.99" }
-    ];
-app.get('/dashboard', (req, res) => {
-    res.render('seller/dashboard', {
-        // Data here
-        categories: categories,
-        games: games
-    });
+// dashboard page for seller
+app.get('/dashboard', async (req, res) => {
+    try {
+        const games = await getAllProduct();
+        const categories = await getAllCategory();
+        console.log(games, "\n\n\nThis print log is at line 48 of server.js");
+        res.render('seller/dashboard', {
+            // Data here
+            categories: categories,
+            games: games
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching dashboard data");
+    }
 });
 app.get('/api/product/add', (req, res) => {
-    res.render('seller/product');
+    res.render('seller/product',{
+        mode: 'add',
+        product: {},
+        min: {},
+        rec: {},
+        gallery: [],
+        videos: [],
+        currentCategories: []
+    });
 });
-
+app.get('/api/product/edit/:id', async (req, res) => {
+    try {
+    const productId = req.params.id;
+    // ดึงข้อมูล Product และ Requirements จาก DB
+    const product = await getProductById(productId);
+    const categories = await getCategoriesByProductId(productId);
+    const requirements = await getRequirementsByProductId(productId);
+    const images = await getImagesByProductId(productId);
+    const videos = await getVideosByProductId(productId);
+    if (!product[0]) return res.status(404).send("Product not found");
+        console.log("Fetched product for edit:", product[0]);
+        res.render('seller/product', {
+            mode: 'edit',
+            product: product[0],
+            min: requirements.min,
+            rec: requirements.rec,
+            gallery: images,
+            videos: videos, // จะเป็น [url1, url2]
+            currentCategories: categories
+        });
+    }
+        catch (err) {
+        console.error("Error in Edit Route:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
 app.get('/api/categories', async (req, res) => {
     const categories = await getAllCategory();;
     res.json(categories);
@@ -289,7 +316,7 @@ app.post('/api/product/add', upload.fields([
 async(req, res) =>
 {
     try {
-    let categories = req.body['category[]'] || [];
+    let categories = req.body['category[]'] || req.body.category; // รองรับทั้งกรณีที่ส่งมาเป็น array หรือ string เดียว
     const posterFile = req.files['poster'] ? req.files['poster'][0] : null;
     const galleryFiles = req.files['gallery_image[]'] || [];
     const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
@@ -300,7 +327,8 @@ async(req, res) =>
         }
         if (productId) {
             for (const categoryId of categories) {
-                await addProductCategory(productId, categoryId);
+                await addProductList(productId, categoryId, 1);
+                console.log(`Linked product ${productId} with category ${categoryId}`);
             }
         // 2. วนลูปบันทึก Gallery (ถูกต้องแล้ว)
         for (const file of galleryFiles) {
@@ -330,6 +358,17 @@ app.delete('/categories/:id', (req, res) => {
     categories = categories.filter(cat => cat.id !== targetId);
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
+});
+app.delete('/api/gallery/delete/:id', async (req, res) => {
+    const imageId = parseInt(req.params.id);
+    try {
+        const result = await deleteGalleryByImageId(imageId);
+        res.json({ success: true });
+        console.log(`Deleted gallery image with ID: ${imageId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error deleting gallery image');
+    }
 });
 app.put('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);

@@ -15,6 +15,73 @@ const getAllProduct = async () => {
     }
 };
 
+const getProductById = async (productId) => {
+    const sql = `SELECT * FROM products WHERE product_id = ?`;
+    const payload = [productId];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const getCategoriesByProductId = async (productId) => {
+    const sql = `SELECT c.category_id, c.name FROM product_lists pl INNER JOIN categories c ON pl.category_id = c.category_id WHERE pl.product_id = ?`;
+    try {
+        const [rows] = await db.promise().execute(sql, [productId]);
+        return rows;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+
+};
+const getRequirementsByProductId = async (productId) => {
+    const sql = `SELECT * FROM hardware_requirement WHERE product_id = ?`;
+    try {
+        const [rows] = await db.promise().query(sql, [productId]);
+        
+        // ถ้าไม่พบข้อมูลเลย ให้ส่ง Object ว่างกลับไป (จบการทำงานแบบปลอดภัย)
+        if (!rows || rows.length === 0) {
+            return { min: {}, rec: {} };
+        }
+
+        // คืนค่าแบบแยกประเภท
+        return {
+            min: rows.find(r => r.type === 'min') || {},
+            rec: rows.find(r => r.type === 'recommended') || {}
+        };
+    } catch (err) {
+        console.error("Error fetching requirements:", err);
+        return { min: {}, rec: {} }; // คืนค่าว่างกรณีเกิด Error
+    }
+};
+
+const getImagesByProductId = async (productId) => {
+    const sql = `SELECT * FROM images WHERE product_id = ?`;
+    try {
+        const [rows] = await db.promise().query(sql, [productId]);
+        // ถ้าไม่มีรูป ให้คืน Array ว่าง []
+        return rows || [];
+    } catch (err) {
+        console.error("Error fetching images:", err);
+        return [];
+    }
+};
+
+const getVideosByProductId = async (productId) => {
+    const sql = `SELECT video_url FROM videos WHERE product_id = ?`;
+    try {
+        const [rows] = await db.promise().query(sql, [productId]);
+        
+        // คืนค่าเป็น Array ของ URL เพื่อให้ง่ายต่อการนำไปใส่ใน Input
+        // เช่น ['url1', 'url2']
+        return rows.map(row => row.video_url) || [];
+    } catch (err) {
+        console.error("Error fetching videos:", err);
+        return [];
+    }
+};
 const addProduct = async (name, description, price, posterUrl) => {
     // 1. ตรวจสอบชื่อคอลัมน์ในวงเล็บ (name, description, price, poster_url) ให้ตรงกับใน MySQL เป๊ะๆ
     const sql = `INSERT INTO products (name, description, price, poster_url) VALUES (?, ?, ?, ?)`;
@@ -34,7 +101,7 @@ const addProduct = async (name, description, price, posterUrl) => {
 };
 
 const addProductList = async (productId, categoryId, userId) => {
-    const sql = `INSERT INTO product_lists (product_id, category_id, user_id) VALUES (?, ?, ?)`;
+    const sql = `INSERT INTO product_lists (product_id, category_id, user_id,release_date) VALUES (?, ?, ?, CURDATE())`;
     try {
         const [result] = await db.promise().execute(sql, [productId, categoryId, userId]);
         return result;
@@ -55,6 +122,15 @@ const addVideo = async (productId, videoUrl) => {
     const sql = `INSERT INTO videos (video_url, product_id) VALUES (?, ?)`;
     try {
         const [result] = await db.promise().execute(sql, [productId, videoUrl]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const deleteGalleryByImageId = async (imageId) => {
+    const sql = `DELETE FROM images WHERE image_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [imageId]);
         return result;
     } catch (err) {
         console.error(err);
@@ -134,5 +210,14 @@ module.exports = {
     addProduct,
     addGallery,
     addVideo,
-    addSystemRequirements
+    addSystemRequirements,
+    getProductById,
+    addProductList,
+    getRequirementsByProductId,
+    getImagesByProductId,
+    getVideosByProductId,
+    deleteGalleryByImageId,
+    getCategoriesByProductId
+
+
 };
