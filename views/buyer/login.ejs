@@ -25,7 +25,7 @@
               <i class="bi bi-person-fill"></i>
 
               <!-- User Registration field -->
-              <form action="/" method="GET">
+              <form action="/loginBuyer" method="post">
                 <div class="form-group w-100">
                   <label for="username">Username:</label>
                   <input
@@ -33,6 +33,7 @@
                     type="text"
                     class="form-control rounded-4 mt-1 mb-2"
                     placeholder="Username"
+                    value="<%= typeof username !== 'undefined' ? username : '' %>"
                   />
 
                   <label for="password">
@@ -48,6 +49,9 @@
                     />
                     <i class="bi bi-eye input-icon"></i>
                   </div>
+                  <% if (typeof error !== 'undefined' && error) { %>
+                    <small class="text-danger"><%= error %></small>
+                  <% } %>
                 </div>
                 <div class="text-center py-2">
                   <p>

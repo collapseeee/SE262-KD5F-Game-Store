@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const { getAllProduct, searchProduct } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-// const { getWishlistByUserId } = require('./models/wishlist');
+const { getWishlistByUserId, deleteFromWishlist, addToWishlist } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
 
 const app = express();
@@ -33,6 +33,7 @@ app.use(express.static('node_modules/bootstrap'));
 app.use(express.static('node_modules/bootstrap-icons'));
 app.use(express.static('node_modules/bootstrap-multiselect'));
 app.use(express.static('node_modules/jquery'));
+app.use(express.static('node_modules/axios'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -44,101 +45,63 @@ app.set('views', './views');
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
+    const games = await getAllProduct();
     if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        const userWishlists = await getWishlistByUserId(user.user_id);
+        const wishlistIds = userWishlists.map(item => item.product_id);
         res.render('index', {
-            games: await getAllProduct(),
+            games: games,
             categories: await getAllCategory(),
+            wishlists: wishlistIds,
             username: req.session.username
         });
     } else {
         // Want to see ejs page change? edit here
         res.render('index', {
             categories: await getAllCategory(),
-            games: await getAllProduct()
+            games: await getAllProduct(),
+            username: null,
+            wishlists: []
         });
     }
 });
 
-
-app.post('/loginBuyer', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginBuyer(username, password)
-        .then(() => {
-            req.session.username = username;
-            console.log('Session after login:', req.session);
-            return res.redirect('/');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during login');
-        });
-
+app.get('/identification', (req, res) => {
+    res.render('identification');
 });
 
-app.post('/loginSeller', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginSeller(username, password)
-        .then(() => {
-            req.session.username = username;
-
-            res.redirect('/');
-            console.log('Session after login:', req.session);
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during login');
-        });
-
-});
-
-app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
-    const confirmPassword = req.body['confirm-pasword'];
-    if (password !== confirmPassword) {
-        return res.status(400).send('Passwords do not match');
-    }
-    const existingUser = await getUserByName(username);
-    if (existingUser.length > 0) {
-        return res.status(400).render('register', { error: 'Username already exists', username });
-    }
-    Auth.signup(username, password, 'buyer')
-        .then(() => {
-            req.session.username = username;
-
-            res.redirect('/');
-            console.log('Session after signup:', req.session);
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during signup');
-        });
-
-});
-
-app.get('/signout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error during logout');
-        } else {
-            res.send('Logout successful');
-            res.redirect('/');
-        }
-
-
-
-    });
-});
 app.get('/register', (req, res) => {
     res.render('register');
 })
 
+app.get('/sellerLogin', (req, res) => {
+    res.render('seller/login');
+});
+
+app.get('/buyerLogin', (req, res) => {
+    res.render('buyer/login');
+});
+
 app.get('/account', async (req, res) => {
-    res.render('buyer/personalInformation', {
+    if (req.session.username) {
+        res.render('buyer/personalInformation', {
+            // Data here
+            categories: await getAllCategory()
+        });
+    } else {
+        res.redirect('/identification');
+    }
+});
+
+app.get('/dashboard', (req, res) => {
+    res.render('seller/dashboard', {
         // Data here
-        categories: await getAllCategory()
+        categories: categories,
+        games: games
     });
 });
+
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
@@ -170,9 +133,11 @@ app.get('/result', async (req, res) => {
     });
 });
 
-app.get('/productdetail', async (req, res) => {
+app.get('/product/:id', async (req, res) => {
+    const gameId = req.params.id;
     res.render('buyer/productDetail', {
-        categories: await getAllCategory()
+        categories: await getAllCategory()/* ,
+        game: await getProductById(gameId) */
     });
 });
 app.get('/cart', async (req, res) => {
@@ -188,12 +153,15 @@ app.get('/cart', async (req, res) => {
         price: 0.99,
         added_date: Date.now()
     }];
-
-    res.render('buyer/shoppingCart', {
-        // Data here (Currently mock data)
-        games: games,
-        categories: await getAllCategory()
-    });
+    if (req.session.username) {
+        res.render('buyer/shoppingCart', {
+            // Data here (Currently mock data)
+            games: games,
+            categories: await getAllCategory()
+        });
+    } else {
+        res.redirect('/identification');
+    }
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
@@ -222,31 +190,90 @@ app.get('/wishlist', async (req, res) => {
             games: await getWishlistByUserId(user.user_id)
         });
     } else {
-        res.render('identification');
+        res.redirect('/identification');
     }
 
 });
-app.get('/contact', (req, res) => {
-
+app.get('/contact', async (req, res) => {
     res.render('contact', {
         // Data here
-        categories: ['All Category', 'FPS', 'Soul-Like', 'Family']
+        categories: await getAllCategory()
     });
 });
 
 // API endpoints
 
+
+app.post('/loginBuyer', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginBuyer(username, password)
+        .then(() => {
+            req.session.username = username;
+            console.log('Session after login:', req.session);
+            return res.redirect('/');
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.', username });
+        });
+
+});
+
+app.post('/loginSeller', (req, res) => {
+    const { username, password } = req.body;
+    Auth.loginSeller(username, password)
+        .then(() => {
+            req.session.username = username;
+
+            res.redirect('/');
+            console.log('Session after login:', req.session);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.', username });
+        });
+
+});
+
+app.get('/signout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error during logout');
+        } else {
+            res.redirect('/');
+        }
+    });
+});
+
+app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
+    const confirmPassword = req.body['confirm-pasword'];
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+    const existingUser = await getUserByName(username);
+    if (existingUser) {
+        return res.status(400).render('register', { error: 'Username already exists', username });
+    }
+    Auth.signup(username, password, 'buyer')
+        .then(() => {
+            req.session.username = username;
+
+            res.redirect('/');
+            console.log('Session after signup:', req.session);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).send('Error during signup');
+        });
+
+});
+
 app.get('/api/product', async (req, res) => {
     // GET all products
 });
 
-app.get('/dashboard', async (req, res) => {
-    res.render('seller/dashboard', {
-        // Data here
-        categories: await getAllCategory(),
-        games: games
-    });
-});
 
 app.delete('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
@@ -286,9 +313,26 @@ app.get('/api/image/:id', async (req, res) => {
     }
 })
 
+// Webstore APIs
+
 app.post('/api/wishlist/:id', async (req, res) => {
     try {
-        res.send("")
+        const product_id = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await addToWishlist(user.user_id, product_id)
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.delete('/api/wishlist/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);
