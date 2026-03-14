@@ -1,4 +1,4 @@
-<div class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2">
+<div class="card col-lg-3 col-md-4 col-12 rounded-3 pt-0 px-0 pb-3 my-2 scroll-reveal" style="--reveal-delay: <%= (typeof index !== 'undefined' ? index * 100 : 0) %>ms">
   <img class="rounded-top-3 w-100 poster" src="<%=game.poster_url%>" alt="" />
   <div>
     <p class="game-category"><%=game.category%></p>
@@ -40,6 +40,7 @@
     background-color: #5c3b75;
     color: #fefefe;
     box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+    overflow: hidden;
   }
 
   #wishlist,
@@ -47,6 +48,22 @@
     background-color: #b7ef00;
     height: 48px;
     border: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  #wishlist:hover,
+  #add-to-cart:hover {
+    background-color: #c8ff2a;
+    transform: scale(1.05);
+  }
+
+  .card-svg {
+    transition: color 0.2s ease;
+  }
+
+  #wishlist:hover .card-svg,
+  #add-to-cart:hover .card-svg {
+    color: #2f2b33;
   }
 
   #wishlist > img,

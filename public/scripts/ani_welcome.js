@@ -4,17 +4,18 @@ const welcomefooter = document.getElementById('welcome-popup-footer');
 const { chars } = splitText(welcomefooter, { words: false, chars: true });
 
 animate(chars, {
-  // Property keyframes
+  // Gentler bounce
   y: [
-    { to: '-2.75rem', ease: 'outExpo', duration: 600 },
+    { to: '-1.5rem', ease: 'outExpo', duration: 600 },
     { to: 0, ease: 'outBounce', duration: 800, delay: 100 }
   ],
-  // Property specific parameters
+  // Subtle wobble instead of full spin
   rotate: {
-    from: '-1turn',
+    from: '-5deg',
+    to: '5deg',
     delay: 0
   },
-  delay: stagger(50),
+  delay: stagger(40),
   ease: 'inOutCirc',
   loopDelay: 1000,
   loop: true

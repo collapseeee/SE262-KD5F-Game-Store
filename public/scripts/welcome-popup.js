@@ -28,8 +28,8 @@
 
         // Animate overlay fade in and scale
         welcomeOverlay.style.opacity = '0';
-        welcomeOverlay.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        welcomeOverlay.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        welcomeOverlay.style.transform = 'translate(-50%, -50%) scale(0.85)';
+        welcomeOverlay.style.transition = 'opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
 
         // Trigger reflow to apply initial styles
         welcomeOverlay.offsetHeight;
@@ -41,7 +41,7 @@
         // Animate title
         welcomeTitle.style.opacity = '0';
         welcomeTitle.style.transform = 'translateY(-20px)';
-        welcomeTitle.style.transition = 'opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s';
+        welcomeTitle.style.transition = 'opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s';
         welcomeTitle.offsetHeight;
         welcomeTitle.style.opacity = '1';
         welcomeTitle.style.transform = 'translateY(0)';
@@ -59,7 +59,7 @@
             // Initial state
             char.style.opacity = '0';
             char.style.transform = 'translateY(20px) translateX(-10px)';
-            char.style.transition = `opacity 0.4s ease-out ${0.5 + index * 0.05}s, transform 0.4s ease-out ${0.5 + index * 0.05}s`;
+            char.style.transition = `opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1) ${0.5 + index * 0.04}s, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1) ${0.5 + index * 0.04}s`;
 
             // Trigger reflow
             char.offsetHeight;
@@ -75,7 +75,7 @@
         // Fade out overlay
         welcomeOverlay.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
         welcomeOverlay.style.opacity = '0';
-        welcomeOverlay.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        welcomeOverlay.style.transform = 'translate(-50%, -50%) scale(0.85) translateY(10px)';
 
         // Hide element after animation completes
         setTimeout(() => {
