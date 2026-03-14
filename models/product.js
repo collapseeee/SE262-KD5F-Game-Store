@@ -15,6 +15,17 @@ const getAllProduct = async () => {
     }
 };
 
+const getProductById = async (id) => {
+    const sql = ``;
+    const payload = [id];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows[0];
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const searchProduct = async (gameName, filteredIds) => {
     let sql =
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
@@ -40,5 +51,6 @@ const searchProduct = async (gameName, filteredIds) => {
 
 module.exports = {
     getAllProduct,
-    searchProduct
+    searchProduct,
+    getProductById
 }
