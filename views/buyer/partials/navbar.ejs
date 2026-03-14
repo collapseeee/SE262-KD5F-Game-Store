@@ -1,5 +1,5 @@
 <script type="text/javascript" src="/dist/jquery.min.js"></script>
-<nav class="navbar navbar-expand-lg bg-custom my-3">
+<nav class="navbar navbar-expand-lg bg-custom my-3 nav-animate">
   <div class="container align-items-start justify-content-center">
     <div class="navbar-brand rounded-5 d-flex px-2">
       <a href="/">
@@ -122,6 +122,8 @@
 
   .bg-custom {
     background-color: #8122c9;
+    position: relative;
+    z-index: 10;
   }
 
   /* Search bar */
@@ -146,6 +148,26 @@
     background-color: #8b00f5;
     color: #FEFEFE;
     cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-button:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px rgba(139, 0, 245, 0.5);
+  }
+
+  #brand-icon {
+    transition: transform 0.3s ease;
+  }
+
+  #brand-icon:hover {
+    transform: scale(1.08);
+  }
+
+  #search-input:focus {
+    outline: none;
+    box-shadow: 0 2px 0 0 #B7EF00;
   }
 
   .multiselect-native-select, 
