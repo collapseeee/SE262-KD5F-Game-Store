@@ -53,15 +53,15 @@ html {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-.main-image img {
-    width: 512px;
-    max-width: 100%;
-    height: 350px;
+#main-image img {
+    width: 100%;
+    max-width: 512px;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.main-image img:hover {
+#main-image img:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
