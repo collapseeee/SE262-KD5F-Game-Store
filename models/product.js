@@ -62,7 +62,7 @@ const searchProduct = async (gameName, filteredIds) => {
     sql += ` GROUP BY pl.product_id`;
 
     try {
-        const [rows] = await db.promise().execute(sql, payload);
+        const [rows] = await db.promise().query(sql, payload);
         return rows;
     } catch (err) {
         console.error(err);
