@@ -17,7 +17,7 @@
     <%-include('partials/navbar')%>
     <main class="container my-4">
       <h1 class="fs-1">Personal Information</h1>
-      <div class="container-fluid account-container p-5 rounded-4 row">
+      <div class="container-fluid account-container p-5 rounded-4 row mx-auto">
         <div
           class="image-container p-5 mx-auto rounded-4 w-100 h-100 col-lg-6 justify-content-center"
         >
@@ -33,49 +33,98 @@
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Username:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center"><%=username%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              <%=user.username%>
+            </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Account created:
             </p>
             <p class="col-lg-6 col-sm-12 text-lg-end text-sm-center">
-              <%=createDate%>
+              <%=user.created_date%>
             </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Total spend:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center">$<%=totalSpend%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              $<%=user.total_spend%>
+            </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 text-lg-start text-sm-center">
               Game purchased:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center"><%=totalGame%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              <%=user.total_game%>
+            </p>
           </div>
         </div>
       </div>
       <div class="my-3">
-        <button
+        <a
+          href="/signout"
+          type="button"
           id="logout-button"
           class="fs-2 rounded-4 px-4 border-0 py-2 mx-2"
         >
           Log Out
+        </a>
+        <button id="delete-account-button" class="fs-3 text-danger m-4" href="" data-bs-toggle="modal" data-bs-target="#confirm-modal"></a>
+          Delete my account
         </button>
-        <a id="delete-account-button" class="fs-3 text-danger m-4" href=""
-          >Delete my account</a
-        >
+      </div>
+            <!-- Modal -->
+      <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirmation-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body fs-2 text-center">
+            <i class="bi-exclamation-circle-fill text-warning fs-1 text-center"></i>
+              <h1 class="modal-title fs-1" id="confirmation-label">Are you sure?</h1>
+              <div class="fs-3">you are deleting your account.</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              <button id="confirm-delete-button" type="button" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
+
     <%-include('partials/footer')%>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
+    <script>
+      const confirmDeleteButton = document.body.querySelector('#confirm-delete-button');
+      confirmDeleteButton.addEventListener('click', event => {
+        axios.delete('/api/account');
+        window.location.reload();
+        window.location.href = '/';
+      });
+    </script>
   </body>
 
   <style>
+
+    .modal-content {
+      background-color: #8122C9 !important;
+      color: #FEFEFE;
+    }
+
+    .modal-header, .modal-footer {
+      background-color: #8122C9;
+    }
+
     .account-container {
       background-color: #8b00f5;
     }
+
     .image-container {
       background-color: #fefefe;
       max-width: 512px;
@@ -85,6 +134,13 @@
     #logout-button {
       background-color: #8b00f5;
       color: white;
+      text-decoration: none;
+    }
+
+    #delete-account-button {
+      background-color: #8122C9;
+      text-decoration-line: underline;
+      border: none;
     }
   </style>
 </html>

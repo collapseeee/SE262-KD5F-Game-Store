@@ -214,3 +214,7 @@
 .input-with-icon .input-icon:hover {
   color: #B7EF00;
 }
+
+.tooltip-inner {
+        text-align: left;
+}
