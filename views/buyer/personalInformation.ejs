@@ -12,24 +12,25 @@
     />
     <!-- Link style.css -->
     <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
   </head>
   <body>
     <%-include('partials/navbar')%>
     <main class="container my-4">
-      <h1 class="fs-1">Personal Information</h1>
-      <div class="container-fluid account-container p-5 rounded-4 row mx-auto">
+      <h1 class="fs-1 fade-in-title">Personal Information</h1>
+      <div class="container-fluid account-container p-5 rounded-4 row mx-auto scroll-reveal" style="--reveal-delay: 100ms;">
         <div
-          class="image-container p-5 mx-auto rounded-4 w-100 h-100 col-lg-6 justify-content-center"
+          class="image-container p-5 mx-auto rounded-4 w-100 h-100 col-lg-6 justify-content-center image-pop-in"
         >
           <img
             id="user-image"
-            class="w-100 h-100"
+            class="w-100 h-100 image-scale-hover"
             src="/assets/user.png"
             alt=""
           />
         </div>
         <div class="fs-3 flex-grow-1 col-lg-6 ps-5 pt-3">
-          <div class="row">
+          <div class="row scroll-reveal info-row" style="--reveal-delay: 200ms;">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Username:
             </p>
@@ -37,7 +38,7 @@
               <%=user.username%>
             </p>
           </div>
-          <div class="row">
+          <div class="row scroll-reveal info-row" style="--reveal-delay: 300ms;">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Account created:
             </p>
@@ -45,7 +46,7 @@
               <%=user.created_date%>
             </p>
           </div>
-          <div class="row">
+          <div class="row scroll-reveal info-row" style="--reveal-delay: 400ms;">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Total spend:
             </p>
@@ -53,7 +54,7 @@
               $<%=user.total_spend%>
             </p>
           </div>
-          <div class="row">
+          <div class="row scroll-reveal info-row" style="--reveal-delay: 500ms;">
             <p class="fw-bold col-lg-6 text-lg-start text-sm-center">
               Game purchased:
             </p>
@@ -63,43 +64,45 @@
           </div>
         </div>
       </div>
-      <div class="my-3">
+      <div class="my-3 scroll-reveal" style="--reveal-delay: 600ms;">
         <a
           href="/signout"
           type="button"
           id="logout-button"
-          class="fs-2 rounded-4 px-4 border-0 py-2 mx-2"
+          class="fs-2 rounded-4 px-4 border-0 py-2 mx-2 button-hover"
         >
           Log Out
         </a>
-        <button id="delete-account-button" class="fs-3 text-danger m-4" href="" data-bs-toggle="modal" data-bs-target="#confirm-modal"></a>
+        <button id="delete-account-button" class="fs-3 m-4" data-bs-toggle="modal" data-bs-target="#confirm-modal">
           Delete my account
         </button>
       </div>
             <!-- Modal -->
       <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirmation-label" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-animate">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body fs-2 text-center">
-            <i class="bi-exclamation-circle-fill text-warning fs-1 text-center"></i>
+            <i class="bi-exclamation-circle-fill text-warning fs-1 text-center icon-pulse"></i>
               <h1 class="modal-title fs-1" id="confirmation-label">Are you sure?</h1>
               <div class="fs-3">you are deleting your account.</div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-              <button id="confirm-delete-button" type="button" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+              <button type="button" class="btn btn-secondary button-hover" data-bs-dismiss="modal">No</button>
+              <button id="confirm-delete-button" type="button" class="btn btn-danger button-hover" data-bs-dismiss="modal">Yes</button>
             </div>
           </div>
         </div>
       </div>
     </main>
+    <script src="/scripts/personalInfo-animations.js"></script>
 
     <%-include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/axios/dist/axios.min.js"></script>
+    <script src="/public/scripts/scroll-reveal.js"></script>
     <script>
       const confirmDeleteButton = document.body.querySelector('#confirm-delete-button');
       confirmDeleteButton.addEventListener('click', event => {
@@ -138,9 +141,34 @@
     }
 
     #delete-account-button {
-      background-color: #8122C9;
-      text-decoration-line: underline;
+      background-color: transparent;
       border: none;
+      position: relative;
+      padding: 0;
+      cursor: pointer;
+      color: #ec1111;
+      text-decoration: none;
+      transition: text-shadow 0.3s ease;
+    }
+
+    #delete-account-button::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background-color: #ec1111;
+      transform: translateX(-50%) scaleX(1);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #delete-account-button:hover {
+      text-shadow: 0 0 8px rgba(236, 17, 17, 0.5);
+    }
+
+    #delete-account-button:hover::after {
+      transform: translateX(-50%) scaleX(1.2);
     }
   </style>
 </html>
