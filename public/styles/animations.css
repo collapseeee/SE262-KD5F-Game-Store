@@ -1,0 +1,125 @@
+/* ===== Scroll Reveal System ===== */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Navbar Entrance ===== */
+@keyframes navSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-animate {
+  animation: navSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ===== Carousel Fade-In ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carousel-animate {
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+/* ===== Ken Burns on Carousel Images ===== */
+.carousel-item {
+  overflow: hidden;
+}
+
+.carousel-item img {
+  transition: transform 6s ease;
+  transform: scale(1);
+}
+
+.carousel-item.active img {
+  transform: scale(1.05);
+}
+
+/* ===== Card Hover Effects ===== */
+.card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card .poster {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .poster {
+  transform: scale(1.05);
+}
+
+/* ===== Welcome Popup Glow Pulse ===== */
+@keyframes popupGlow {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(129, 34, 201, 0.2);
+  }
+  50% {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+                0 0 80px rgba(129, 34, 201, 0.4);
+  }
+}
+
+/* ===== Cart/Wishlist Item Hover ===== */
+.cart-container {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cart-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cart-container .game-poster {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cart-container:hover .game-poster {
+  transform: scale(1.03);
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

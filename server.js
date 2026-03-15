@@ -4,11 +4,11 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { getWishlistByUserId, deleteFromWishlist, addToWishlist } = require('./models/wishlist');
-const { getUserByName } = require('./models/account');
+const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
+const { getUserByName, deleteUserById } = require('./models/account');
 
 const app = express();
 // App setup
@@ -26,14 +26,10 @@ app.use(
 );
 
 app.use(express.static('public'));
+app.use(express.static('node_modules'));
 
 app.use(express.json());
 
-app.use(express.static('node_modules/bootstrap'));
-app.use(express.static('node_modules/bootstrap-icons'));
-app.use(express.static('node_modules/bootstrap-multiselect'));
-app.use(express.static('node_modules/jquery'));
-app.use(express.static('node_modules/axios'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -85,9 +81,12 @@ app.get('/buyerLogin', (req, res) => {
 
 app.get('/account', async (req, res) => {
     if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        user.created_date = `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`;
         res.render('buyer/personalInformation', {
             // Data here
-            categories: await getAllCategory()
+            categories: await getAllCategory(),
+            user: user
         });
     } else {
         res.redirect('/identification');
@@ -160,12 +159,27 @@ app.get('/result', async (req, res) => {
 });
 
 app.get('/product/:id', async (req, res) => {
-    const gameId = req.params.id;
-    res.render('buyer/productDetail', {
-        categories: await getAllCategory()/* ,
-        game: await getProductById(gameId) */
-    });
+    try {
+        const gameId = req.params.id;
+        const game = await getProductById(gameId);
+        const user = await getUserByName(req.session.username);
+        const images = await getImageByGameProductId(gameId);
+        const exportImage = images.map(image => image.image_url);
+        const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+
+        res.render('buyer/productDetail', {
+            categories: await getAllCategory(),
+            gameDetails: game,
+            isWishlisted: isWishlisted,
+            images: exportImage,
+            requirements: await getProductRequirementById(gameId)
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("SERVER ERROR");
+    }
 });
+
 app.get('/cart', async (req, res) => {
     // Mock data, Get data FROM Cart table WHERE userid = ...
     const games = [{
@@ -272,9 +286,23 @@ app.get('/signout', (req, res) => {
     });
 });
 
+app.delete('/api/account', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+    await deleteUserById(user.user_id);
+    res.status(204);
+    req.session.destroy(async err => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error during delete account');
+        } else {
+            res.redirect('/');
+        }
+    })
+});
+
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    const confirmPassword = req.body['confirm-pasword'];
+    const confirmPassword = req.body['confirm-password'];
     if (password !== confirmPassword) {
         return res.status(400).send('Passwords do not match');
     }

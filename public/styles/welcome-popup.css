@@ -1,0 +1,14 @@
+/* Welcome Popup Styles */
+.welcome-popup-overlay {
+    cursor: pointer;
+}
+
+.welcome-popup-container {
+    cursor: pointer;
+}
+
+/* Text character animation */
+.welcome-text-char {
+    display: inline-block;
+    opacity: 0;
+}
