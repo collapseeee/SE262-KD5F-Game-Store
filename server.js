@@ -108,7 +108,7 @@ app.get('/result', async (req, res) => {
     let categoryArray = [];
 
     // Passing Input:
-    let rawInput = category || categories;
+    const rawInput = category || categories;
     if (rawInput) {
         if (Array.isArray(rawInput)) {
             // It's already an array: ['1', '2']
