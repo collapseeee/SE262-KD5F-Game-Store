@@ -2,26 +2,13 @@
   class="container-fluid d-flex justify-content-between align-items-center px-5 scroll-reveal"
 >
   <div class="footer-content">
-    <svg
-      class="bi px-auto footer-svg"
-      width="24"
-      height="24"
-      fill="currentColor"
-    >
-      <use xlink:href="bootstrap-icons.svg#c-circle" />
-    </svg>
+    <i class="bi-c-circle"></i>
     <p>2026 KaiDao-5-Fong</p>
   </div>
   <div class="footer-content">
-    <svg
-      class="bi px-auto footer-svg"
-      width="24"
-      height="24"
-      fill="currentColor"
+    <a class="link-underline-light link-light" href="/contact">
+      <i class="bi-info-circle"></i> CONTACT US</a
     >
-      <use xlink:href="bootstrap-icons.svg#info-circle" />
-    </svg>
-    <a class="link-underline-light link-light" href="/contact">CONTACT US</a>
   </div>
 </footer>
 
@@ -46,13 +33,13 @@
   }
 
   footer a::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
     width: 0;
     height: 2px;
-    background-color: #B7EF00;
+    background-color: #b7ef00;
     transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
