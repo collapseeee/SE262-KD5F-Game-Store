@@ -43,46 +43,46 @@ function renderPagination() {
     let html = '';
 
     // Opening previous pagination (<<) (<) :
-    html += '<li class="page-item"><a class="page-link" href="#main"><<</a></li>';
-    html += '<li class="page-item"><a class="page-link" href="#main"><</a></li>';
+    html += '<li class="page-item"><a class="page-link"><<</a></li>';
+    html += '<li class="page-item"><a class="page-link"><</a></li>';
 
     // Index in between:
     if (totalPages <= 7) {
         // Total page <= 7: Show all
          for (let i=1; i<=7; i++) {
-            html += `<li class="page-item"><a class ="page-link" href="#main">${i}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${i}</a></li>`;
          };
     } else {
         // Total page > 7: Sliding window pagination
         if (currentPage <= 4) {
             // Near start: 1 2 3 4 5 ... n
-            for (let i = 1; i <= 5; i++) html += `<li class="page-item"><a class ="page-link" href="#main">${i}</a></li>`;
+            for (let i = 1; i <= 5; i++) html += `<li class="page-item"><a class ="page-link">${i}</a></li>`;
             html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
-            html += `<li class="page-item"><a class ="page-link" href="#main">${totalPages}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${totalPages}</a></li>`;
         } 
         else if (currentPage >= totalPages - 3) {
             // Near end: 1 ... n-4 n-3 n-2 n-1 n
-            html += `<li class="page-item"><a class ="page-link" href="#main">1</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">1</a></li>`;
             html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
             for (let i = totalPages - 4; i <= totalPages; i++) {
-                html += `<li class="page-item"><a class ="page-link" href="#main">${i}</a></li>`;
+                html += `<li class="page-item"><a class ="page-link">${i}</a></li>`;
             }
         } 
         else {
             // Middle: 1 ... 4 5 6 ... n
-            html += `<li class="page-item"><a class ="page-link" href="#main">1</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">1</a></li>`;
             html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
-            html += `<li class="page-item"><a class ="page-link" href="#main">${currentPage-1}</a></li>`;
-            html += `<li class="page-item"><a class ="page-link" href="#main">${currentPage}</a></li>`;
-            html += `<li class="page-item"><a class ="page-link" href="#main">${currentPage+1}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${currentPage-1}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${currentPage}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${currentPage+1}</a></li>`;
             html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
-            html += `<li class="page-item"><a class ="page-link" href="#main">${totalPages}</a></li>`;
+            html += `<li class="page-item"><a class ="page-link">${totalPages}</a></li>`;
         }
     }
 
     // Closing next pagination (>) (>>) :
-    html += `<li class="page-item"><a class ="page-link" href="#main">></a></li>`;
-    html += `<li class="page-item"><a class ="page-link" href="#main">>></a></li>`;
+    html += `<li class="page-item"><a class ="page-link">></a></li>`;
+    html += `<li class="page-item"><a class ="page-link">>></a></li>`;
 
     paginationUl.innerHTML = html;
 }

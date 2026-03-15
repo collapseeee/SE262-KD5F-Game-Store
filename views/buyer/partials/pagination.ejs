@@ -10,6 +10,20 @@
     perPageCountSpan.innerHTML = perPageCount;
 </script>
 <style>
+    @media (max-width: 768px) {
+        .pagination.round-circle {
+            flex-wrap: wrap;
+            row-gap: 10px;
+        }
+
+        .pagination.round-circle .page-link {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 0.8rem;
+        }
+    }
+
     .pagination.round-circle .page-item {
         margin: 0 5px;
     }
