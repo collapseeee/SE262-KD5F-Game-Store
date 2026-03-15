@@ -15,6 +15,95 @@ const getAllProduct = async () => {
     }
 };
 
+const updateProduct = async (productId, name, description, price, posterUrl) => {
+
+    let sql;
+    let params;
+
+    if (posterUrl) {
+        sql = `
+        UPDATE products
+        SET name=?, description=?, price=?, poster_url=?
+        WHERE product_id=?`;
+        params = [name, description, price, posterUrl, productId];
+    } else {
+        sql = `
+        UPDATE products
+        SET name=?, description=?, price=?
+        WHERE product_id=?`;
+        params = [name, description, price, productId];
+    }
+
+    try {
+        const [result] = await db.promise().execute(sql, params);
+        return result;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+const updateSystemRequirements = async (productId, data) => {
+    const sql = `
+        UPDATE hardware_requirement
+        SET operating_system = ?, processor = ?, memory = ?, graphics_card = ?, directx_version = ?, network = ?, storage = ?, soundcard = ?, additional_note = ?
+        WHERE product_id = ? AND type = ?`;
+    try{
+        const minResult = await db.promise().execute(sql, [
+            data.min_os || '-',
+            data.min_processor || '-',
+            data.min_memory || '-',
+            data.min_graphic || '-',
+            data.min_directx || '-',
+            data.min_network || '-',
+            data.min_storage || '-',
+            data.min_soundcard || '-',
+            data.min_notes || '-',
+            productId,
+            'min'
+        ]);
+        const recResult = await db.promise().execute(sql, [
+            data.rec_os || '-',
+            data.rec_processor || '-',
+            data.rec_memory || '-',
+            data.rec_graphic || '-',
+            data.rec_directx || '-',
+            data.rec_network || '-',
+            data.rec_storage || '-',
+            data.rec_soundcard || '-',
+            data.rec_notes || '-',
+            productId,
+            'recommended'
+        ]);
+        return { min: minResult, rec: recResult };
+    } catch (err) {
+        console.error("Error updating System Requirements:", err);
+        return null;
+    }
+};
+
+const updateGallery = async (imageId, imageUrl) => {
+    const sql = `UPDATE images SET image_url = ? WHERE image_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [imageUrl, imageId]);
+        return result;
+    } catch (err) {
+        console.error("Error updating gallery image:", err);
+        return null;
+    }
+};
+
+const updateVideo = async (videoId, videoUrl) => {
+    const sql = `UPDATE videos SET video_url = ? WHERE video_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [videoUrl, videoId]);
+        return result;
+    } catch (err) {
+        console.error("Error updating video URL:", err);
+        return null;
+    }
+};
+
+
 const getProductById = async (productId) => {
     const sql = `SELECT * FROM products WHERE product_id = ?`;
     const payload = [productId];
@@ -53,7 +142,7 @@ const getRequirementsByProductId = async (productId) => {
         };
     } catch (err) {
         console.error("Error fetching requirements:", err);
-        return { min: {}, rec: {} }; // คืนค่าว่างกรณีเกิด Error
+        return { min: {}, rec: {} }; 
     }
 };
 
@@ -61,7 +150,6 @@ const getImagesByProductId = async (productId) => {
     const sql = `SELECT * FROM images WHERE product_id = ?`;
     try {
         const [rows] = await db.promise().query(sql, [productId]);
-        // ถ้าไม่มีรูป ให้คืน Array ว่าง []
         return rows || [];
     } catch (err) {
         console.error("Error fetching images:", err);
@@ -70,31 +158,25 @@ const getImagesByProductId = async (productId) => {
 };
 
 const getVideosByProductId = async (productId) => {
-    const sql = `SELECT video_url FROM videos WHERE product_id = ?`;
+    const sql = `SELECT video_id, video_url FROM videos WHERE product_id = ?`;
     try {
         const [rows] = await db.promise().query(sql, [productId]);
-        
-        // คืนค่าเป็น Array ของ URL เพื่อให้ง่ายต่อการนำไปใส่ใน Input
-        // เช่น ['url1', 'url2']
-        return rows.map(row => row.video_url) || [];
+        return rows || [];
     } catch (err) {
         console.error("Error fetching videos:", err);
         return [];
     }
 };
 const addProduct = async (name, description, price, posterUrl) => {
-    // 1. ตรวจสอบชื่อคอลัมน์ในวงเล็บ (name, description, price, poster_url) ให้ตรงกับใน MySQL เป๊ะๆ
     const sql = `INSERT INTO products (name, description, price, poster_url) VALUES (?, ?, ?, ?)`;
     try {
         const [result] = await db.promise().execute(sql, [name, description, price, posterUrl]);
         
-        // 2. เช็กว่า insertId มีค่าออกมาไหม
         if (result && result.insertId) {
             return result.insertId;
         }
         return null;
     } catch (err) {
-        // ดู Error ใน Console ของคุณว่า MySQL แจ้งว่าอะไร (เช่น Unknown column หรือ Field ... doesn't have a default value)
         console.error("MySQL Insert Error:", err.message); 
         return null;
     }
@@ -136,8 +218,16 @@ const deleteGalleryByImageId = async (imageId) => {
         console.error(err);
     }
 };
+const deleteProdcutListByProductId = async (productId) => {
+    const sql = `DELETE FROM product_lists WHERE product_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [productId]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
 async function addSystemRequirements(productId, data) {
-    // กำหนดให้บันทึก 2 แถวเสมอ (Array 2 ชุดใน values)
     const values = [
         [
             productId,
@@ -173,7 +263,6 @@ async function addSystemRequirements(productId, data) {
         VALUES ?`;
 
     try {
-        // ใช้ .promise().query() ตามที่คุณตั้งค่าไว้
         const [result] = await db.promise().query(sql, [values]);
         return result;
     } catch (error) {
@@ -217,7 +306,14 @@ module.exports = {
     getImagesByProductId,
     getVideosByProductId,
     deleteGalleryByImageId,
-    getCategoriesByProductId
+    getCategoriesByProductId,
+    updateProduct,
+    updateSystemRequirements,
+    updateGallery,
+    updateVideo,
+    deleteProdcutListByProductId
+
+
 
 
 };

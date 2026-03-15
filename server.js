@@ -4,13 +4,27 @@ const bodyParser = require('body-parser');
 const Auth = require('./controllers/auth');
 const session = require('express-session');
 const sessionStore = require('./models/session');
-const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSystemRequirements, getProductById, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId,getCategoriesByProductId } = require('./models/product');
+const path = require('path');
+const { getAllProduct, searchProduct, addProduct, addGallery, addVideo, addSystemRequirements, getProductById, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId,getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
 const Account = require('./models/account');
-const upload = multer({ dest: 'public/assets/picture' });
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/assets/picture'); // ตรวจสอบว่ามีโฟลเดอร์นี้ในเครื่องแล้ว
+    },
+    filename: function (req, file, cb) {
+        // สร้างชื่อไฟล์ใหม่: ชื่อฟิลด์ + เวลาปัจจุบัน + นามสกุลเดิม
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 const app = express();
+
 // App setup
 app.use(
     session({
@@ -34,7 +48,6 @@ app.use(express.static('node_modules/bootstrap-icons'));
 app.use(express.static('node_modules/bootstrap-multiselect'));
 app.use(express.static('node_modules/jquery'));
 app.use(express.static('public/assets/'));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -140,7 +153,6 @@ app.get('/register', (req, res) => {
 });
 app.get('/sellerInformation', async (req, res) => {
     try {
-        // สมมติว่า getUserById เป็นฟังก์ชันที่ดึงข้อมูลจาก DB
         const rows = await Account.getUserById("1");
         const sellerData = (rows && rows.length > 0) ? rows[0] : null;
 
@@ -282,12 +294,11 @@ app.get('/api/product/add', (req, res) => {
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
     const productId = req.params.id;
-    // ดึงข้อมูล Product และ Requirements จาก DB
     const product = await getProductById(productId);
     const categories = await getCategoriesByProductId(productId);
     const requirements = await getRequirementsByProductId(productId);
     const images = await getImagesByProductId(productId);
-    const videos = await getVideosByProductId(productId);
+    const videoData = await getVideosByProductId(productId);
     if (!product[0]) return res.status(404).send("Product not found");
         console.log("Fetched product for edit:", product[0]);
         res.render('seller/product', {
@@ -296,8 +307,9 @@ app.get('/api/product/edit/:id', async (req, res) => {
             min: requirements.min,
             rec: requirements.rec,
             gallery: images,
-            videos: videos, // จะเป็น [url1, url2]
-            currentCategories: categories
+            videoIds: videoData.map(v => v.video_id),  // [1, 2]
+            videos: videoData.map(v => v.video_url), // ['url1', 'url2']
+            currentCategories: categories.map(c => c.category_id)
         });
     }
         catch (err) {
@@ -313,48 +325,152 @@ app.post('/api/product/add', upload.fields([
     { name: 'poster', maxCount: 1 },
     { name: 'gallery_image[]', maxCount: 4 }
 ]),
-async(req, res) =>
-{
-    try {
-    let categories = req.body['category[]'] || req.body.category; // รองรับทั้งกรณีที่ส่งมาเป็น array หรือ string เดียว
-    const posterFile = req.files['poster'] ? req.files['poster'][0] : null;
-    const galleryFiles = req.files['gallery_image[]'] || [];
-    const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
-        const { name, category, price, description } = req.body;
-        const productId = await addProduct(name, description, price, posterFile.path);
-        if (!Array.isArray(categories)) {
-            categories = [categories];
+    async(req, res) =>
+    {
+        try {
+        let categories = req.body['category[]'] || req.body.category || [];
+        let cleanPath = null;
+        if (req.files.poster && req.files.poster[0]) {
+            
+            cleanPath = req.files.poster[0].path.replace(/\\/g, '/').replace('public/assets', '');
         }
-        if (productId) {
-            for (const categoryId of categories) {
-                await addProductList(productId, categoryId, 1);
-                console.log(`Linked product ${productId} with category ${categoryId}`);
+        const galleryFiles = req.files['gallery_image[]'] || [];
+        const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
+            const { name, category, price, description } = req.body;
+            const productId = await addProduct(name, description, price, cleanPath);
+            if (!Array.isArray(categories)) {
+                categories = [categories];
             }
-        // 2. วนลูปบันทึก Gallery (ถูกต้องแล้ว)
-        for (const file of galleryFiles) {
-            await addGallery(file.path, productId);
-        }
+            if (productId) {
+                const categoryArray = Array.isArray(categories) ? categories : [categories];
+            for (const categoryId of categoryArray) {
+                if(categoryId) await addProductList(productId, categoryId, 1);
+            }
 
-        // 3. วนลูปบันทึก Video (ใช้ชื่อตัวแปรที่รวมมาแล้ว)
-        for (const video of videoUrls) {
-            await addVideo(video, productId);
-        }
+            
+            for (const file of galleryFiles) {
+                const cleanGalleryPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
+                await addGallery(cleanGalleryPath, productId);
+            }
 
-        // ส่วนของ System Requirements...
-        await addSystemRequirements(productId, req.body);
-        
-        res.status(200).send("เพิ่มข้อมูลสำเร็จ");
+            
+            for (const video of videoUrls) {
+                await addVideo(video, productId);
+            }
+
+            
+            await addSystemRequirements(productId, req.body);
+            
+            res.redirect('/dashboard');
+            }
         }
-    }
-    catch (err) {
-        console.error(err);
-        res.status(500).send('Error adding product');
+        catch (err) {
+            console.error(err);
+            res.status(500).send('Error adding product');
+        }
+    });
+
+app.put('/categories/:id', (req, res) => {
+    const targetId = parseInt(req.params.id);
+    const newName = req.body.name;
+    const category = categories.find(cat => cat.id === targetId);
+    if (category) {
+        category.name = newName;
+        res.json({ success: true });
+        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
+    } else {
+        res.status(404).json({ success: false, message: 'Category not found' });
     }
 });
 
+app.post(
+'/api/product/edit/:id',
+upload.fields([
+ { name: 'poster', maxCount: 1 },
+ { name: 'gallery_image[]', maxCount: 4 }
+]),
+async (req, res) => {
+let categories = req.body['category[]'] || req.body.category;
+const categoryArray = Array.isArray(categories) ? categories : [categories];
+ const productId = parseInt(req.params.id);
+ const UpdateProduct = req.body;
+ const posterFile = req.files.poster
+    ? req.files.poster[0].filename
+    : null;
+
+    const galleryFiles = req.files['gallery_image[]'] || [];
+    const videoIds = [req.body.videoId, req.body.videoId2];
+    const videoUrls = [req.body.videoUrl, req.body.videoUrl2];
+    console.log(videoIds);
+    console.log(videoUrls);
+ try {
+
+    await updateProduct(
+        productId,
+        UpdateProduct.name,
+        UpdateProduct.description,
+        UpdateProduct.price,
+        posterFile
+    );
+    await deleteProdcutListByProductId(productId);
+
+    await Promise.all(
+    categoryArray.map(categoryId =>
+        addProductList(productId, categoryId, 1)
+    )
+);
+    await updateSystemRequirements(productId, req.body);
+    console.log("Files received by Multer:", req.files);
+   if (galleryFiles.length > 0) {
+    for (const file of galleryFiles) {
+        const cleanPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
+        
+        
+        await addGallery(cleanPath, productId);
+    }
+}
+   for (let i = 0; i < videoUrls.length; i++) {
+    const url = videoUrls[i];
+    const id = videoIds[i];
+
+    
+    if (url && url.trim() !== "" && id && id !== "") {
+        try {
+            await updateVideo(id, url);
+        } catch (error) {
+            console.error(`Error updating video ID ${id}:`, error);
+        }
+    } else if (url && url.trim() !== "" && (!id || id === "")) {
+        
+        await addVideo(url, productId);
+    }
+}
+    
+    res.redirect('/dashboard');
+
+ } catch (err) {
+    console.error(err);
+    res.status(500).json({ success:false });
+ }
+
+});
+
+app.delete('/api/games/:id', async(req, res) => {
+    const targetId = parseInt(req.params.id);
+    games = games.filter(game => game.id !== targetId);
+    res.json({ success: true });
+    console.log(`Deleted game with ID: ${targetId}`);
+    try {
+        const data = await getAllProduct();
+        res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
 app.delete('/categories/:id', (req, res) => {
     const targetId = parseInt(req.params.id);
-    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
+    
     categories = categories.filter(cat => cat.id !== targetId);
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
@@ -370,34 +486,6 @@ app.delete('/api/gallery/delete/:id', async (req, res) => {
         res.status(500).send('Error deleting gallery image');
     }
 });
-app.put('/categories/:id', (req, res) => {
-    const targetId = parseInt(req.params.id);
-    const newName = req.body.name;
-    const category = categories.find(cat => cat.id === targetId);
-    if (category) {
-        category.name = newName;
-        res.json({ success: true });
-        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
-    } else {
-        res.status(404).json({ success: false, message: 'Category not found' });
-    }
-});
-
-
-app.delete('/api/games/:id', async(req, res) => {
-    const targetId = parseInt(req.params.id);
-    games = games.filter(game => game.id !== targetId);
-    res.json({ success: true });
-    console.log(`Deleted game with ID: ${targetId}`);
-    try {
-        const data = await getAllProduct();
-        res.json(data);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err);
-    }
-});
-
 app.get('/api/image/:id', async (req, res) => {
     try {
         const data = await getImageByGameProductId(req.params.id);

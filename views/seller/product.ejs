@@ -14,7 +14,7 @@
 <body>
     <%-include('partials/navbar')%>
     <main class="container my-4">
-        <form action="<%= mode === 'edit' ? '/api/product/edit/' + product.id : '/api/product/add' %>" method="POST" enctype="multipart/form-data">
+        <form action="<%= mode === 'edit' ? '/api/product/edit/' + product.product_id : '/api/product/add' %>" method="POST" enctype="multipart/form-data">
             
             <h2 class="section-title"><%= mode === 'edit' ? 'EDIT PRODUCT' : 'ADD PRODUCT' %></h2>
             
@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="price" class="form-label">Price:</label>
-                                <input type="number" step="0.01" class="form-control square-input" id="price" name="price" 
+                                <input type="number" step="0.01" class="form-control square-input" id="price" name="price"
                                        value="<%= product.price || '' %>" required>
                             </div>
                         </div>
@@ -143,8 +143,8 @@
             const categoryList = document.getElementById('categoryList');
             const dropdownBtn = document.getElementById('categoryDropdownBtn');
             
-            // ดึง Category เดิมมาติ๊กถูก (กรณี Edit)
-            const currentCats = <%- JSON.stringify(mode === 'edit' ? currentCategories : []) %>;
+           
+            const currentCats = <%- JSON.stringify(typeof currentCategories !== 'undefined' ? currentCategories : []) %>;
 
             fetch('/api/categories')
                 .then(response => response.json())
@@ -156,7 +156,7 @@
                         li.className = 'mb-2';
                         li.innerHTML = `
                             <div class="form-check">
-                                <input class="form-check-input category-checkbox" type="checkbox" 
+                                <input class="form-check-input category-checkbox" type="checkbox"
                                     name="category[]" value="${cat.category_id}" id="cat${cat.category_id}" ${isChecked}>
                                 <label class="form-check-label text-white" for="cat${cat.category_id}">
                                     ${cat.name}
@@ -167,11 +167,28 @@
                     });
                     updateDropdownLabel();
                 });
+document.querySelector('form').addEventListener('submit', function (e) {
+    const checkedCategories = document.querySelectorAll('.category-checkbox:checked');
+    const dropdownBtn = document.getElementById('categoryDropdownBtn');
 
-            function updateDropdownLabel() {
-                const checkedCount = document.querySelectorAll('.category-checkbox:checked').length;
-                dropdownBtn.textContent = checkedCount > 0 ? `Selected (${checkedCount})` : 'Select categories';
-            }
+    if (checkedCategories.length === 0) {
+        e.preventDefault();
+
+
+        alert('Please select at least one category for the product.');
+        dropdownBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+           function updateDropdownLabel() {
+    const checkedCount = document.querySelectorAll('.category-checkbox:checked').length;
+    const dropdownBtn = document.getElementById('categoryDropdownBtn');
+    
+    dropdownBtn.textContent = checkedCount > 0 ? `Selected (${checkedCount})` : 'Select categories';
+    
+    if (checkedCount > 0) {
+        dropdownBtn.style.border = '1px solid rgba(255,255,255,0.2)';
+    }
+}
 
             categoryList.addEventListener('change', updateDropdownLabel);
             categoryList.addEventListener('click', (e) => e.stopPropagation());
@@ -203,13 +220,13 @@
    /* --- Global Styles --- */
 /* --- Global Styles --- */
 body {
-    background-color: #8122C9; /* สีพื้นหลังม่วงเข้ม */
+    background-color: #8122C9;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
 }
 
 .section-container {
-    background-color: #8B00F5; /* สีม่วงสว่างสำหรับ Container */
+    background-color: #8B00F5;
     border-radius: 25px;
     padding: 30px;
     width: 100%;
@@ -229,7 +246,7 @@ body {
 
 /* --- Form Inputs (Square Design) --- */
 .square-input {
-    border-radius: 0 !important; /* บังคับเป็นสี่เหลี่ยมมุมฉาก */
+    border-radius: 0 !important;
     border: 1px solid #ced4da;
     padding: 10px;
 }
@@ -273,27 +290,26 @@ body {
     height: 469px !important;
 }
 
-/* บังคับให้ช่อง Description ยืดเต็มพื้นที่ที่เหลือ */
+
 #description {
-    height: 100% !important; /* ยืดตาม container */
-    min-height: 50px; /* กันเบียดเมื่อจอเล็ก */
+    height: 100% !important;
+    min-height: 50px;
 }
 
 
-/* ล็อคขนาด Poster Card หลักเป็น 327x469 */
+/* --- fix poster style --- */
 .main-poster-card {
     width: 327px !important;
     height: 469px !important;
     min-width: 327px;
     min-height: 469px;
     background-color: rgba(255, 255, 255, 0.15) !important;
-    border-radius: 25px !important; /* ปรับมุมโค้งให้มนขึ้นตามความสูง */
+    border-radius: 25px !important;
 }
 
-/* ปรับแต่งพื้นที่ Icon ภายในการ์ดหลักให้ใหญ่ขึ้นตามสัดส่วนการ์ด */
 .main-poster-card .icon-wrapper {
-    width: 240px; /* ขยายความกว้าง Icon wrapper */
-    height: 180px; /* ขยายความสูง Icon wrapper */
+    width: 240px;
+    height: 180px;
     background-color: #f8f9fa;
     border-radius: 15px !important;
     display: flex;
@@ -302,14 +318,14 @@ body {
     margin-bottom: 25px;
 }
 
-/* ปรับขนาดรูปภาพ PNG ภายใน */
+
 .main-poster-card .upload-placeholder-img {
     max-height: 120px;
     width: auto;
     object-fit: contain;
 }
 
-/* ปรับแต่งตัวอักษร Click to upload */
+
 .main-poster-card .card-text {
     font-size: 1.25rem;
     margin-top: 10px;
@@ -317,20 +333,20 @@ body {
 
 /* --- System Requirements Section --- */
 .requirement-box {
-    background-color: #5a189a; /* สีม่วงเข้มสำหรับกล่องย่อย */
+    background-color: #5a189a;
     border-radius: 15px;
 }
 
 .req-label {
     color: white;
     font-size: 0.9rem;
-    min-width: 95px; /* จัดตำแหน่ง Label ให้ตรงกัน */
+    min-width: 95px;
     margin-right: 10px;
     margin-bottom: 0;
 }
 
 .req-input {
-    border-radius: 0 !important; /* Input เป็นสี่เหลี่ยมสีขาว */
+    border-radius: 0 !important;
     border: none;
     background-color: white !important;
     font-size: 0.85rem;
@@ -355,11 +371,11 @@ body {
     filter: brightness(1.1);
 }
 
-/* กำหนดขนาดและฟอนต์พื้นฐานของปุ่ม */
+
 .custom-btn-size {
-    width: 220px; /* ปรับความกว้างตามความเหมาะสม */
+    width: 220px;
     height: 65px;
-    border-radius: 20px !important; /* ขอบมนตามรูป */
+    border-radius: 20px !important;
     font-size: 2rem;
     font-weight: bold;
     border: none;
@@ -371,12 +387,12 @@ body {
     transform: scale(1.05);
 }
 
-/* ปรับแต่งปุ่มให้เป็นแบบ Responsive */
+
 .responsive-btn {
-    width: 100%; /* เต็มความกว้างคอลัมน์ในจอเล็ก */
-    max-width: 250px; /* ขนาดสูงสุดในจอใหญ่ */
+    width: 100%;
+    max-width: 250px;
     height: 70px;
-    border-radius: 20px !important; /* ขอบมนตามรูปภาพ */
+    border-radius: 20px !important;
     font-size: 1.8rem;
     font-weight: bold;
     border: none;
@@ -387,19 +403,19 @@ body {
     text-transform: uppercase;
 }
 
-/* เอฟเฟกต์เมื่อเอาเมาส์วาง */
+
 .responsive-btn:hover {
     filter: brightness(1.1);
     transform: translateY(-3px);
 }
 
-/* สีปุ่ม CANCEL (แดง) */
+
 .btn-cancel {
     background-color: #C11212 !important;
     color: white !important;
 }
 
-/* สีปุ่ม SAVE (เขียวมะนาว ตัวอักษรม่วง) */
+
 .btn-save {
     background-color: #CCF500 !important;
     color: #8B00F5 !important;
@@ -416,22 +432,21 @@ body {
     color: white;
 }
 
-/* บังคับให้รูปในโหมด Edit แสดงผลเต็มขนาดการ์ด */
+
 .main-poster-card .upload-placeholder-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ทำให้รูปไม่เบี้ยวและเต็มกรอบ */
+    object-fit: cover;
 }
 
-/* ปรับแต่งระยะห่างสำหรับจอเล็ก */
+
 @media (max-width: 576px) {
     .responsive-btn {
-        max-width: 160px; /* ปรับให้เล็กลงเมื่ออยู่บนมือถือ */
+        max-width: 160px;
         font-size: 1.2rem;
         height: 55px;
     }
     
-    /* ให้ปุ่มเรียงต่อกันแนวตั้งถ้าจอมือถือแคบมาก (Optional) */
     /* .d-flex { flex-direction: column; align-items: center; } */
 }
 </style>
