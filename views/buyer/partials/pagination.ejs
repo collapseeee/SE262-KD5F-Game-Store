@@ -1,21 +1,6 @@
 <nav aria-label="...">
   <ul class="pagination justify-content-center round-circle my-4">
-    <li class="page-item"><a class="page-link" href="#" onclick="displayPage(1)"><<</a></li>
-    <li class="page-item"><a class="page-link" href="#" ><</a></li>
-    <% const numberOfPages = Math.ceil(games.length/12); %>
-    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-    <% if (numberOfPages<=7) { %>
-        <% for(let i=2; i<=numberOfPages; i++) { %>
-            <li class="page-item"><a class="page-link" href="#"><%= i %></a></li>
-        <% }; %>
-    <% }; %>
-    <% if (numberOfPages>7) { %>
-        <% for(let i=2; i<=numberOfPages; i++) { %>
-            <li class="page-item"><a class="page-link" href="#"><%= i %></a></li>
-        <% }; %>
-    <% }; %>
-    <li class="page-item"><a class="page-link" href="#">></a></li>
-    <li class="page-item"><a class="page-link" href="#">>></a></li>
+    <!-- Logic handled by result.js -->>
   </ul> 
 </nav>
 <p class="text-center my-0 p-0">Displaying <span id="per-page-count">0</span> games out of <%= games.length %> results.</p>
