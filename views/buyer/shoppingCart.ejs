@@ -9,22 +9,25 @@
     <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
     <!-- Link style.css -->
     <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
   </head>
   <body>
     <%-include('partials/popup/payment')%>
     <%-include('partials/popup/paymentSuccess')%>
     <%-include('partials/navbar')%>
     <main class="container my-4">
-      <h1><span id="cart-header-span">Your Shopping Cart</span> <span id="checkout-header-span" style="display: none;"> > Checkout</span></h1>
-      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
+      <h1 class="scroll-reveal"><span id="cart-header-span">Your Shopping Cart</span> <span id="checkout-header-span" style="display: none;"> > Checkout</span></h1>
+      <a href="/" class="back-to-home scroll-reveal" style="--reveal-delay: 100ms"><p>< Back to Home</p></a>
       <div class="row">
         <div class="items-container col-12 col-lg-8">
-            <% games.forEach((game) => { %>
+            <% games.forEach((game, index) => { %>
+              <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
                 <%- include('partials/cartItem',{game: game}) %>
+              </div>
             <% }); %>
         </div>
         <div class="col-12 col-lg-4">
-            <div class="items-container">
+            <div class="items-container scroll-reveal" style="--reveal-delay: 200ms">
                 <div class="checkout-container rounded-4 mb-3 shadow p-4" id="payment-container" style="display: none;">
                     <h4>Payment Method</h4>
                     <div class="form-check">
@@ -88,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="items-container">
+            <div class="items-container scroll-reveal" style="--reveal-delay: 300ms">
                 <div class="checkout-container rounded-4 mb-3 shadow p-4" id="coupon-container">
                     <p class="text-start fw-bold m-1">KaiDao Coupon</p>
                     <div class="input-group shadow-sm rounded-pill">
@@ -111,6 +114,7 @@
     </main>
     <%- include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/scroll-reveal.js"></script>
     <script>
         // Checkout popups logics
         const cartHeaderSpan = document.getElementById('cart-header-span');
@@ -157,27 +161,27 @@
                     paymentImg.src = "/assets/truemoney-payment.jpg";
                 }
 
-                paymentPopup.style.display = 'block';
-                paymentPopupOverlay.style.display = 'block';
+                paymentPopup.classList.add('active');
+                paymentPopupOverlay.classList.add('active');
             }
         });
         
         paymentProceedBtn.addEventListener('click', (e) => {
-            paymentPopup.style.display = 'none';
-            paymentPopupOverlay.style.display = 'none';
+            paymentPopup.classList.remove('active');
+            paymentPopupOverlay.classList.remove('active');
 
-            successPopup.style.display = 'block';
-            successPopupOverlay.style.display = 'block';
+            successPopup.classList.add('active');
+            successPopupOverlay.classList.add('active');
         });
 
         paymentCancelBtn.addEventListener('click', (e) => {
-            paymentPopup.style.display = 'none';
-            paymentPopupOverlay.style.display = 'none';
+            paymentPopup.classList.remove('active');
+            paymentPopupOverlay.classList.remove('active');
         });
 
         successProceedBtn.addEventListener('click', (e) => {
-            successPopup.style.display = 'none';
-            successPopupOverlay.style.display = 'none';
+            successPopup.classList.remove('active');
+            successPopupOverlay.classList.remove('active');
             window.location.href = '/';
             // Handle removing data from cart later on.
         });
