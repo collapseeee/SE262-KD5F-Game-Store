@@ -8,7 +8,7 @@ const { getAllProduct, searchProduct, getProductById, getProductRequirementById 
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getUserByName } = require('./models/account');
+const { getUserByName, deleteUserById } = require('./models/account');
 
 const app = express();
 // App setup
@@ -81,9 +81,12 @@ app.get('/buyerLogin', (req, res) => {
 
 app.get('/account', async (req, res) => {
     if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        user.created_date = `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`;
         res.render('buyer/personalInformation', {
             // Data here
-            categories: await getAllCategory()
+            categories: await getAllCategory(),
+            user: user
         });
     } else {
         res.redirect('/identification');
@@ -257,9 +260,23 @@ app.get('/signout', (req, res) => {
     });
 });
 
+app.delete('/api/account', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+    await deleteUserById(user.user_id);
+    res.status(204);
+    req.session.destroy(async err => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error during delete account');
+        } else {
+            res.redirect('/');
+        }
+    })
+});
+
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    const confirmPassword = req.body['confirm-pasword'];
+    const confirmPassword = req.body['confirm-password'];
     if (password !== confirmPassword) {
         return res.status(400).send('Passwords do not match');
     }
