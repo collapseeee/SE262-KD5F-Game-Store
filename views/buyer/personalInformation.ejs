@@ -33,37 +33,45 @@
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Username:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center"><%=username%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              <%=user.username%>
+            </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Account created:
             </p>
             <p class="col-lg-6 col-sm-12 text-lg-end text-sm-center">
-              <%=createDate%>
+              <%=user.created_date%>
             </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 col-sm-12 text-lg-start text-sm-center">
               Total spend:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center">$<%=totalSpend%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              $<%=user.total_spend%>
+            </p>
           </div>
           <div class="row">
             <p class="fw-bold col-lg-6 text-lg-start text-sm-center">
               Game purchased:
             </p>
-            <p class="col-lg-6 text-lg-end text-sm-center"><%=totalGame%></p>
+            <p class="col-lg-6 text-lg-end text-sm-center">
+              <%=user.total_game%>
+            </p>
           </div>
         </div>
       </div>
       <div class="my-3">
-        <button
+        <a
+          href="/signout"
+          type="button"
           id="logout-button"
           class="fs-2 rounded-4 px-4 border-0 py-2 mx-2"
         >
           Log Out
-        </button>
+        </a>
         <a id="delete-account-button" class="fs-3 text-danger m-4" href=""
           >Delete my account</a
         >
