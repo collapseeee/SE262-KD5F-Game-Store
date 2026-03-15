@@ -13,10 +13,10 @@ const Account = require('./models/account');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/assets/picture'); // ตรวจสอบว่ามีโฟลเดอร์นี้ในเครื่องแล้ว
+        cb(null, 'public/assets/picture');
     },
     filename: function (req, file, cb) {
-        // สร้างชื่อไฟล์ใหม่: ชื่อฟิลด์ + เวลาปัจจุบัน + นามสกุลเดิม
+        
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
