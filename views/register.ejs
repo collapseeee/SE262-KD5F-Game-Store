@@ -40,16 +40,42 @@
                   <br/>
                   <label for="password">
                     Password:
-                    <i class="bi bi-info-circle" style="color: #2f2b33"></i>
                   </label>
                   <div class="input-with-icon">
                     <input
+                      id="passwordInput"
                       name="password"
                       type="password"
                       class="form-control rounded-4 mt-1 my-2"
-                      placeholder="password"
+                      placeholder="Password"
                     />
                     <i class="bi bi-eye input-icon"></i>
+                  </div>
+                  
+                  <!-- Strength Meter -->
+                  <div id="strengthMeter" style="display: none; margin: 8px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                      <small><strong>Strength:</strong></small>
+                      <small id="strengthLabel" style="font-weight: bold;"></small>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                      <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s ease; border-radius: 3px;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Security Tip -->
+                  <small id="securityTip" class="text-muted d-block mt-2" style="display: none;"></small>
+
+                  <!-- Requirements Checklist -->
+                  <div id="requirementsList" style="display: none; margin-top: 12px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                    <small style="font-weight: bold; display: block; margin-bottom: 6px;">Requirements:</small>
+                    <div style="font-size: 12px; line-height: 1.6;">
+                      <div id="req-length"><i class="bi bi-circle"></i> <span>At least 8 characters</span></div>
+                      <div id="req-upper"><i class="bi bi-circle"></i> <span>1 uppercase letter (A-Z)</span></div>
+                      <div id="req-lower"><i class="bi bi-circle"></i> <span>1 lowercase letter (a-z)</span></div>
+                      <div id="req-number"><i class="bi bi-circle"></i> <span>1 number (0-9)</span></div>
+                      <div id="req-symbol"><i class="bi bi-circle"></i> <span>1 special character (!@#$%^&*)</span></div>
+                    </div>
                   </div>
 
                   <label for="confirm-password">Confirm Password:</label>
@@ -81,17 +107,98 @@
     </div>
   </body>
   <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/scripts/password-security.js"></script>
+  <script src="/scripts/seePassword.js"></script>
   <script>
+
+    // Password Strength Feedback
+    const passwordInput = document.getElementById('passwordInput');
+    const strengthMeter = document.getElementById('strengthMeter');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const securityTip = document.getElementById('securityTip');
+    const requirementsList = document.getElementById('requirementsList');
+
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      
+      if (!password) {
+        strengthMeter.style.display = 'none';
+        requirementsList.style.display = 'none';
+        securityTip.style.display = 'none';
+        return;
+      }
+
+      const analysis = analyzePassword(password);
+      const { score, label, requirements, tip } = analysis;
+
+      // Show meters
+      strengthMeter.style.display = 'block';
+      requirementsList.style.display = 'block';
+
+      // Update strength bar and label
+      const widths = ['0%', '25%', '50%', '75%', '100%'];
+      strengthBar.style.width = widths[score + 1] || '0%';
+      strengthBar.style.backgroundColor = STRENGTH_COLORS[score + 1] || '#dc3545';
+      strengthLabel.textContent = label;
+      strengthLabel.style.color = STRENGTH_COLORS[score + 1] || '#dc3545';
+
+      // Update requirements checklist
+      updateRequirement('req-length', requirements.minLength);
+      updateRequirement('req-upper', requirements.hasUppercase);
+      updateRequirement('req-lower', requirements.hasLowercase);
+      updateRequirement('req-number', requirements.hasNumber);
+      updateRequirement('req-symbol', requirements.hasSymbol);
+
+      // Update security tip
+      if (tip) {
+        securityTip.style.display = 'block';
+        securityTip.innerHTML = `<i class="bi bi-lightbulb"></i> ${tip}`;
+      } else {
+        securityTip.style.display = 'none';
+      }
+    });
+
+    function updateRequirement(id, isMet) {
+      const element = document.getElementById(id);
+      const icon = element.querySelector('i');
+      const span = element.querySelector('span');
+      
+      if (isMet) {
+        icon.className = 'bi bi-check-circle-fill';
+        icon.style.color = '#51cf66';
+        span.style.color = '#51cf66';
+      } else {
+        icon.className = 'bi bi-circle';
+        icon.style.color = '#6c757d';
+        span.style.color = '#6c757d';
+      }
+    }
+
+    // Form submission validation
     document.querySelector('form').addEventListener('submit', function (e) {
       const password = document.querySelector('input[name="password"]').value;
-      const confirmPassword = document.querySelector('input[name="confirm-pasword"]').value;
+      const confirmPassword = document.querySelector('input[name="confirm-password"]').value;
       const errorMsg = document.getElementById('password-error');
+      const analysis = analyzePassword(password);
+
+      // Check if passwords match
       if (password !== confirmPassword) {
         e.preventDefault();
         errorMsg.style.display = 'block';
-      } else {
-        errorMsg.style.display = 'none';
+        errorMsg.textContent = 'Passwords do not match';
+        return;
       }
+
+      // Check if password meets minimum requirements
+      if (!analysis.isValid) {
+        e.preventDefault();
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = 'Password is too weak. Please follow the requirements above.';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
     });
   </script>
 </html>

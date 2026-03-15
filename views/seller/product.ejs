@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= mode === 'edit' ? 'Edit Product' : 'Add Product' %></title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/styles/style.css" />
+</head>
+<body>
+    <%-include('partials/navbar')%>
+    <main class="container my-4">
+        <form action="<%= mode === 'edit' ? '/api/product/edit/' + product.product_id : '/api/product/add' %>" method="POST" enctype="multipart/form-data">
+            
+            <h2 class="section-title"><%= mode === 'edit' ? 'EDIT PRODUCT' : 'ADD PRODUCT' %></h2>
+            
+            <div class="section-container">
+                <div class="row g-4">
+                    <div class="col-auto">
+                        <div class="card custom-upload-card main-poster-card text-center shadow-lg border-0 p-4">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <div class="icon-wrapper mb-3">
+                                    <img src="<%= (mode === 'edit' && product.poster_url) ? product.poster_url : '/picture.png' %>"
+     alt="Upload Poster" class="img-fluid upload-placeholder-img">
+                                </div>
+                                <p class="card-text text-white fw-light fs-5">
+                                    <%= mode === 'edit' ? 'Click to change poster' : 'Click to upload the poster' %>
+                                </p>
+                                <input type="file" class="d-none" id="posterUpload" name="poster">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col d-flex flex-column" style="height: 469px;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name:</label>
+                                <input type="text" class="form-control square-input" id="name" name="name" 
+                                       value="<%= product.name || '' %>" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Price:</label>
+                                <input type="number" step="0.01" class="form-control square-input" id="price" name="price"
+                                       value="<%= product.price || '' %>" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-white">Category:</label>
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle w-100 text-start square-input" type="button" id="categoryDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);">
+                                    Select categories
+                                </button>
+                                <ul class="dropdown-menu w-100 p-3" id="categoryList" style="max-height: 250px; overflow-y: auto;">
+                                    <li class="text-center text-muted">Loading categories...</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-0 flex-grow-1 d-flex flex-column">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea class="form-control square-input flex-grow-1" id="description" name="description" required style="resize: none;"><%= product.description || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%-include('partials/galleryCard.ejs')%>
+
+            <div class="section-container System-Requirements-container">
+                <h2 class="text-white fw-bold mb-4">System Requirements</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h4 class="text-white mb-3">Minimum:</h4>
+                        <div class="requirement-box p-3">
+                            <% const m = min || {}; %>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">OS:</label>
+                                <input type="text" name="min_os" class="form-control req-input" value="<%= m.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Processor:</label>
+                                <input type="text" name="min_processor" class="form-control req-input" value="<%= m.processor || '' %>" placeholder="AMD64/ARM64">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Memory:</label>
+                                <input type="text" name="min_memory" class="form-control req-input" value="<%= m.memory || '' %>" placeholder="16 GB RAM">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Graphic:</label>
+                                <input type="text" name="min_graphic" class="form-control req-input" value="<%= m.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">DirectX:</label>
+                                <input type="text" name="min_directx" class="form-control req-input" value="<%= m.directx_version || '' %>" placeholder="Version 11">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Storage:</label>
+                                <input type="text" name="min_storage" class="form-control req-input" value="<%= m.storage || '' %>" placeholder="100GB space">
+                            </div>
+                            <div class="mb-2 d-flex flex-column">
+                                <label class="req-label mb-1">Additional notes:</label>
+                                <textarea class="form-control req-input" rows="3" name="min_additional_notes" placeholder="Notes"><%= m.additional_note || '' %></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4 class="text-white mb-3">Recommended:</h4>
+                        <div class="requirement-box p-3">
+                            <% const r = rec || {}; %>
+                             <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">OS:</label>
+                                <input type="text" name="min_os" class="form-control req-input" value="<%= m.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Processor:</label>
+                                <input type="text" name="min_processor" class="form-control req-input" value="<%= m.processor || '' %>" placeholder="AMD64/ARM64">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Memory:</label>
+                                <input type="text" name="min_memory" class="form-control req-input" value="<%= m.memory || '' %>" placeholder="16 GB RAM">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Graphic:</label>
+                                <input type="text" name="min_graphic" class="form-control req-input" value="<%= m.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">DirectX:</label>
+                                <input type="text" name="min_directx" class="form-control req-input" value="<%= m.directx_version || '' %>" placeholder="Version 11">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Storage:</label>
+                                <input type="text" name="min_storage" class="form-control req-input" value="<%= m.storage || '' %>" placeholder="100GB space">
+                            </div>
+                            <div class="mb-2 d-flex flex-column">
+                                <label class="req-label mb-1">Additional notes:</label>
+                                <textarea class="form-control req-input" rows="3" name="min_additional_notes" placeholder="Notes"><%= m.additional_note || '' %></textarea>
+                            </div>
+                            </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5 mb-5">
+                    <div class="col-12 d-flex justify-content-center justify-content-md-end gap-3">
+                        <button type="button" class="btn btn-cancel responsive-btn" onclick="window.history.back()">CANCEL</button>
+                        <button type="submit" class="btn btn-save responsive-btn">
+                            <%= mode === 'edit' ? 'UPDATE' : 'SAVE' %>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+    <%- include('partials/footer')%>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryList = document.getElementById('categoryList');
+            const dropdownBtn = document.getElementById('categoryDropdownBtn');
+            
+           
+            const currentCats = <%- JSON.stringify(typeof currentCategories !== 'undefined' ? currentCategories : []) %>;
+
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    categoryList.innerHTML = '';
+                    categories.forEach(cat => {
+                        const isChecked = currentCats.includes(cat.category_id) ? 'checked' : '';
+                        const li = document.createElement('li');
+                        li.className = 'mb-2';
+                        li.innerHTML = `
+                            <div class="form-check">
+                                <input class="form-check-input category-checkbox" type="checkbox"
+                                    name="category[]" value="${cat.category_id}" id="cat${cat.category_id}" ${isChecked}>
+                                <label class="form-check-label text-white" for="cat${cat.category_id}">
+                                    ${cat.name}
+                                </label>
+                            </div>
+                        `;
+                        categoryList.appendChild(li);
+                    });
+                    updateDropdownLabel();
+                });
+document.querySelector('form').addEventListener('submit', function (e) {
+    const checkedCategories = document.querySelectorAll('.category-checkbox:checked');
+    const dropdownBtn = document.getElementById('categoryDropdownBtn');
+
+    if (checkedCategories.length === 0) {
+        e.preventDefault();
+
+
+        alert('Please select at least one category for the product.');
+        dropdownBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+           function updateDropdownLabel() {
+    const checkedCount = document.querySelectorAll('.category-checkbox:checked').length;
+    const dropdownBtn = document.getElementById('categoryDropdownBtn');
+    
+    dropdownBtn.textContent = checkedCount > 0 ? `Selected (${checkedCount})` : 'Select categories';
+    
+    if (checkedCount > 0) {
+        dropdownBtn.style.border = '1px solid rgba(255,255,255,0.2)';
+    }
+}
+
+            categoryList.addEventListener('change', updateDropdownLabel);
+            categoryList.addEventListener('click', (e) => e.stopPropagation());
+        });
+
+        // Poster Preview Logic
+        const posterInput = document.getElementById('posterUpload');
+        const posterImg = document.querySelector('.upload-placeholder-img');
+        const mainCard = document.querySelector('.main-poster-card');
+
+        if (mainCard) mainCard.addEventListener('click', () => posterInput.click());
+
+        posterInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    posterImg.src = e.target.result;
+                    posterImg.style.objectFit = 'cover';
+                    posterImg.style.height = '100%';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
+<style>
+   /* --- Global Styles --- */
+/* --- Global Styles --- */
+body {
+    background-color: #8122C9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+}
+
+.section-container {
+    background-color: #8B00F5;
+    border-radius: 25px;
+    padding: 30px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 40px auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.dropdown-menu {
+    background-color: #8B00F5;
+}
+.section-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* --- Form Inputs (Square Design) --- */
+.square-input {
+    border-radius: 0 !important;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.form-label {
+    color: white;
+    font-weight: 500;
+}
+
+/* --- Card & Upload Styles (General) --- */
+.custom-upload-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 20px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.custom-upload-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-wrapper {
+    background-color: #f8f9fa;
+    border-radius: 10px !important;
+    padding: 20px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.upload-placeholder-img {
+    max-height: 140px;
+    width: auto;
+    object-fit: contain;
+}
+.col.d-flex.flex-column {
+    height: 469px !important;
+}
+
+
+#description {
+    height: 100% !important;
+    min-height: 50px;
+}
+
+
+/* --- fix poster style --- */
+.main-poster-card {
+    width: 327px !important;
+    height: 469px !important;
+    min-width: 327px;
+    min-height: 469px;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 25px !important;
+}
+
+.main-poster-card .icon-wrapper {
+    width: 240px;
+    height: 180px;
+    background-color: #f8f9fa;
+    border-radius: 15px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+
+.main-poster-card .upload-placeholder-img {
+    max-height: 120px;
+    width: auto;
+    object-fit: contain;
+}
+
+
+.main-poster-card .card-text {
+    font-size: 1.25rem;
+    margin-top: 10px;
+}
+
+/* --- System Requirements Section --- */
+.requirement-box {
+    background-color: #5a189a;
+    border-radius: 15px;
+}
+
+.req-label {
+    color: white;
+    font-size: 0.9rem;
+    min-width: 95px;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.req-input {
+    border-radius: 0 !important;
+    border: none;
+    background-color: white !important;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+}
+
+.req-input::placeholder {
+    color: #ccc;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background-color: #00d1b2;
+    border: none;
+    border-radius: 0;
+    padding: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+
+.custom-btn-size {
+    width: 220px;
+    height: 65px;
+    border-radius: 20px !important;
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.custom-btn-size:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+
+.responsive-btn {
+    width: 100%;
+    max-width: 250px;
+    height: 70px;
+    border-radius: 20px !important;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+
+.responsive-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-3px);
+}
+
+
+.btn-cancel {
+    background-color: #C11212 !important;
+    color: white !important;
+}
+
+
+.btn-save {
+    background-color: #CCF500 !important;
+    color: #8B00F5 !important;
+}
+
+#categoryDropdownBtn {
+    background-color: rgba(255,255,255,0.05);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+#categoryDropdownBtn:hover {
+    background-color: rgba(255,255,255,0.05);
+    color: white;
+}
+
+
+.main-poster-card .upload-placeholder-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+@media (max-width: 576px) {
+    .responsive-btn {
+        max-width: 160px;
+        font-size: 1.2rem;
+        height: 55px;
+    }
+    
+    /* .d-flex { flex-direction: column; align-items: center; } */
+}
+</style>

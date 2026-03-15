@@ -214,3 +214,53 @@
 .input-with-icon .input-icon:hover {
   color: #B7EF00;
 }
+
+.tooltip-inner {
+        text-align: left;
+}
+
+/* Password Strength Styles */
+#strengthMeter small {
+  color: #B7EF00;
+}
+
+#strengthLabel {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+#securityTip {
+  color: #ffc107 !important;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#requirementsList {
+  background: rgba(47, 43, 51, 0.8) !important;
+  border: 1px solid #B7EF00;
+  padding: 10px 12px !important;
+  border-radius: 6px;
+}
+
+#requirementsList small {
+  color: #B7EF00;
+}
+
+#requirementsList > div > div {
+  color: #6c757d;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#requirementsList i {
+  font-size: 0.8em;
+}
+
+#req-length span, #req-upper span, #req-lower span, 
+#req-number span, #req-symbol span {
+  transition: color 0.2s ease;
+}
