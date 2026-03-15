@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Results</title>
+
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <%-include('partials/navbar');%>
+    <main class="container my-4">
+        <!-- Search Specification -->
+         <div class="row">
+            <div class="col-12 col-md-6">
+                <p class="text-center mx-4 fs-4">Category: <%= searchedCategory %></p>
+            </div>
+            <div class="col-12 col-md-6">
+                <p class="text-center mx-4 fs-4">Search: <%= searchedName %></p>
+            </div>
+         </div>        
+      <!-- Game Cards Grid -->
+      <div class="container">
+        <div class="row gap-4 justify-content-center align-items-start">
+          <% games.forEach((game) => { %>
+            <%-include('partials/gameCard', { game: game});%>
+          <%})%>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+       <%-include('partials/pagination');%>
+
+    </main>
+
+    <%-include('partials/footer')%>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/result.js"></script>
+  </body>
+  <style>
+    .game-name {
+      height: 48px !important;
+    }
+  </style>
+</html>

@@ -123,30 +123,46 @@ app.get('/account', async (req, res) => {
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
     const { gameName, categories, category } = req.query;
-    let filteredIds = '';
+    let categoryArray = [];
 
-    if (category) {
-        filteredIds += category;
-    }
-    // If the category is selected
-    if (categories) {
-        const [filterCategory] = Array.isArray(categories) ? [categories] : categories;
-        // If multiple categories selected
-        if (categories.length > 1) {
-            filterCategory.forEach(categoryId => {
-                filteredIds += categoryId + ',';
-            });
-            // Remove the last comma sign
-            filteredIds = filteredIds.substring(0, filteredIds.length - 1);
-        }
-        if (categories.length === 1) {
-            filteredIds = categories;
+    // Passing Input:
+    const rawInput = category || categories;
+    if (rawInput) {
+        if (Array.isArray(rawInput)) {
+            // It's already an array: ['1', '2']
+            categoryArray = rawInput;
+        } else if (typeof rawInput === 'string' && rawInput.includes(',')) {
+            // It's a comma string: "1,2,3" -> turn into ['1', '2', '3']
+            categoryArray = rawInput.split(',');
+        } else {
+            // It's a single value: "1" -> turn into ['1']
+            categoryArray = [rawInput];
         }
     }
-    const results = await searchProduct(gameName, filteredIds);
 
+    // Search Operation 
+    const results = await searchProduct(gameName, (categoryArray.length > 0) ? categoryArray : null);
+
+    // Matching categoryId with its name:
+    const allCategories = await getAllCategory();
+    let categoriesName = "All Categories"; // Default value if no category is selected for the search.
+    if (categoryArray.length > 0) {
+        const nameList = categoryArray.map(id => {
+            const found = allCategories.find(c => c.category_id === id);
+            return found ? found.name : null;
+        }).filter(Boolean);
+
+        categoriesName = nameList.join(" | ");
+    }
+    
+    const user = await getUserByName(req.session.username);
     res.render('buyer/searchResult', {
-        games: results
+        categories: allCategories,
+        games: results,
+        // for displaying in result page
+        searchedName: gameName || "All Games",
+        searchedCategory: categoriesName,
+        wishlists: await getWishlistByUserId(user.user_id)
     });
 });
 
