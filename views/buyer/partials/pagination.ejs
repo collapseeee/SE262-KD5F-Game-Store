@@ -1,7 +1,14 @@
 <nav aria-label="...">
-  <ul class="pagination justify-content-center round-circle my-4">
+  <ul class="pagination justify-content-center round-circle mt-4">
     <!-- Logic handled by result.js -->>
   </ul> 
+  <div id="goto-popup" class="goto-container w-25 p-4 mx-auto mt-0 mb-4 rounded-4">
+    <p class="text-center mb-2">Go to page:</p>
+    <div class="d-flex align-items-center">
+        <input type="number" id="goto-input" min="1" class="form-control text-white bg-dark border-secondary">
+        <button id="goto-submit" class="btn">GO</button>
+    </div>
+</div>
 </nav>
 <p class="text-center my-0 p-0">Displaying <span id="per-page-count">0</span> games out of <%= games.length %> results.</p>
 <script>
@@ -10,6 +17,17 @@
     perPageCountSpan.innerHTML = perPageCount;
 </script>
 <style>
+    .goto-container {
+        background-color: #5C3B75;
+        display: none;
+        position: absolute;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+    .btn {
+        background-color: #B7EF00;
+    }
+
     @media (max-width: 768px) {
         .pagination.round-circle {
             flex-wrap: wrap;
