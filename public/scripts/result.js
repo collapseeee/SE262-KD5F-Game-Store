@@ -99,8 +99,13 @@ function toggleGotoPopup(event) {
     popup.style.top = `${rect.top + window.scrollY - 120}px`; 
     popup.style.left = `${rect.left + window.scrollX - 50}px`;
     
-    popup.style.display = 'block';
-    document.getElementById('goto-input').value = currentPage;
+    if (popup.style.display === 'block') {
+        popup.style.display = 'none';
+    } else {
+        document.getElementById('goto-input').value = currentPage;
+        popup.style.display = 'block';
+    }
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -110,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const paginationList = document.querySelector('.pagination');
 
+    // Event listener logic for pagination.
     paginationList.addEventListener('click', (e) => {
         const link = e.target.closest('.page-link');
 
@@ -134,6 +140,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else {
             displayPage(parseInt(action));
+        }
+    });
+
+    // Close the popup when clicking outside the popup box
+    window.addEventListener('click', (e) => {
+        const popup = document.getElementById('goto-popup');
+        
+        const isVisible = popup.style.display === 'block';
+
+        if (isVisible) {
+            if (!popup.contains(e.target) && !e.target.closest('.page-link')) {
+                popup.style.display = 'none';
+            }
         }
     });
 });
