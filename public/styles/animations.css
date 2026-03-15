@@ -108,6 +108,109 @@
   transform: scale(1.03);
 }
 
+/* ===== Personal Information Page Animations ===== */
+
+/* Title entrance animation */
+@keyframes titleSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-title {
+  animation: titleSlideDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Image pop-in effect */
+@keyframes imagePop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.image-pop-in {
+  animation: imagePop 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+/* Image hover scale */
+.image-scale-hover {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.image-scale-hover:hover {
+  transform: scale(1.05);
+}
+
+/* Info row animations */
+.info-row {
+  margin-bottom: 1.5rem;
+}
+
+/* Button hover effects */
+@keyframes buttonGlow {
+  from {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+  }
+  to {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.button-hover {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.button-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.button-hover:active {
+  transform: translateY(0);
+}
+
+/* Modal animation */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-animate {
+  animation: modalSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Icon pulse effect */
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.icon-pulse {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
 /* ===== Reduced Motion ===== */
 @media (prefers-reduced-motion: reduce) {
   *,
