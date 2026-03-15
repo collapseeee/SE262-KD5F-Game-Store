@@ -40,14 +40,18 @@
                   <br/>
                   <label for="password">
                     Password:
-                    <i class="bi bi-info-circle" style="color: #2f2b33"></i>
+                    <i class="bi bi-info-circle" style="color: #2f2b33; cursor: pointer;"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="right"
+                      data-bs-html="true"
+                      title="Password needs to contain:<br>• At least 1 uppercase letter<br>• At least 1 number"></i>
                   </label>
                   <div class="input-with-icon">
                     <input
                       name="password"
                       type="password"
                       class="form-control rounded-4 mt-1 my-2"
-                      placeholder="password"
+                      placeholder="Password"
                     />
                     <i class="bi bi-eye input-icon"></i>
                   </div>
@@ -81,7 +85,11 @@
     </div>
   </body>
   <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/scripts/seePassword.js"></script>
   <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
     document.querySelector('form').addEventListener('submit', function (e) {
       const password = document.querySelector('input[name="password"]').value;
       const confirmPassword = document.querySelector('input[name="confirm-pasword"]').value;
