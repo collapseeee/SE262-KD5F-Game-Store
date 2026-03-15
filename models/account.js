@@ -29,7 +29,7 @@ const Account = {
   // Create new user
   createUser: async (userData) => {
     const sql = 'INSERT INTO accounts (username, password, created_date, isBuyer, isSeller) VALUES (?, ?, ?, ?, ?)';
-    const date = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`
+    const date = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
     try {
       const results = await executeQuery(sql, [userData.username, userData.password, date, userData.isBuyer, userData.isSeller]);
       return results;
@@ -38,6 +38,18 @@ const Account = {
       throw error;
     }
   },
+  deleteUserById: async (userId) => {
+    const sql = `DELETE FROM accounts WHERE user_id = ?`;
+    const payload = [userId];
+    try {
+      const results = await executeQuery(sql, payload);
+      return results;
+    } catch (error) {
+      error.message = `Error deleting user: ${error.message}`;
+      throw error;
+    }
+  }
+  ,
   getUserByName: async (username) => {
     const sql = 'SELECT * FROM accounts WHERE username = ?';
     try {
