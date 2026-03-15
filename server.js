@@ -132,10 +132,6 @@ app.get('/result', async (req, res) => {
 app.get('/product/:id', async (req, res) => {
     try {
         const gameId = req.params.id;
-        if (gameId.includes('.')) {
-            console.log(`The ${gameId} does not exist.`)
-            return res.status(404).send(`${gameId} is Not Found`);
-        }
         const game = await getProductById(gameId);
         const user = await getUserByName(req.session.username);
         const images = await getImageByGameProductId(gameId);
