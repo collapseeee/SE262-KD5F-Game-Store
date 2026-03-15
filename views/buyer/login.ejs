@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Buyer Sign In</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/signPage.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+          <div>
+            <h1 class="sign">Buyer</h1>
+            <h1 class="sign mb-3">Sign In</h1>
+          </div>
+          <div class="contentBox rounded-4 p-3 mt-5">
+            <a href="/" class="back-to-home"
+              ><i class="bi bi-caret-left"></i> Back to Home</a
+            >
+            <div class="identification">
+              <i class="bi bi-person-fill"></i>
+
+              <!-- User Registration field -->
+              <form action="/loginBuyer" method="post">
+                <div class="form-group w-100">
+                  <label for="username">Username:</label>
+                  <input
+                    name="username"
+                    type="text"
+                    class="form-control rounded-4 mt-1 mb-2"
+                    placeholder="Username"
+                    value="<%= typeof username !== 'undefined' ? username : '' %>"
+                  />
+
+                  <label for="password">
+                    Password:
+                    <i class="bi bi-info-circle" style="color: #2f2b33"></i>
+                  </label>
+                  <div class="input-with-icon">
+                    <input
+                      name="password"
+                      type="password"
+                      class="form-control rounded-4 mt-1 my-2"
+                      placeholder="password"
+                    />
+                    <i class="bi bi-eye input-icon"></i>
+                  </div>
+                  <% if (typeof error !== 'undefined' && error) { %>
+                    <small class="text-danger"><%= error %></small>
+                  <% } %>
+                </div>
+                <div class="text-center py-2">
+                  <p>
+                    No account?
+                    <a href="/register" style="color: #b7ef00">Sign up here</a>
+                  </p>
+                  <p>
+                    A Seller?
+                    <a href="/sellerLogin" style="color: #b7ef00"
+                      >Sign in here</a
+                    >
+                  </p>
+                </div>
+                <!-- button to buyer and seller page -->
+                <div class="text-center my-3">
+                  <button type="submit" class="btn sign-btn rounded-4">
+                    Sign in
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</html>

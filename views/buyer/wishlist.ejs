@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Wishlist</title>
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <%-include('partials/navbar')%>
+    <main class="container my-4">
+      <h1>Wishlists</h1>
+      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
+      <div class="items-container">
+        <% games.forEach((game) => { %>
+            <%- include('partials/cartItem',{game: game}) %>
+        <%});%>
+      </div>
+    </main>
+    <%- include('partials/footer')%>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
+    <script src="/scripts/wishlist.js"></script>
+  </body>
+</html>
