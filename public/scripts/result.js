@@ -52,7 +52,7 @@ function renderPagination() {
     // Index in between:
     if (totalPages <= 7) {
         // Total page <= 7: Show all
-         for (let i=1; i<=7; i++) {
+         for (let i=1; i<=totalPages; i++) {
             html += `<li class="page-item"><a class ="page-link">${i}</a></li>`;
          };
     } else {
