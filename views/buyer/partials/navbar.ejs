@@ -16,7 +16,7 @@
             <form action="/result" method="get" class="dropdown-menu p-3">
               <div class="row rounded-5 p-2">
                 <% categories.forEach(category=> { %>
-                  <button type="submit" name="category" value="<%=category.category_id%>" class="dropdown-item text-start p-2 col-4">
+                  <button type="submit" name="category" value="<%=category.category_id%>" class="dropdown-item text-start p-2 col-sm-6 col-lg-6">
                     <%=category.name%>
                   </button>
                 <%});%>
@@ -261,26 +261,48 @@
       multiselect-collapsible-hidden are used. 
   */
 
-  .category-container .dropdown-menu  {
+  .category-container .dropdown-menu.show {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+@media only screen and (width < 576px) {
+    .category-container .dropdown-item {
+    width: 50%;
+  }
+
+    .category-container .dropdown-menu  {
     position: absolute !important;
     width: max-content;
-    max-width: 512px;
+    max-width: 320px;
     top: 135% !important;
+    left: -150%;
     border: none;
     border-radius: 0 1em 1em 1em !important;
     background-color: #8122c9 !important;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
     padding: 1em;
   }
+}
 
-  .category-container .dropdown-menu.show {
-    display: flex !important;
-    flex-wrap: wrap !important;
-  }
-
-  .category-container .dropdown-item {
+@media only screen and (width > 576px) {
+    .category-container .dropdown-item {
     width: 33.33%;
   }
+
+    .category-container .dropdown-menu  {
+    position: absolute !important;
+    width: max-content;
+    max-width: 512px;
+    top: 135% !important;
+    left: -150%;
+    border: none;
+    border-radius: 0 1em 1em 1em !important;
+    background-color: #8122c9 !important;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    padding: 1em;
+  }
+}
 
   .category-container .dropdown-menu button {
     color: hsl(0, 0%, 75%);
