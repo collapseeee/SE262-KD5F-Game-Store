@@ -28,9 +28,13 @@
       <!-- Game Cards Grid -->
       <div class="container">
         <div class="row gap-4 justify-content-center align-items-start scroll-reveal" style="--reveal-delay: 100ms;">
-          <% games.forEach((game, index) => { %>
-            <%-include('partials/gameCard', { game: game, index: index });%>
-          <%})%>
+          <% if (games && games.length > 0) { %>
+            <% games.forEach((game, index) => { %>
+              <%-include('partials/gameCard', { game: game, index: index });%>
+            <%})%>
+          <% } else { %>
+            <p class="text-center mt-4 mb-0 fs-4" style="color: #B7EF00;">No result matched.</p>
+          <% } %>
         </div>
       </div>
 
