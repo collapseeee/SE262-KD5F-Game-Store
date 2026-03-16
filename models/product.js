@@ -30,7 +30,17 @@ const getProductById = async (id) => {
     } catch (err) {
         console.error(err);
     }
-}
+};
+const getProductByIdForEdit = async (id) => {
+    const sql = `SELECT product_id, name, price, description, poster_url FROM products WHERE product_id = ?`;
+    const payload = [id];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows[0];
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 const getProductRequirementById = async (id) => {
     const sql = `
@@ -304,10 +314,10 @@ const searchProduct = async (gameName, filteredIds) => {
         payload.push(filteredIds);
     }
 
-    sql += ` GROUP BY pl.product_id`;
+    sql += ' GROUP BY pl.product_id';
 
     try {
-        const [rows] = await db.promise().execute(sql, payload);
+        const [rows] = await db.promise().query(sql, payload);
         return rows;
     } catch (err) {
         console.error(err);
@@ -333,5 +343,6 @@ module.exports = {
     updateSystemRequirements,
     updateGallery,
     updateVideo,
-    deleteProdcutListByProductId
+    deleteProdcutListByProductId,
+    getProductByIdForEdit
 };
