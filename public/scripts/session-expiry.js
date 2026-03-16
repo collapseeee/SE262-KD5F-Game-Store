@@ -3,7 +3,7 @@
 // Redirects to /identification?expired=true after expiry.
 (function () {
   const SESSION_DURATION = 30 * 60; // 30 minutes in seconds
-  const WARNING_AT = 60; // show warning 60s before expiry
+  const WARNING_AT = 0; // disabled - no warning popup, only show when actually expired
   const STORAGE_KEY = 'session_last_active';
   const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
 
