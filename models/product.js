@@ -30,7 +30,19 @@ const getProductById = async (id) => {
     } catch (err) {
         console.error(err);
     }
-}
+};
+
+const getProductByIdForEdit = async (id) => {
+    const sql = `SELECT product_id, name, price, description, poster_url FROM products WHERE product_id = ?`;
+    const payload = [id];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows[0];
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 
 const getProductRequirementById = async (id) => {
     const sql = `
@@ -140,6 +152,16 @@ const addVideo = async (productId, videoUrl) => {
         console.error(err);
     }
 };
+const deleteProductbyId = async (productId) => {
+    const sql = `DELETE FROM products WHERE product_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [productId]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const deleteGalleryByImageId = async (imageId) => {
     const sql = `DELETE FROM images WHERE image_id = ?`;
     try {
@@ -333,5 +355,7 @@ module.exports = {
     updateSystemRequirements,
     updateGallery,
     updateVideo,
-    deleteProdcutListByProductId
+    deleteProdcutListByProductId,
+    getProductByIdForEdit,
+    deleteProductbyId
 };

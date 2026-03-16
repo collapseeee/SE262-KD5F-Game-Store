@@ -111,7 +111,7 @@
                                         visibility
                                     </span>
                                     <button class="btn btn-action-edit" onclick="window.location.href = '/api/product/edit/<%= game.product_id %>'">Edit</button>
-                                    <button class="btn btn-action-delete">Delete</button>
+                                    <button class="btn btn-action-delete" onclick="deleteGame(<%= game.product_id %>)">Delete</button>
                                 </div>
 
                                 <div class="dropdown d-lg-none">
@@ -126,7 +126,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <li class="px-3 py-2"><a class="btn btn-popover-edit w-100" href="/api/product/edit/<%= game.product_id %>">Edit</a></li>
-                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" href="#">Delete</a></li>
+                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" onclick="deleteGames(<%= game.product_id %>)">Delete</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -161,10 +161,10 @@ function toggleVisibility(id) {
     }
 }
 
-async function deleteItem(type, id) {
+async function deleteGame(id) {
         try {
             
-            const response = await fetch(`/${type}/${id}`, {
+            const response = await fetch(`/api/games/${id}`, {
                 method: 'DELETE'
             });
 
@@ -181,7 +181,9 @@ async function deleteItem(type, id) {
             alert("cannot connect Server");
         }
     }
-
+function deleteGames(id){
+    console.log(id);
+}
     function enableEdit(index) {
     const row = document.getElementById(`row-cat-${index}`);
     
