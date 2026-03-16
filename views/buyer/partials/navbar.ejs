@@ -79,6 +79,22 @@
             }
           }
         });
+
+        // Close dropdown when clicking outside
+        $(document).on('click', function(e) {
+          const $target = $(e.target);
+          const $multiselect = $('#category-selection').closest('.multiselect-native-select');
+          
+          // Check if click is outside the multiselect component
+          if (!$target.closest('.multiselect-native-select').length && 
+              !$target.closest('.multiselect-container').length) {
+            const $dropdown = $multiselect.find('.multiselect-container');
+            if ($dropdown.is(':visible')) {
+              // Hide dropdown by removing the show class
+              $dropdown.hide();
+            }
+          }
+        });
     });
 </script>
 <style>
@@ -164,6 +180,20 @@
   .multiselect-native-select, 
   .multiselect-native-select .btn-group {
     height: 100%;
+    position: relative;
+  }
+
+  /* Ensure dropdown menu appears below button on all viewports */
+  .multiselect-container.dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    min-width: 200px !important;
+    margin-top: 2px !important;
+    margin-left: 0 !important;
+    float: none !important;
+    z-index: 1000 !important;
   }
 
   .dropdown-toggle {
@@ -183,18 +213,69 @@
     line-height: 1;
   }
 
+  /* Dropdown menu positioning */
+  .category-container .dropdown-menu {
+    min-width: 200px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+  }
+
   @media screen and (max-width: 576px) {
     .navbar-brand {
       position: absolute;
       height: 50%;
       left:7.5%;
-    }    
+    }
+    
+    /* Fix dropdown on mobile */
+    .category-container {
+      width: 100%;
+    }
+    
+    .category-container .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0 !important;
+      right: auto !important;
+      min-width: 100%;
+      margin-top: 8px;
+    }
+
+    /* Keep multiselect dropdown below button */
+    .multiselect-native-select, 
+    .multiselect-native-select .btn-group {
+      position: relative;
+    }
+
+    .multiselect-container.dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: auto !important;
+      min-width: 100% !important;
+      margin-top: 2px !important;
+      float: none !important;
+      z-index: 1000 !important;
+    }
   }
-    @media screen and (max-width: 768px) {
+  
+  @media screen and (max-width: 768px) {
     .navbar-brand {
       position: absolute;
       height: 50%;
       left:7.5%;
-    }    
+    }
+    
+    /* Fix dropdown on tablet */
+    .category-container .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0 !important;
+      right: auto !important;
+      min-width: 200px;
+      margin-top: 8px;
+    }
   }
 </style>

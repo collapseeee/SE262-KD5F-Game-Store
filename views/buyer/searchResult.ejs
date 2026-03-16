@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
     <!-- Link style.css -->
     <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
   </head>
   <body>
     <!-- Navbar -->
@@ -26,9 +27,9 @@
          </div>        
       <!-- Game Cards Grid -->
       <div class="container">
-        <div class="row gap-4 justify-content-center align-items-start">
-          <% games.forEach((game) => { %>
-            <%-include('partials/gameCard', { game: game});%>
+        <div class="row gap-4 justify-content-center align-items-start scroll-reveal" style="--reveal-delay: 100ms;">
+          <% games.forEach((game, index) => { %>
+            <%-include('partials/gameCard', { game: game, index: index });%>
           <%})%>
         </div>
       </div>
@@ -40,6 +41,7 @@
 
     <%-include('partials/popup/sessionExpired')%>
     <%-include('partials/footer')%>
+    <script src="/scripts/scroll-reveal.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/scripts/result.js"></script>
     <script src="/scripts/session-expiry.js"></script>
