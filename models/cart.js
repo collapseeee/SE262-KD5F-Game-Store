@@ -32,7 +32,7 @@ const getIsInCart = async (userId, productId) => {
 
 const addToCart = async (userId, productId) => {
     const sql = `INSERT INTO carts (user_id, product_id, cart_date) VALUES (?, ?, ?);`
-    const date = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`;
+    const date = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`;
     const payload = [userId, productId, date];
 
     const [rows] = await db.promise().execute(sql, payload);
