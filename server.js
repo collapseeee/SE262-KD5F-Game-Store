@@ -151,7 +151,7 @@ app.get('/result', async (req, res) => {
     let categoriesName = "All Categories"; // Default value if no category is selected for the search.
     if (categoryArray.length > 0) {
         const nameList = categoryArray.map(id => {
-            const found = allCategories.find(c => c.category_id === id);
+            const found = allCategories.find(c => c.category_id === Number(id));
             return found ? found.name : null;
         }).filter(Boolean);
 
