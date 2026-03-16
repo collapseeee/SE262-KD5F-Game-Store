@@ -20,11 +20,16 @@
       <a href="/" class="back-to-home scroll-reveal" style="--reveal-delay: 100ms"><p>< Back to Home</p></a>
       <div class="row">
         <div class="items-container col-12 col-lg-8">
-            <% games.forEach((game, index) => { %>
-              <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
-                <%- include('partials/cartItem',{game: game}) %>
-              </div>
-            <% }); %>
+            <% if (games && games.length > 0) { %>
+                <% games.forEach((game, index) => { %>
+                <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
+                    <%- include('partials/cartItem',{game: game}) %>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <p class="fs-3 text-center mb-1 mt-4">Your cart is currently empty.</p>
+                <p class="fs-4 text-center">Go add something!</p>
+            <% }; %>
         </div>
         <div class="col-12 col-lg-4">
             <div class="items-container scroll-reveal" style="--reveal-delay: 200ms">
@@ -66,13 +71,15 @@
                 <div class="checkout-container rounded-4 mb-3 shadow p-4">
                     <% var sumPrice = 0; %>
                     <% var discount = 0; %>
-                    <% games.forEach((game) => { %>
-                        <% sumPrice += game.price; %>
-                        <div class="d-flex justify-content-between align-items-center mb-3 mt-0">
-                            <p class="text-start text-truncate flex-grow-1 m-0"><%- game.name -%></p>
-                            <p class="text-end text-nowrap m-0">$<%- game.price -%></p>
-                        </div>
-                    <% }); %>
+                    <% if (games && games.length > 0) { %>
+                        <% games.forEach((game) => { %>
+                            <% sumPrice += parseFloat(game.price); %>
+                            <div class="d-flex justify-content-between align-items-center mb-3 mt-0">
+                                <p class="text-start text-truncate flex-grow-1 m-0"><%- game.name -%></p>
+                                <p class="text-end text-nowrap m-0">$<%- game.price -%></p>
+                            </div>
+                        <% }); %>
+                    <% }; %>
                     <hr class="hr m-0" />
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-0">
                         <% var totalVat = Math.ceil(sumPrice*7)/100; %>
@@ -121,6 +128,7 @@
     <script src="/scripts/scroll-reveal.js"></script>
     <script src="/scripts/cart.js"></script>
     <script src="/scripts/session-expiry.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
   </body>
 </html>
 

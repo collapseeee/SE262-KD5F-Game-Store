@@ -15,7 +15,11 @@
           <%}%>
       </button>
       <button id="add-to-cart" data-game-id="<%=game.product_id%>">
-        <i class="bi-cart-plus fs-2"></i>
+          <% if (carts.includes(game.product_id)) {%>
+            <i class="bi-cart-plus-fill fs-2"></i>
+          <%} else {%>
+            <i class="bi-cart-plus fs-2"></i>
+          <%}%>
       </button>
     </form>
   </div>
