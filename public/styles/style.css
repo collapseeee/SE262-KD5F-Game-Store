@@ -1,4 +1,7 @@
 body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     color: #FEFEFE;
     background-color: #8122C9;
 }
