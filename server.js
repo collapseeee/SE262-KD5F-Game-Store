@@ -6,6 +6,7 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId,getProductByIdForEdit } = require('./models/product');
 const { getAllCategory } = require('./models/category');
@@ -62,18 +63,23 @@ app.get('/', async (req, res) => {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
+        const userCarts = await getCartByUserId(user.user_id);
+        const cartIds = userCarts.map(item => item.product_id);
+
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
             wishlists: wishlistIds,
-            username: req.session.username
+            username: req.session.username,
+            carts: cartIds
         });
     } else {
         res.render('index', {
             categories: await getAllCategory(),
             games: await getAllProduct(),
             username: null,
-            wishlists: []
+            wishlists: [],
+            carts: []
         });
     }
 });
@@ -165,7 +171,8 @@ app.get('/result', async (req, res) => {
         // for displaying in result page
         searchedName: gameName || "All Games",
         searchedCategory: categoriesName,
-        wishlists: await getWishlistByUserId(user.user_id)
+        wishlists: await getWishlistByUserId(user.user_id),
+        carts: await getCartByUserId(user.user_id)
     });
 });
 
@@ -191,28 +198,19 @@ app.get('/product/:id', async (req, res) => {
     }
 });
 
+// Cart page
 app.get('/cart', async (req, res) => {
-    // Mock data, Get data FROM Cart table WHERE userid = ...
-    const games = [{
-        name: "HELLDIVER 9",
-        categories: ['Action', 'Shooter'],
-        price: 999.99,
-        added_date: Date.now()
-    }, {
-        name: "Mangophobia",
-        categories: ['Horror'],
-        price: 0.99,
-        added_date: Date.now()
-    }];
-    if (req.session.username) {
-        res.render('buyer/shoppingCart', {
-            // Data here (Currently mock data)
-            games: games,
-            categories: await getAllCategory()
-        });
-    } else {
-        res.redirect('/identification');
-    }
+    const user = await getUserByName(req.session.username);
+    if (!user) res.redirect('/identification');
+
+    const userId = user.user_id;
+
+    const cartData = await getCartByUserId(userId);
+    const games = Array.isArray(cartData) ? cartData : [];
+    res.render('buyer/shoppingCart', {
+        games: games,
+        categories: await getAllCategory()
+    });
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
@@ -594,6 +592,30 @@ app.delete('/api/wishlist/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/cart/:id', async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await addToCart(user.user_id, product_id)
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.delete('/api/cart/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await deleteFromCart(user.user_id, productId);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
