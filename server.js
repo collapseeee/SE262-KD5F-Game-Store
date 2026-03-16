@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId,getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, getProductByIdForEdit } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -157,7 +157,7 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-    
+
     const user = await getUserByName(req.session.username);
     res.render('buyer/searchResult', {
         categories: allCategories,
@@ -235,10 +235,21 @@ app.get('/register', (req, res) => {
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
+        const wishlists = await getWishlistByUserId(user.user_id);
+        const exportedWishlists = wishlists.map(wishlist => {
+            return {
+                product_id: wishlist.product_id,
+                name: wishlist.name,
+                price: wishlist.price,
+                poster_url: wishlist.poster_url,
+                categories: wishlist.categories,
+                wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
+            }
+        });
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user.user_id)
+            games: exportedWishlists
         });
     } else {
         res.redirect('/identification');
