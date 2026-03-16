@@ -131,6 +131,10 @@ app.get('/account', async (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+
+    if (!user) res.redirect('/identification');
+    
     const { gameName, categories, category } = req.query;
     let categoryArray = [];
 
@@ -164,7 +168,6 @@ app.get('/result', async (req, res) => {
         categoriesName = nameList.join(" | ");
     }
     
-    const user = await getUserByName(req.session.username);
     res.render('buyer/searchResult', {
         categories: allCategories,
         games: results,
