@@ -30,7 +30,17 @@ const getProductById = async (id) => {
     } catch (err) {
         console.error(err);
     }
-}
+};
+const getProductByIdForEdit = async (id) => {
+    const sql = `SELECT product_id, name, price, description, poster_url FROM products WHERE product_id = ?`;
+    const payload = [id];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows[0];
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 const getProductRequirementById = async (id) => {
     const sql = `
@@ -333,5 +343,6 @@ module.exports = {
     updateSystemRequirements,
     updateGallery,
     updateVideo,
-    deleteProdcutListByProductId
+    deleteProdcutListByProductId,
+    getProductByIdForEdit
 };
