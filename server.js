@@ -87,10 +87,13 @@ app.get('/register', (req, res) => {
 });
 app.get('/sellerInformation', async (req, res) => {
     try {
-        const rows = await Account.getUserById("1");
-        const sellerData = (rows && rows.length > 0) ? rows[0] : null;
-        res.render('seller/personalInformation', { seller: sellerData });
-        console.log('Seller data fetched for personal information page:', sellerData);
+        if (req.session.username) {
+            const user = await Account.getUserByName(req.session.username);
+            res.render('seller/personalInformation', { seller: user });
+
+        } else {
+            res.render('/identification');
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send("Error fetching seller info");
@@ -272,7 +275,8 @@ app.post('/loginSeller', (req, res) => {
         .then(() => {
             req.session.username = username;
 
-            res.redirect('/');
+            res.redirect('/dashboard');
+            console.log(req.session.username);
         })
         .catch(error => {
             console.error(error);
