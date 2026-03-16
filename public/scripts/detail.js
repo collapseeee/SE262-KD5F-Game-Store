@@ -13,6 +13,21 @@ wishlistButton.addEventListener('click', event => {
     }
 });
 
+const cartButton = document.body.querySelector('.add-to-cart-btn');
+
+cartButton.addEventListener('click', event => {
+    const icon = event.target.querySelector('i');
+    if (icon.classList.contains('bi-cart-plus')) {
+        axios.post(`/api/cart/${document.body.dataset.gameId}`);
+        icon.classList.remove('bi-cart-plus');
+        icon.classList.add('bi-cart-plus-fill');
+    } else {
+        axios.delete(`/api/cart/${document.body.dataset.gameId}`);
+        icon.classList.remove('bi-cart-plus-fill');
+        icon.classList.add('bi-cart-plus');
+    }
+});
+
 const leftArrow = document.body.querySelector('#left-arrow');
 const rightArrow = document.body.querySelector('#right-arrow');
 const mainImage = document.body.querySelector('#main-image > img');
