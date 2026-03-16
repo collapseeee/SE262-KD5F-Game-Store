@@ -99,6 +99,9 @@
         </div>
       </div>
     </main>
+    <script src="/scripts/personalInfo-animations.js"></script>
+
+    <%-include('partials/popup/sessionExpired')%>
     <%-include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/axios/dist/axios.min.js"></script>
@@ -111,6 +114,7 @@
         window.location.href = '/';
       });
     </script>
+    <script src="/scripts/session-expiry.js"></script>
   </body>
 
   <style>

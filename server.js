@@ -286,12 +286,13 @@ app.post('/loginSeller', (req, res) => {
 });
 
 app.get('/signout', (req, res) => {
+    const expired = req.query.expired;
     req.session.destroy(err => {
         if (err) {
             console.error(err);
             res.status(500).send('Error during logout');
         } else {
-            res.redirect('/');
+            res.redirect(expired ? '/identification?expired=true' : '/');
         }
     });
 });
