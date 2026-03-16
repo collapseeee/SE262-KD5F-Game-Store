@@ -7,7 +7,7 @@ const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId,getProductByIdForEdit } = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -369,16 +369,16 @@ app.get('/api/product/add', (req, res) => {
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
-        const product = await getProductById(productId);
+        const product = await getProductByIdForEdit(productId);
         const categories = await getCategoriesByProductId(productId);
         const requirements = await getRequirementsByProductId(productId);
         const images = await getImagesByProductId(productId);
         const videoData = await getVideosByProductId(productId);
-        if (!product[0]) return res.status(404).send("Product not found");
-        console.log("Fetched product for edit:", product[0]);
+        if (!product) return res.status(404).send("Product not found");
+        console.log("Fetched product for edit:", product);
         res.render('seller/product', {
             mode: 'edit',
-            product: product[0],
+            product: product,
             min: requirements.min,
             rec: requirements.rec,
             gallery: images,
