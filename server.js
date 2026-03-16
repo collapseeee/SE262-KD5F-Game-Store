@@ -206,9 +206,27 @@ app.get('/cart', async (req, res) => {
     const userId = user.user_id;
 
     const cartData = await getCartByUserId(userId);
-    const games = Array.isArray(cartData) ? cartData : [];
+    const carts = Array.isArray(cartData) ? cartData : [];
+    const exportedCarts = carts.map(cart => {
+        const dateObj = new Date(cart.cart_date);
+
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        return {
+            product_id: cart.product_id,
+            name: cart.name,
+            price: cart.price,
+            poster_url: cart.poster_url,
+            categories: cart.categories,
+            cart_date: formattedDate
+        }
+    });
     res.render('buyer/shoppingCart', {
-        games: games,
+        games: exportedCarts,
         categories: await getAllCategory()
     });
 });
