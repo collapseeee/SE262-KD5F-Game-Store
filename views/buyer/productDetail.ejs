@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="/styles/style.css" />
     <link rel="stylesheet" href="/styles/productDetail.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
   </head>
   <body data-game-id="<%=gameDetails.product_id%>" data-images="<%=images%>">
     <%- include('partials/navbar') %>
     <main class="container my-4">
-      <a href="/" class="back-to-home"><p>< Back to Home</p></a>
+      <a href="/" class="back-to-home scroll-reveal"><p>< Back to Home</p></a>
       <!-- detail -->
-      <div class="contentBox p-4 pt-5 rounded-4">
+      <div class="contentBox p-4 pt-5 rounded-4 scroll-reveal" style="--reveal-delay: 100ms">
         <div class="row">
         <!-- Left: Images -->
         <div class="col-md-8 align-items-center">
@@ -84,7 +85,7 @@
       </div>
 
       <!-- description -->
-      <div class="contentBox mt-4 rounded-4 px-5 py-5">
+      <div class="contentBox mt-4 rounded-4 px-5 py-5 scroll-reveal" style="--reveal-delay: 200ms">
         <div class="fs-3 fw-bold mb-3">DESCRIPTION</div>
         <div class="section p-3 rounded-4">
           <p><%=gameDetails.description%></p>
@@ -92,7 +93,7 @@
       </div>
 
       <!-- system requirements -->
-      <div class="contentBox mt-4 rounded-4 px-5 py-5">
+      <div class="contentBox mt-4 rounded-4 px-5 py-5 scroll-reveal" style="--reveal-delay: 300ms">
         <div class="fs-3 fw-bold mb-3">SYSTEM REQUIREMENTS</div>
         <div class="row section p-3 rounded-4">
           <div class="col-lg-6">
@@ -157,5 +158,6 @@
   </body>
   <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/axios/dist/axios.min.js"></script>
+  <script src="/scripts/scroll-reveal.js"></script>
   <script src="/scripts/detail.js"></script>
 </html>
