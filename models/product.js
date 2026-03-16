@@ -209,7 +209,8 @@ async function addSystemRequirements(productId, data) {
             data.rec_notes || '-'
         ]
     ];
-
+    console.log("Prepared System Requirements Values:", values);
+    
     const sql = `
         INSERT INTO hardware_requirement
         (product_id, type, operating_system, processor, memory, graphics_card, directx_version, network, storage, soundcard, additional_note)
@@ -222,6 +223,7 @@ async function addSystemRequirements(productId, data) {
         console.error("Error saving System Requirements:", error);
         throw error;
     }
+        
 }
 
 
