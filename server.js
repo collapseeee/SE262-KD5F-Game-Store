@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory} = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory,deleteCategoryByCategoryId} = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -369,14 +369,6 @@ app.post('/signup', async (req, res) => {
 app.get('/api/product', async (req, res) => {
     // GET all products
 });
-
-app.delete('/categories/:id', (req, res) => {
-    const targetId = parseInt(req.params.id);
-    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
-    categories = categories.filter(cat => cat.id !== targetId);
-    res.json({ success: true });
-    alert(`Deleted category with ID: ${targetId}`);
-});
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
@@ -580,12 +572,18 @@ app.delete('/api/games/:id', async (req, res) => {
         console.error(err);
     }
 });
-app.delete('/categories/:id', (req, res) => {
+app.delete('/categories/:id', async(req, res) => {
     const targetId = parseInt(req.params.id);
-
-    categories = categories.filter(cat => cat.id !== targetId);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects)
+    const category = categories.filter(cat => cat.id !== targetId);
+    if (category) {
+        await deleteCategoryByCategoryId(targetId);
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
+    }
+    else{
+        console.log('Category not found');
+    }
 });
 app.delete('/api/gallery/delete/:id', async (req, res) => {
     const imageId = parseInt(req.params.id);
