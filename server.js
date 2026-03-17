@@ -6,6 +6,7 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, getProductByIdForEdit } = require('./models/product');
 const { getAllCategory } = require('./models/category');
@@ -62,18 +63,23 @@ app.get('/', async (req, res) => {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
+        const userCarts = await getCartByUserId(user.user_id);
+        const cartIds = userCarts.map(item => item.product_id);
+
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
             wishlists: wishlistIds,
-            username: req.session.username
+            username: req.session.username,
+            carts: cartIds
         });
     } else {
         res.render('index', {
             categories: await getAllCategory(),
             games: await getAllProduct(),
             username: null,
-            wishlists: []
+            wishlists: [],
+            carts: []
         });
     }
 });
@@ -125,6 +131,10 @@ app.get('/account', async (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+
+    if (!user) res.redirect('/identification');
+    
     const { gameName, categories, category } = req.query;
     let categoryArray = [];
 
@@ -157,15 +167,15 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-
-    const user = await getUserByName(req.session.username);
+    
     res.render('buyer/searchResult', {
         categories: allCategories,
         games: results,
         // for displaying in result page
         searchedName: gameName || "All Games",
         searchedCategory: categoriesName,
-        wishlists: await getWishlistByUserId(user.user_id)
+        wishlists: await getWishlistByUserId(user.user_id),
+        carts: await getCartByUserId(user.user_id)
     });
 });
 
@@ -177,11 +187,13 @@ app.get('/product/:id', async (req, res) => {
         const images = await getImageByGameProductId(gameId);
         const exportImage = images.map(image => image.image_url);
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+        const isInCart = await getIsInCart(user.user_id, gameId)
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
             gameDetails: game,
             isWishlisted: isWishlisted,
+            isInCart: isInCart,
             images: exportImage,
             requirements: await getProductRequirementById(gameId)
         });
@@ -191,28 +203,37 @@ app.get('/product/:id', async (req, res) => {
     }
 });
 
+// Cart page
 app.get('/cart', async (req, res) => {
-    // Mock data, Get data FROM Cart table WHERE userid = ...
-    const games = [{
-        name: "HELLDIVER 9",
-        categories: ['Action', 'Shooter'],
-        price: 999.99,
-        added_date: Date.now()
-    }, {
-        name: "Mangophobia",
-        categories: ['Horror'],
-        price: 0.99,
-        added_date: Date.now()
-    }];
-    if (req.session.username) {
-        res.render('buyer/shoppingCart', {
-            // Data here (Currently mock data)
-            games: games,
-            categories: await getAllCategory()
+    const user = await getUserByName(req.session.username);
+    if (!user) res.redirect('/identification');
+
+    const userId = user.user_id;
+
+    const cartData = await getCartByUserId(userId);
+    const carts = Array.isArray(cartData) ? cartData : [];
+    const exportedCarts = carts.map(cart => {
+        const dateObj = new Date(cart.cart_date);
+
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-    } else {
-        res.redirect('/identification');
-    }
+
+        return {
+            product_id: cart.product_id,
+            name: cart.name,
+            price: cart.price,
+            poster_url: cart.poster_url,
+            categories: cart.categories,
+            cart_date: formattedDate
+        }
+    });
+    res.render('buyer/shoppingCart', {
+        games: exportedCarts,
+        categories: await getAllCategory()
+    });
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
@@ -297,12 +318,13 @@ app.post('/loginSeller', (req, res) => {
 });
 
 app.get('/signout', (req, res) => {
+    const expired = req.query.expired;
     req.session.destroy(err => {
         if (err) {
             console.error(err);
             res.status(500).send('Error during logout');
         } else {
-            res.redirect('/');
+            res.redirect(expired ? '/identification?expired=true' : '/');
         }
     });
 });
@@ -604,6 +626,30 @@ app.delete('/api/wishlist/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/cart/:id', async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await addToCart(user.user_id, product_id)
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.delete('/api/cart/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await deleteFromCart(user.user_id, productId);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');

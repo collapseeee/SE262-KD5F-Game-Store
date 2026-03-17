@@ -17,7 +17,11 @@ const successProceedBtn = document.getElementById('success-popup-button-proceed'
 const backToCartBtn = document.getElementById('back-button');
 const paymentTxt = document.getElementById('payment-text')
 
+const cartContainer = document.querySelectorAll('.cart-container');
+
 checkoutBtn.addEventListener('click', (e) => {
+    if (cartContainer.length === 0) return;
+    
     if (paymentContainer.style.display !== 'block') { // First click, show payment methods.
         cartHeaderSpan.style.color = '#fefefe7e'
         checkoutHeaderSpan.style.display = 'block';
@@ -89,12 +93,13 @@ const promoInput = document.getElementById('promo-input');
 const finalPriceSpan = document.getElementById('final-price-msg');
 const discountSpan = document.getElementById('discount-msg');
 const discountRateSpan = document.getElementById('discount-rate-msg');
-const totalAmountPopup = document.getElementById('payment-popup-price-p');
 const couponTxt = document.getElementById('coupon-text');
 let currentTotal = finalPriceSpan.innerHTML;
 let isDiscountApplied = false;
 
 redeemBtn.addEventListener('click', () => {
+    if (cartContainer.length === 0) return;
+
     const code = promoInput.value.trim().toLowerCase();
 
     if (isDiscountApplied) {
@@ -111,7 +116,7 @@ redeemBtn.addEventListener('click', () => {
         discountSpan.innerHTML = discountAmount.toFixed(2);
         finalPriceSpan.innerText = currentTotal.toFixed(2);
         discountRateSpan.innerHTML = "(5%)";
-        totalAmountPopup.innerHTML = currentTotal.toFixed(2);
+        
 
         promoInput.classList.add('disabled');
         redeemBtn.classList.add('disabled');
@@ -120,3 +125,16 @@ redeemBtn.addEventListener('click', () => {
         couponTxt.innerHTML = 'Invalid coupon!';
     }
 });
+
+// Remove Cart Item
+const cartItems = document.querySelectorAll('.cart-container');
+
+cartItems.forEach(item => {
+    item.addEventListener('click', async (event) => {
+        if (event.target.id === 'remove') {
+            if (window.confirm(`Are you sure to delete this item from your cart?`) === true) {
+                axios.delete(`/api/cart/${event.target.dataset.itemId}`).then(() => location.reload());
+            }
+        }
+    })
+})

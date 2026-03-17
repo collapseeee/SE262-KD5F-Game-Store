@@ -12,8 +12,18 @@ cards.forEach((card) => {
             return;
         }
         if (cartButton) {
+            const icon = event.target.querySelector('i')
             const id = event.target.getAttribute('data-game-id');
-            console.log('add to cart', id);
+            if (icon.classList.contains('bi-cart-plus')) {
+                axios.post(`/api/cart/${id}`)
+                icon.classList.remove('bi-cart-plus');
+                icon.classList.add('bi-cart-plus-fill');
+            } else {
+                axios.delete(`/api/cart/${id}`);
+                icon.classList.remove('bi-cart-plus-fill');
+                icon.classList.add('bi-cart-plus');
+            }
+            return;
         } else if (wishlistButton) {
             const icon = event.target.querySelector('i')
             if (icon.classList.contains('bi-heart')) {
