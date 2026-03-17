@@ -212,28 +212,13 @@ a > i, .bi-search {
   @keyframes dropdownFadeIn {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateX(-100px) translateY(-10px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(-100px) translateY(0);
     }
   }
-
-  @keyframes dropdownFadeOut {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-  }
-
-  .category-container .dropdown-menu.hiding {
-  animation: dropdownFadeOut 0.25s ease forwards !important;
-}
 
   .category-container .dropdown-menu {
     opacity: 0;
@@ -253,6 +238,9 @@ a > i, .bi-search {
   }
 
   .category-container .dropdown-menu button {
+    word-break: break-word;
+    line-height: 1.3;
+    text-align: left;
     padding: 4px 16px!important; 
     margin-bottom: 2px;
     gap: 4px;
@@ -268,7 +256,6 @@ a > i, .bi-search {
     width: max-content;
     max-width: 280px;
     top: 135% !important;
-    
   }
 }
 
@@ -280,8 +267,8 @@ a > i, .bi-search {
     .category-container .dropdown-menu  {
     position: absolute !important;
     width: max-content;
-    max-width: 480px;
-    min-width: 400px;
+    max-width: 520px;
+    min-width: 420px;
     top: 135% !important;
   }
 }
@@ -340,6 +327,10 @@ a > i, .bi-search {
       margin-top: 8px;
     }
 
+    .category-container .dropdown-menu.show {
+      transform: translateX(-100px) !important; /* Shift left to align with button */
+    }
+
     /* Keep multiselect dropdown below button */
     .multiselect-native-select, 
     .multiselect-native-select .btn-group {
@@ -364,6 +355,10 @@ a > i, .bi-search {
 
     .multiselect-container::before {
       right: 70px; /* Adjust for full-width dropdown */
+    }
+
+    .category-container .dropdown-menu button {
+      white-space: normal;
     }
   }
   
