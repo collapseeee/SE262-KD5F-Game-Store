@@ -15,6 +15,7 @@ CREATE TABLE products (
 CREATE TABLE categories (
 	category_id INT NOT NULL UNIQUE AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE,
+    isHidden BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY (category_id)
 ) ENGINE=InnoDB;
 
@@ -98,7 +99,6 @@ CREATE TABLE product_lists (
     category_id INT DEFAULT NULL,
     user_id INT NOT NULL,
     release_date DATE NOT NULL,
-    isHidden BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES accounts(user_id) ON DELETE RESTRICT,
