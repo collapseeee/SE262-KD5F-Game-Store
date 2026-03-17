@@ -6,8 +6,9 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId,getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory,deleteCategoryByCategoryId} = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -62,18 +63,23 @@ app.get('/', async (req, res) => {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
+        const userCarts = await getCartByUserId(user.user_id);
+        const cartIds = userCarts.map(item => item.product_id);
+
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
             wishlists: wishlistIds,
-            username: req.session.username
+            username: req.session.username,
+            carts: cartIds
         });
     } else {
         res.render('index', {
             categories: await getAllCategory(),
             games: await getAllProduct(),
             username: null,
-            wishlists: []
+            wishlists: [],
+            carts: []
         });
     }
 });
@@ -125,6 +131,10 @@ app.get('/account', async (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+
+    if (!user) res.redirect('/identification');
+    
     const { gameName, categories, category } = req.query;
     let categoryArray = [];
 
@@ -184,11 +194,13 @@ app.get('/product/:id', async (req, res) => {
         const images = await getImageByGameProductId(gameId);
         const exportImage = images.map(image => image.image_url);
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+        const isInCart = await getIsInCart(user.user_id, gameId)
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
             gameDetails: game,
             isWishlisted: isWishlisted,
+            isInCart: isInCart,
             images: exportImage,
             requirements: await getProductRequirementById(gameId)
         });
@@ -198,28 +210,37 @@ app.get('/product/:id', async (req, res) => {
     }
 });
 
+// Cart page
 app.get('/cart', async (req, res) => {
-    // Mock data, Get data FROM Cart table WHERE userid = ...
-    const games = [{
-        name: "HELLDIVER 9",
-        categories: ['Action', 'Shooter'],
-        price: 999.99,
-        added_date: Date.now()
-    }, {
-        name: "Mangophobia",
-        categories: ['Horror'],
-        price: 0.99,
-        added_date: Date.now()
-    }];
-    if (req.session.username) {
-        res.render('buyer/shoppingCart', {
-            // Data here (Currently mock data)
-            games: games,
-            categories: await getAllCategory()
+    const user = await getUserByName(req.session.username);
+    if (!user) res.redirect('/identification');
+
+    const userId = user.user_id;
+
+    const cartData = await getCartByUserId(userId);
+    const carts = Array.isArray(cartData) ? cartData : [];
+    const exportedCarts = carts.map(cart => {
+        const dateObj = new Date(cart.cart_date);
+
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-    } else {
-        res.redirect('/identification');
-    }
+
+        return {
+            product_id: cart.product_id,
+            name: cart.name,
+            price: cart.price,
+            poster_url: cart.poster_url,
+            categories: cart.categories,
+            cart_date: formattedDate
+        }
+    });
+    res.render('buyer/shoppingCart', {
+        games: exportedCarts,
+        categories: await getAllCategory()
+    });
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
@@ -242,10 +263,21 @@ app.get('/register', (req, res) => {
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
+        const wishlists = await getWishlistByUserId(user.user_id);
+        const exportedWishlists = wishlists.map(wishlist => {
+            return {
+                product_id: wishlist.product_id,
+                name: wishlist.name,
+                price: wishlist.price,
+                poster_url: wishlist.poster_url,
+                categories: wishlist.categories,
+                wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
+            }
+        });
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user.user_id)
+            games: exportedWishlists
         });
     } else {
         res.redirect('/identification');
@@ -343,14 +375,6 @@ app.post('/signup', async (req, res) => {
 
 app.get('/api/product', async (req, res) => {
     // GET all products
-});
-
-app.delete('/categories/:id', (req, res) => {
-    const targetId = parseInt(req.params.id);
-    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
-    categories = categories.filter(cat => cat.id !== targetId);
-    res.json({ success: true });
-    alert(`Deleted category with ID: ${targetId}`);
 });
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
@@ -456,12 +480,13 @@ app.post('/api/product/add', upload.fields([
         }
     });
 
-app.put('/categories/:id', (req, res) => {
+app.put('/categories/:id', async(req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
-    const category = categories.find(cat => cat.id === targetId);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects
+    const category = categories.find(cat => cat.category_id === targetId);
     if (category) {
-        category.name = newName;
+        await renameCategory(targetId, newName); // Call the function to update the category name in the database
         res.json({ success: true });
         console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
     } else {
@@ -554,12 +579,18 @@ app.delete('/api/games/:id', async (req, res) => {
         console.error(err);
     }
 });
-app.delete('/categories/:id', (req, res) => {
+app.delete('/categories/:id', async(req, res) => {
     const targetId = parseInt(req.params.id);
-
-    categories = categories.filter(cat => cat.id !== targetId);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects)
+    const category = categories.filter(cat => cat.id !== targetId);
+    if (category) {
+        await deleteCategoryByCategoryId(targetId);
     res.json({ success: true });
     console.log(`Deleted category with ID: ${targetId}`);
+    }
+    else{
+        console.log('Category not found');
+    }
 });
 app.delete('/api/gallery/delete/:id', async (req, res) => {
     const imageId = parseInt(req.params.id);
@@ -601,6 +632,30 @@ app.delete('/api/wishlist/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/cart/:id', async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await addToCart(user.user_id, product_id)
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.delete('/api/cart/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await deleteFromCart(user.user_id, productId);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');

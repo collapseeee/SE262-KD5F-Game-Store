@@ -35,10 +35,10 @@
                         <tr id="row-cat-<%= index %>" class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
                         <td class="ps-3 py-3 text-white">
                             <span class="view-mode"><%= cat.name %></span>
-                            <input type="text" 
+                            <input type="text"
                                     class="form-control edit-mode d-none custom-input" 
                                     value="<%= cat.name %>"
-                                    onkeyup="if(event.key === 'Enter') saveEdit('<%= index %>', <%= cat.id %>)">
+                                    onkeyup="if(event.key === 'Enter') saveEdit('<%= index %>', <%= cat.category_id %>)">
                         </td>
                         <td class="text-end pe-3">
                             <div class="d-none d-lg-flex justify-content-end align-items-center gap-3">
@@ -50,9 +50,8 @@
                                 
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-action-edit view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                    <button class="btn btn-action-delete view-mode" onclick="deleteItem('categories', <%= cat.id %>)">Delete</button>
-                                    
-                                    <button class="btn btn-action-done edit-mode d-none" onclick="saveEdit('<%= index %>', <%= cat.id %>)">Done</button>
+                                    <button class="btn btn-action-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
+                                    <button class="btn btn-action-done edit-mode d-none" onclick="saveEdit('<%= index %>', <%= cat.category_id %>)">Done</button>
                                     <button class="btn btn-action-delete edit-mode d-none" onclick="disableEdit('<%= index %>')">Delete</button>
                                 </div>
                             </div>
@@ -68,8 +67,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <button class="btn btn-popover-rename view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                        <button class="btn btn-popover-delete view-mode" onclick="deleteItem('categories', <%= cat.id %>)">Delete</button>
-                    
+                                        <button class="btn btn-popover-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
                                     </ul>
                                 </div>
                         </td>
@@ -163,17 +161,13 @@ function toggleVisibility(id) {
     }
 }
 
-async function deleteItem(type, id) {
+async function deleteItem(id) {
         try {
-            
-            const response = await fetch(`/${type}/${id}`, {
+            const response = await fetch(`/categories/${id}`, {
                 method: 'DELETE'
             });
-
             const result = await response.json();
-
             if (result.success) {
-                
                 window.location.reload();
             } else {
                 alert("Error in database");
@@ -205,8 +199,8 @@ function disableEdit(index) {
 async function saveEdit(index, id) {
     const row = document.getElementById(`row-cat-${index}`);
     const newName = row.querySelector('input.edit-mode').value;
-
-    
+    console.log("Saving new name:", newName);
+    console.log("Category ID:", id);
     try {
         const response = await fetch(`/categories/${id}`, {
             method: 'PUT',
