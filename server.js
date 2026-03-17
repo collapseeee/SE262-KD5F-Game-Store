@@ -8,10 +8,10 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
-const { addOrder,updateUserTotalSpend,updateUserTotalGame } = require('./models/checkout')
+const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -672,18 +672,26 @@ app.delete('/api/cart/:id', async (req, res) => {
 app.post('/api/order' , async (req, res) => {
     try {
         const user = await getUserByName(req.session.username);
-        const cartItems = await getCartByUserId(user.user_id);
+        const userId = user.user_id;
+        const cartItems = await getCartByUserId(userId);
         if (cartItems.length === 0) return res.status(400).send('Cart is empty');
 
         const productIds = cartItems.map(item => item.product_id);
         const { method, finalPrice, gameCount } = req.body;
 
-        await addOrder(user.user_id, productIds, method, finalPrice);
+        await addOrder(userId, productIds, method, finalPrice);
         
-        await updateUserTotalSpend(user.user_id, finalPrice);
-        await updateUserTotalGame(user.user_id, gameCount);
+        await updateUserTotalSpend(userId, finalPrice);
+        await updateUserTotalGame(userId, gameCount);
 
-        await deleteCart(user.user_id);
+        for (const item of cartItems) {
+            const sellerId = await getSellerIdByProductId(item.product_id);
+            if (sellerId) {
+                await updateUserTotalSale(sellerId, item.price);
+            }
+        }
+
+        await deleteCart(userId);
 
         res.status(200).send('Order Processed Successfully');
     } catch (err) {

@@ -44,8 +44,21 @@ const updateUserTotalGame = async (userId, addedAmount) => { // PUT method
     return rows;
 }
 
+const updateUserTotalSale = async (sellerId, addedAmount) => { // PUT method
+    const sql = `UPDATE accounts SET total_sale = ? WHERE user_id = ?;`
+    const seller = await getUserById(sellerId);
+    if (!seller) throw new Error("Seller not found");
+
+    const newAmount = Number(seller.total_sale) + Number(addedAmount); 
+    const payload = [newAmount, sellerId];
+
+    const [rows] = await db.promise().execute(sql, payload);
+    return rows;
+}
+
 module.exports = {
     addOrder,
     updateUserTotalSpend,
-    updateUserTotalGame
+    updateUserTotalGame,
+    updateUserTotalSale
 }
