@@ -119,7 +119,7 @@ const finalPriceSpan = document.getElementById('final-price-msg');
 const discountSpan = document.getElementById('discount-msg');
 const discountRateSpan = document.getElementById('discount-rate-msg');
 const couponTxt = document.getElementById('coupon-text');
-let currentTotal = finalPriceSpan.innerHTML;
+let currentTotal = parseFloat(finalPriceSpan.innerHTML);
 let isDiscountApplied = false;
 
 redeemBtn.addEventListener('click', () => {
