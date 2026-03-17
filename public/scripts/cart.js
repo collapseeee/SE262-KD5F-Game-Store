@@ -1,3 +1,5 @@
+import { customConfirm } from "./customConfirm.js";
+
 // Checkout popups logics
 const cartHeaderSpan = document.getElementById('cart-header-span');
 const checkoutHeaderSpan = document.getElementById('checkout-header-span');
@@ -132,7 +134,9 @@ const cartItems = document.querySelectorAll('.cart-container');
 cartItems.forEach(item => {
     item.addEventListener('click', async (event) => {
         if (event.target.id === 'remove') {
-            if (window.confirm(`Are you sure to delete this item from your cart?`) === true) {
+            const confirmed = await customConfirm("Are you sure to delete this item from your cart?");
+
+            if (confirmed) {
                 axios.delete(`/api/cart/${event.target.dataset.itemId}`).then(() => location.reload());
             }
         }

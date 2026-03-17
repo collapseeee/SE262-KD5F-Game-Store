@@ -1,30 +1,50 @@
 const wishlistButton = document.body.querySelector('.wishlist-btn');
 
-wishlistButton.addEventListener('click', event => {
+wishlistButton.addEventListener('click', async (event) => {
     const icon = event.target.querySelector('i');
     if (icon.classList.contains('bi-heart')) {
-        axios.post(`/api/wishlist/${document.body.dataset.gameId}`);
-        icon.classList.remove('bi-heart');
-        icon.classList.add('bi-heart-fill');
+        try {
+            await axios.post(`/api/wishlist/${document.body.dataset.gameId}`);
+            icon.classList.remove('bi-heart');
+            icon.classList.add('bi-heart-fill');
+            Notify.show('Added to wishlist!', 'success');
+        } catch (err) {
+            Notify.show('Failed to add to wishlist', 'error');
+        }
     } else {
-        axios.delete(`/api/wishlist/${document.body.dataset.gameId}`);
-        icon.classList.remove('bi-heart-fill');
-        icon.classList.add('bi-heart');
+        try {
+            await axios.delete(`/api/wishlist/${document.body.dataset.gameId}`);
+            icon.classList.remove('bi-heart-fill');
+            icon.classList.add('bi-heart');
+            Notify.show('Removed from wishlist', 'info');
+        } catch (err) {
+            Notify.show('Failed to remove from wishlist', 'error');
+        }
     }
 });
 
 const cartButton = document.body.querySelector('.add-to-cart-btn');
 
-cartButton.addEventListener('click', event => {
+cartButton.addEventListener('click', async (event) => {
     const icon = event.target.querySelector('i');
     if (icon.classList.contains('bi-cart-plus')) {
-        axios.post(`/api/cart/${document.body.dataset.gameId}`);
-        icon.classList.remove('bi-cart-plus');
-        icon.classList.add('bi-cart-plus-fill');
+        try {
+            await axios.post(`/api/cart/${document.body.dataset.gameId}`);
+            icon.classList.remove('bi-cart-plus');
+            icon.classList.add('bi-cart-plus-fill');
+            Notify.show('Added to cart!', 'success');
+        } catch (err) {
+            Notify.show('Failed to add to cart', 'error');
+        }
     } else {
-        axios.delete(`/api/cart/${document.body.dataset.gameId}`);
-        icon.classList.remove('bi-cart-plus-fill');
-        icon.classList.add('bi-cart-plus');
+        try {
+            await axios.delete(`/api/cart/${document.body.dataset.gameId}`);
+            icon.classList.remove('bi-cart-plus-fill');
+            icon.classList.add('bi-cart-plus');
+            Notify.show('Removed from cart', 'info');
+        } catch (err) {
+            Notify.show('Failed to remove from cart', 'error');
+        }
     }
 });
 
