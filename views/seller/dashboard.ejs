@@ -35,7 +35,7 @@
                         <tr id="row-cat-<%= index %>" class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
                         <td class="ps-3 py-3 text-white">
                             <span class="view-mode"><%= cat.name %></span>
-                            <input type="text" 
+                            <input type="text"
                                     class="form-control edit-mode d-none custom-input" 
                                     value="<%= cat.name %>"
                                     onkeyup="if(event.key === 'Enter') saveEdit('<%= index %>', <%= cat.category_id %>)">
@@ -135,8 +135,10 @@
         </div>
     </div>
 </main>
+    <%- include('../buyer/partials/popup/sessionExpired')%>
     <%- include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/session-expiry.js"></script>
   </body>
 </html>
 <script>
@@ -197,8 +199,8 @@ function disableEdit(index) {
 async function saveEdit(index, id) {
     const row = document.getElementById(`row-cat-${index}`);
     const newName = row.querySelector('input.edit-mode').value;
-
-    
+    console.log("Saving new name:", newName);
+    console.log("Category ID:", id);
     try {
         const response = await fetch(`/categories/${id}`, {
             method: 'PUT',

@@ -156,6 +156,7 @@
             </div>
         </form>
     </main>
+    <%- include('../buyer/partials/popup/sessionExpired')%>
     <%- include('partials/footer')%>
 
     <script>
@@ -234,6 +235,7 @@ document.querySelector('form').addEventListener('submit', function (e) {
             }
         });
     </script>
+    <script src="/scripts/session-expiry.js"></script>
 </body>
 </html>
 <style>

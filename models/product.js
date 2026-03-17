@@ -311,6 +311,16 @@ const updateVideo = async (videoId, videoUrl) => {
     }
 };
 
+const renameCategory = async (categoryId, newName) => {
+    const sql = `UPDATE categories SET name = ? WHERE category_id = ?`;
+    try {
+        const [result] = await db.promise().execute(sql, [newName, categoryId]);
+        return result;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const searchProduct = async (gameName, filteredIds) => {
     let sql =
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl

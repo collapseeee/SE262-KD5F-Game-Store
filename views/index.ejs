@@ -38,7 +38,7 @@
       <!-- Explore more Text -->
       <p id="explore" class="scroll-reveal">
       <% if (username !== null) { %>
-        <a href="/result">Explore more</a>
+        <a href="/result" id="explore-link">Explore more</a>
       <%} else {%>
         <p id="explore">
         Explore more: <a href="/identification" id="login-text">Log in</a> or
@@ -47,6 +47,10 @@
       <%}%>
     </main>
 
+    <% if (username) { %>
+      <%-include('buyer/partials/popup/sessionExpired')%>
+    <% } %>
+
     <%-include('buyer/partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/scripts/welcome-popup.js"></script>
@@ -54,5 +58,8 @@
     <script src="/scripts/scroll-reveal.js"></script>
     <script src="/axios/dist/axios.min.js"></script>
     <script src="/scripts/product.js" defer></script>
+    <% if (username) { %>
+    <script src="/scripts/session-expiry.js"></script>
+    <% } %>
   </body>
 </html>

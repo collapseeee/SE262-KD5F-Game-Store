@@ -101,10 +101,11 @@
     </main>
     <script src="/scripts/personalInfo-animations.js"></script>
 
+    <%-include('partials/popup/sessionExpired')%>
     <%-include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/axios/dist/axios.min.js"></script>
-    <script src="/public/scripts/scroll-reveal.js"></script>
+    <script src="/scripts/scroll-reveal.js"></script>
     <script>
       const confirmDeleteButton = document.body.querySelector('#confirm-delete-button');
       confirmDeleteButton.addEventListener('click', event => {
@@ -113,6 +114,7 @@
         window.location.href = '/';
       });
     </script>
+    <script src="/scripts/session-expiry.js"></script>
   </body>
 
   <style>
