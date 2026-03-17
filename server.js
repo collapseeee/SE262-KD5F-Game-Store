@@ -171,7 +171,7 @@ app.get('/result', async (req, res) => {
     // Get user wishlist and cart item to display differently in icon.
     const userWishlists = await getWishlistByUserId(user.user_id);
     const wishlistIds = userWishlists.map(item => item.product_id);
-    const userCarts = await getWishlistByUserId(user.user_id);
+    const userCarts = await getCartByUserId(user.user_id);
     const cartIds = userCarts.map(item => item.product_id);
     res.render('buyer/searchResult', {
         categories: allCategories,
