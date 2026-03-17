@@ -46,12 +46,12 @@ checkoutBtn.addEventListener('click', (e) => {
 
         if (selectedMethod.id == 'payment-qr') {
             paymentTitle.innerHTML = "Scan QR to pay";
-            paymentMethod.innerHTML = "Your selected payment method is <br> QR Payment."
+            paymentMethod.innerHTML = 'Your selected payment method is <br>QR Payment.';
             paymentAmount.innerHTML = `Total amount: $${totalPrice}`;
             paymentImg.src = "/assets/qr-payment.jpg";
         } else if (selectedMethod.id == 'payment-truemoney') {
             paymentTitle.innerHTML = "Scan Truemoney to pay";
-            paymentMethod.innerHTML = "Your selected payment method is <br> Truemoney."
+            paymentMethod.innerHTML = 'Your selected payment method is <br>Truemoney.';
             paymentAmount.innerHTML = `Total amount: $${totalPrice}`;
             paymentImg.src = "/assets/truemoney-payment.jpg";
         }
@@ -61,12 +61,35 @@ checkoutBtn.addEventListener('click', (e) => {
     }
 });
 
-paymentProceedBtn.addEventListener('click', (e) => {
-    paymentPopup.classList.remove('active');
-    paymentPopupOverlay.classList.remove('active');
+paymentProceedBtn.addEventListener('click', async (e) => {
+    const methodId = document.querySelector('input[name="payment-method"]:checked').id;
+    
+    let dbMethod = 'promptpay'; // Defaults
+    if (methodId === 'payment-qr') dbMethod = 'promptpay';
+    if (methodId === 'payment-truemoney') dbMethod = 'truemoney';
 
-    successPopup.classList.add('active');
-    successPopupOverlay.classList.add('active');
+    const finalPrice = document.getElementById('final-price-msg').innerText;
+    const itemsCount = document.querySelectorAll('.cart-container').length;
+
+    try {
+        const response = await axios.post('/api/order', {
+            method: dbMethod,
+            totalPrice: parseFloat(finalPrice),
+            gameCount: itemsCount
+        });
+
+        if (response.status === 200) {
+            // UI Transition on Success
+            paymentPopup.classList.remove('active');
+            paymentPopupOverlay.classList.remove('active');
+
+            successPopup.classList.add('active');
+            successPopupOverlay.classList.add('active');
+        }
+    } catch (err) {
+        console.error("Checkout failed:", err);
+        paymentTxt.innerHTML = "Order recording failed. Please try again.";
+    }
 });
 
 paymentCancelBtn.addEventListener('click', (e) => {

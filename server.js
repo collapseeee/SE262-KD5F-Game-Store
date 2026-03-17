@@ -11,6 +11,7 @@ const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory,deleteCategoryByCategoryId} = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
+const { addOrder,updateUserTotalSpend,updateUserTotalGame } = require('./models/checkout')
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -655,6 +656,53 @@ app.delete('/api/cart/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromCart(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/order' , async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const cartItems = await getCartByUserId(user.user_id);
+        if (cartItems.length === 0) return res.status(400).send('Cart is empty');
+
+        const productIds = cartItems.map(item => item.product_id);
+        const { method, totalPrice, gameCount } = req.body;
+
+        await addOrder(user.user_id, productIds, method);
+        
+        await updateUserTotalSpend(user.user_id, totalPrice);
+        await updateUserTotalGame(user.user_id, gameCount);
+
+        res.status(200).send('Order Processed Successfully');
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.put('/api/update/spend', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const amount = req.body.final-price-msg;
+
+        const result = await updateUserTotalSpend(user.user_id, amount);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.put('/api/update/game', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const amount = req.body.cart-container.length;
+
+        const result = await updateUserTotalSpend(user.user_id, amount);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
