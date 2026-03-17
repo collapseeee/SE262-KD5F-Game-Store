@@ -167,7 +167,6 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-    console.log(categoriesName);
     
     // Get user wishlist and cart item to display differently in icon.
     const userWishlists = await getWishlistByUserId(user.user_id);
