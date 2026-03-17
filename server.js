@@ -6,6 +6,7 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory} = require('./models/product');
 const { getAllCategory } = require('./models/category');
@@ -62,18 +63,23 @@ app.get('/', async (req, res) => {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
+        const userCarts = await getCartByUserId(user.user_id);
+        const cartIds = userCarts.map(item => item.product_id);
+
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
             wishlists: wishlistIds,
-            username: req.session.username
+            username: req.session.username,
+            carts: cartIds
         });
     } else {
         res.render('index', {
             categories: await getAllCategory(),
             games: await getAllProduct(),
             username: null,
-            wishlists: []
+            wishlists: [],
+            carts: []
         });
     }
 });
@@ -87,10 +93,13 @@ app.get('/register', (req, res) => {
 });
 app.get('/sellerInformation', async (req, res) => {
     try {
-        const rows = await Account.getUserById("1");
-        const sellerData = (rows && rows.length > 0) ? rows[0] : null;
-        res.render('seller/personalInformation', { seller: sellerData });
-        console.log('Seller data fetched for personal information page:', sellerData);
+        if (req.session.username) {
+            const user = await Account.getUserByName(req.session.username);
+            res.render('seller/personalInformation', { seller: user });
+
+        } else {
+            res.render('/identification');
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send("Error fetching seller info");
@@ -122,31 +131,51 @@ app.get('/account', async (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+
+    if (!user) res.redirect('/identification');
+    
     const { gameName, categories, category } = req.query;
-    let filteredIds = '';
+    let categoryArray = [];
 
-    if (category) {
-        filteredIds += category;
-    }
-    // If the category is selected
-    if (categories) {
-        const [filterCategory] = Array.isArray(categories) ? [categories] : categories;
-        // If multiple categories selected
-        if (categories.length > 1) {
-            filterCategory.forEach(categoryId => {
-                filteredIds += categoryId + ',';
-            });
-            // Remove the last comma sign
-            filteredIds = filteredIds.substring(0, filteredIds.length - 1);
-        }
-        if (categories.length === 1) {
-            filteredIds = categories;
+    // Passing Input:
+    const rawInput = category || categories;
+    if (rawInput) {
+        if (Array.isArray(rawInput)) {
+            // It's already an array: ['1', '2']
+            categoryArray = rawInput;
+        } else if (typeof rawInput === 'string' && rawInput.includes(',')) {
+            // It's a comma string: "1,2,3" -> turn into ['1', '2', '3']
+            categoryArray = rawInput.split(',');
+        } else {
+            // It's a single value: "1" -> turn into ['1']
+            categoryArray = [rawInput];
         }
     }
-    const results = await searchProduct(gameName, filteredIds);
 
+    // Search Operation 
+    const results = await searchProduct(gameName, (categoryArray.length > 0) ? categoryArray : null);
+
+    // Matching categoryId with its name:
+    const allCategories = await getAllCategory();
+    let categoriesName = "All Categories"; // Default value if no category is selected for the search.
+    if (categoryArray.length > 0) {
+        const nameList = categoryArray.map(id => {
+            const found = allCategories.find(c => c.category_id === id);
+            return found ? found.name : null;
+        }).filter(Boolean);
+
+        categoriesName = nameList.join(" | ");
+    }
+    
     res.render('buyer/searchResult', {
-        games: results
+        categories: allCategories,
+        games: results,
+        // for displaying in result page
+        searchedName: gameName || "All Games",
+        searchedCategory: categoriesName,
+        wishlists: await getWishlistByUserId(user.user_id),
+        carts: await getCartByUserId(user.user_id)
     });
 });
 
@@ -158,11 +187,13 @@ app.get('/product/:id', async (req, res) => {
         const images = await getImageByGameProductId(gameId);
         const exportImage = images.map(image => image.image_url);
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
+        const isInCart = await getIsInCart(user.user_id, gameId)
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
             gameDetails: game,
             isWishlisted: isWishlisted,
+            isInCart: isInCart,
             images: exportImage,
             requirements: await getProductRequirementById(gameId)
         });
@@ -172,28 +203,37 @@ app.get('/product/:id', async (req, res) => {
     }
 });
 
+// Cart page
 app.get('/cart', async (req, res) => {
-    // Mock data, Get data FROM Cart table WHERE userid = ...
-    const games = [{
-        name: "HELLDIVER 9",
-        categories: ['Action', 'Shooter'],
-        price: 999.99,
-        added_date: Date.now()
-    }, {
-        name: "Mangophobia",
-        categories: ['Horror'],
-        price: 0.99,
-        added_date: Date.now()
-    }];
-    if (req.session.username) {
-        res.render('buyer/shoppingCart', {
-            // Data here (Currently mock data)
-            games: games,
-            categories: await getAllCategory()
+    const user = await getUserByName(req.session.username);
+    if (!user) res.redirect('/identification');
+
+    const userId = user.user_id;
+
+    const cartData = await getCartByUserId(userId);
+    const carts = Array.isArray(cartData) ? cartData : [];
+    const exportedCarts = carts.map(cart => {
+        const dateObj = new Date(cart.cart_date);
+
+        const formattedDate = dateObj.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-    } else {
-        res.redirect('/identification');
-    }
+
+        return {
+            product_id: cart.product_id,
+            name: cart.name,
+            price: cart.price,
+            poster_url: cart.poster_url,
+            categories: cart.categories,
+            cart_date: formattedDate
+        }
+    });
+    res.render('buyer/shoppingCart', {
+        games: exportedCarts,
+        categories: await getAllCategory()
+    });
 });
 app.get('/checkout', (req, res) => {
     res.render('checkout', {
@@ -216,10 +256,21 @@ app.get('/register', (req, res) => {
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
+        const wishlists = await getWishlistByUserId(user.user_id);
+        const exportedWishlists = wishlists.map(wishlist => {
+            return {
+                product_id: wishlist.product_id,
+                name: wishlist.name,
+                price: wishlist.price,
+                poster_url: wishlist.poster_url,
+                categories: wishlist.categories,
+                wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
+            }
+        });
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user.user_id)
+            games: exportedWishlists
         });
     } else {
         res.redirect('/identification');
@@ -256,7 +307,8 @@ app.post('/loginSeller', (req, res) => {
         .then(() => {
             req.session.username = username;
 
-            res.redirect('/');
+            res.redirect('/dashboard');
+            console.log(req.session.username);
         })
         .catch(error => {
             console.error(error);
@@ -266,12 +318,13 @@ app.post('/loginSeller', (req, res) => {
 });
 
 app.get('/signout', (req, res) => {
+    const expired = req.query.expired;
     req.session.destroy(err => {
         if (err) {
             console.error(err);
             res.status(500).send('Error during logout');
         } else {
-            res.redirect('/');
+            res.redirect(expired ? '/identification?expired=true' : '/');
         }
     });
 });
@@ -353,16 +406,16 @@ app.get('/api/product/add', (req, res) => {
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
-        const product = await getProductById(productId);
+        const product = await getProductByIdForEdit(productId);
         const categories = await getCategoriesByProductId(productId);
         const requirements = await getRequirementsByProductId(productId);
         const images = await getImagesByProductId(productId);
         const videoData = await getVideosByProductId(productId);
-        if (!product[0]) return res.status(404).send("Product not found");
-        console.log("Fetched product for edit:", product[0]);
+        if (!product) return res.status(404).send("Product not found");
+        console.log("Fetched product for edit:", product);
         res.render('seller/product', {
             mode: 'edit',
-            product: product[0],
+            product: product,
             min: requirements.min,
             rec: requirements.rec,
             gallery: images,
@@ -574,6 +627,30 @@ app.delete('/api/wishlist/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromWishlist(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/cart/:id', async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await addToCart(user.user_id, product_id)
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.delete('/api/cart/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const user = await getUserByName(req.session.username);
+        const result = await deleteFromCart(user.user_id, productId);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');

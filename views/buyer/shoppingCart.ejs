@@ -20,16 +20,22 @@
       <a href="/" class="back-to-home scroll-reveal" style="--reveal-delay: 100ms"><p>< Back to Home</p></a>
       <div class="row">
         <div class="items-container col-12 col-lg-8">
-            <% games.forEach((game, index) => { %>
-              <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
-                <%- include('partials/cartItem',{game: game}) %>
-              </div>
-            <% }); %>
+            <% if (games && games.length > 0) { %>
+                <% games.forEach((game, index) => { %>
+                <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
+                    <%- include('partials/cartItem',{game: game}) %>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <p class="fs-3 text-center mb-1 mt-4 scroll-reveal" style="--reveal-delay: 150ms">Your cart is currently empty.</p>
+                <p class="fs-4 text-center scroll-reveal" style="--reveal-delay: 150ms">Go add something!</p>
+            <% }; %>
         </div>
         <div class="col-12 col-lg-4">
             <div class="items-container scroll-reveal" style="--reveal-delay: 200ms">
                 <div class="checkout-container rounded-4 mb-3 shadow p-4" id="payment-container" style="display: none;">
-                    <h4>Payment Method</h4>
+                    <a class="mb-2" id="back-button">< Back to Cart</a>
+                    <h4 class="text-center my-4">Payment Method</h4>
                     <div class="form-check">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="payment-method"
@@ -60,17 +66,20 @@
                             </label>
                         </div>
                     </div>
+                    <p class="text-center mt-2 mb-0" id="payment-text"></p>
                 </div>
                 <div class="checkout-container rounded-4 mb-3 shadow p-4">
                     <% var sumPrice = 0; %>
                     <% var discount = 0; %>
-                    <% games.forEach((game) => { %>
-                        <% sumPrice += game.price; %>
-                        <div class="d-flex justify-content-between align-items-center mb-3 mt-0">
-                            <p class="text-start text-truncate flex-grow-1 m-0"><%- game.name -%></p>
-                            <p class="text-end text-nowrap m-0">$<%- game.price -%></p>
-                        </div>
-                    <% }); %>
+                    <% if (games && games.length > 0) { %>
+                        <% games.forEach((game) => { %>
+                            <% sumPrice += parseFloat(game.price); %>
+                            <div class="d-flex justify-content-between align-items-center mb-3 mt-0">
+                                <p class="text-start text-truncate flex-grow-1 m-0"><%- game.name -%></p>
+                                <p class="text-end text-nowrap m-0">$<%- game.price -%></p>
+                            </div>
+                        <% }); %>
+                    <% }; %>
                     <hr class="hr m-0" />
                     <div class="d-flex justify-content-between align-items-center mt-3 mb-0">
                         <% var totalVat = Math.ceil(sumPrice*7)/100; %>
@@ -107,118 +116,19 @@
                             REDEEM
                         </button>
                     </div>
+                    <p class="text-center mt-2 mb-0" id="coupon-text"></p>
                 </div>
             </div>
         </div>
       </div>
     </main>
+    <%-include('partials/popup/sessionExpired')%>
     <%- include('partials/footer')%>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/scripts/scroll-reveal.js"></script>
-    <script>
-        // Checkout popups logics
-        const cartHeaderSpan = document.getElementById('cart-header-span');
-        const checkoutHeaderSpan = document.getElementById('checkout-header-span');
-        const checkoutBtn = document.getElementById("button-checkout")
-        const couponContainer = document.getElementById('coupon-container');
-
-        const paymentContainer = document.getElementById("payment-container")
-        const paymentPopup = document.getElementById('payment-popup-container');
-        const paymentPopupOverlay = document.getElementById('payment-popup-overlay');
-        const paymentProceedBtn = document.getElementById('payment-popup-button-proceed');
-        const paymentCancelBtn = document.getElementById('payment-popup-button-cancel');
-
-        const successPopup = document.getElementById('success-popup-container');
-        const successPopupOverlay = document.getElementById('success-popup-overlay');
-        const successProceedBtn = document.getElementById('success-popup-button-proceed');
-
-        checkoutBtn.addEventListener('click', (e) => {
-            if (paymentContainer.style.display !== 'block') { // First click, show payment methods.
-                cartHeaderSpan.style.color = '#fefefe7e'
-                checkoutHeaderSpan.style.display = 'block';
-                paymentContainer.style.display = 'block';
-                couponContainer.style.display = 'none'
-            } else { // Second click, continue payment.
-                const selectedMethod = document.querySelector('input[name="payment-method"]:checked');
-
-                if(!selectedMethod) {
-                    alert("Please select a payment method before proceeding!");
-                    return;
-                }
-                
-                const paymentTitle = document.getElementById('payment-popup-h1');
-                const paymentMsg = document.getElementById('payment-popup-p');
-                const paymentImg = document.getElementById('payment-popup-img');
-                const totalPrice = document.getElementById('final-price-msg').innerHTML;
-
-                if (selectedMethod.id == 'payment-qr') {
-                    paymentTitle.innerHTML = "Scan QR to pay";
-                    paymentMsg.innerHTML = `Your selected payment method is QR Payment. <br> Total amount: $${totalPrice}`;
-                    paymentImg.src = "/assets/qr-payment.jpg";
-                } else if (selectedMethod.id == 'payment-truemoney') {
-                    paymentTitle.innerHTML = "Scan Truemoney to pay";
-                    paymentMsg.innerHTML = `Your selected payment method is QR Payment. <br> Total amount: $${totalPrice}`;
-                    paymentImg.src = "/assets/truemoney-payment.jpg";
-                }
-
-                paymentPopup.classList.add('active');
-                paymentPopupOverlay.classList.add('active');
-            }
-        });
-        
-        paymentProceedBtn.addEventListener('click', (e) => {
-            paymentPopup.classList.remove('active');
-            paymentPopupOverlay.classList.remove('active');
-
-            successPopup.classList.add('active');
-            successPopupOverlay.classList.add('active');
-        });
-
-        paymentCancelBtn.addEventListener('click', (e) => {
-            paymentPopup.classList.remove('active');
-            paymentPopupOverlay.classList.remove('active');
-        });
-
-        successProceedBtn.addEventListener('click', (e) => {
-            successPopup.classList.remove('active');
-            successPopupOverlay.classList.remove('active');
-            window.location.href = '/';
-            // Handle removing data from cart later on.
-        });
-
-        // Promo code logic
-        const redeemBtn = document.getElementById('button-redeem');
-        const promoInput = document.getElementById('promo-input');
-        const finalPriceSpan = document.getElementById('final-price-msg');
-        const discountSpan = document.getElementById('discount-msg');
-        const discountRateSpan = document.getElementById('discount-rate-msg');
-        const totalAmountPopup = document.getElementById('payment-popup-price-p');
-        let currentTotal = finalPriceSpan.innerHTML;
-        let discountApplied = false;
-
-        redeemBtn.addEventListener('click', () => {
-            const code = promoInput.value.trim().toLowerCase();
-
-            if (code === "pisetkaidao".toLowerCase()) {
-                if (!discountApplied) {
-                    const discountAmount = currentTotal * 0.05;
-                    currentTotal = currentTotal - discountAmount;
-                    
-                    // Update UI
-                    discountSpan.innerHTML = discountAmount.toFixed(2);
-                    finalPriceSpan.innerText = currentTotal.toFixed(2);
-                    discountRateSpan.innerHTML = "(5%)";
-                    totalAmountPopup.innerHTML = currentTotal.toFixed(2);
-                    
-                    discountApplied = true;
-                    promoInput.disabled = true;
-                    redeemBtn.disabled = true;
-                }
-            } else {
-                alert("Invalid Promo Code.");
-            }
-        });
-    </script>
+    <script src="/scripts/cart.js"></script>
+    <script src="/scripts/session-expiry.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
   </body>
 </html>
 
@@ -233,5 +143,12 @@
         background-color: #B7EF00;
         color: black;
         border-radius: 0 50px 50px 0;
+    }
+    #back-button {
+        color: #B7EF00;
+        cursor: pointer;
+    }
+    #coupon-text, #payment-text {
+        color: red;
     }
 </style>

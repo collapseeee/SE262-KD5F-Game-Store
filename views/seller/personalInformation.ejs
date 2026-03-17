@@ -14,7 +14,9 @@
     <%-include('partials/navbar')%>
     <main class="container my-4">
       <h1 class="fs-1">Personal Information</h1>
-      <div class="container-fluid account-container p-5 rounded-4 row">
+      
+      <a href="/dashboard" class="back-to-home scroll-reveal" style="--reveal-delay: 100ms"><p>< Back to Dashboard</p></a>
+      <div class="container-fluid account-container p-5 rounded-4 row mx-auto">
         <div
           class="image-container p-5 mx-auto rounded-4 w-100 h-100 col-lg-6 justify-content-center"
         >
@@ -64,8 +66,10 @@
         >
       </div>
     </main>
+    <%- include('../buyer/partials/popup/sessionExpired')%>
     <%-include('partials/footer')%>
   </body>
+  <script src="/scripts/session-expiry.js"></script>
 
   <style>
     .account-container {

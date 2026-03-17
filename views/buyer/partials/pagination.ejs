@@ -1,0 +1,75 @@
+<nav aria-label="...">
+  <ul class="pagination justify-content-center round-circle mt-4">
+    <!-- Logic handled by result.js -->>
+  </ul> 
+  <div id="goto-popup" class="goto-container w-25 p-4 mx-auto mt-0 mb-4 rounded-4">
+    <p class="text-center mb-2">Go to page:</p>
+    <div class="d-flex align-items-center">
+        <input type="number" id="goto-input" min="1" class="form-control text-white bg-dark border-secondary">
+        <button id="goto-submit" class="btn">GO</button>
+    </div>
+</div>
+</nav>
+<p class="text-center my-0 p-0">Displaying <span id="per-page-count">0</span> games out of <%= games.length %> results.</p>
+<script>
+    const perPageCountSpan = document.getElementById('per-page-count');
+    const perPageCount = document.getElementsByClassName('card').length;
+    perPageCountSpan.innerHTML = perPageCount;
+</script>
+<style>
+    .goto-container {
+        background-color: #5C3B75;
+        display: none;
+        position: absolute;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+    .btn {
+        background-color: #B7EF00;
+    }
+
+    @media (max-width: 768px) {
+        .pagination.round-circle {
+            flex-wrap: wrap;
+            row-gap: 10px;
+        }
+
+        .pagination.round-circle .page-link {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 0.8rem;
+        }
+    }
+
+    .pagination.round-circle .page-item {
+        margin: 0 5px;
+    }
+
+    .pagination.round-circle .page-link {
+        font-size: large;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        padding: 0;
+        text-align: center;
+        border-radius: 50%;
+
+        background-color: #5C3B75;
+        color: #fefefe;
+        border: 1px solid #8122C9;
+        transition: all 0.3s ease;
+    }
+
+    .pagination.round-circle .page-item.active .page-link {
+        background-color: #8B00F5; 
+        color: #fefefe; 
+        border-color: #B7EF00;
+    }
+
+    .pagination.round-circle .page-link:hover {
+        background-color: #B7EF00; /* Primary Purple */
+        color: #000000;
+        border-color: #8122C9;
+    }
+</style>
