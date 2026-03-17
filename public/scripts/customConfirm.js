@@ -30,7 +30,7 @@ export function customConfirm(message) {
        <style>
                 h3 {
                     font-weight: 600;
-                    color: #0a0a0a;
+                    color: #f0f0f0;
 
                 }
                 .modal-btn {
@@ -48,7 +48,7 @@ export function customConfirm(message) {
                 .modal-btn-cancel {
                     border: 1px solid #ddd;
                     background: #f5f5f5;
-                    color: #555;
+                    color: #050505;
                 }
                 .modal-btn-cancel:hover {
                     background: #e8e8e8;
@@ -92,7 +92,7 @@ export function customConfirm(message) {
 
             <div style="font-size:40px; margin-bottom:12px;">🗑️</div>
             <h3 style="margin:0 0 8px; font-size:18px;">Remove Item</h3>
-            <p style="margin:0 0 24px; color:#B6EE01; font-size:14px; font-weight:500;">${message}</p>
+            <p style="margin:0 0 24px; color:#B6EE01; font-size:14px;">${message}</p>
             <div style="display:flex; gap:12px; justify-content:center;">
                 <button id="modal-cancel"  class="modal-btn modal-btn-cancel">Cancel</button>
                 <button id="modal-confirm" class="modal-btn modal-btn-confirm">Yes, Remove</button>
