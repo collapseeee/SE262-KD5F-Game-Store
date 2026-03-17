@@ -8,8 +8,8 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory,deleteCategoryByCategoryId} = require('./models/product');
-const { getAllCategory } = require('./models/category');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const { addOrder,updateUserTotalSpend,updateUserTotalGame } = require('./models/checkout')
 const multer = require('multer');
@@ -135,7 +135,7 @@ app.get('/result', async (req, res) => {
     const user = await getUserByName(req.session.username);
 
     if (!user) res.redirect('/identification');
-    
+
     const { gameName, categories, category } = req.query;
     let categoryArray = [];
 
@@ -480,7 +480,7 @@ app.post('/api/product/add', upload.fields([
         }
     });
 
-app.put('/categories/:id', async(req, res) => {
+app.put('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
     const categories = await getAllCategory(); // Assuming this returns an array of category objects
@@ -492,6 +492,12 @@ app.put('/categories/:id', async(req, res) => {
     } else {
         res.status(404).json({ success: false, message: 'Category not found' });
     }
+});
+
+app.put('/api/category/hide/:id', async (req, res) => {
+    const categoryId = req.params.id;
+    const result = await hideCategory(categoryId);
+    res.json(result);
 });
 
 app.post(
@@ -579,16 +585,16 @@ app.delete('/api/games/:id', async (req, res) => {
         console.error(err);
     }
 });
-app.delete('/categories/:id', async(req, res) => {
+app.delete('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
     const categories = await getAllCategory(); // Assuming this returns an array of category objects)
     const category = categories.filter(cat => cat.id !== targetId);
     if (category) {
         await deleteCategoryByCategoryId(targetId);
-    res.json({ success: true });
-    console.log(`Deleted category with ID: ${targetId}`);
+        res.json({ success: true });
+        console.log(`Deleted category with ID: ${targetId}`);
     }
-    else{
+    else {
         console.log('Category not found');
     }
 });
