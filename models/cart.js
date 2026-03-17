@@ -46,9 +46,17 @@ const deleteFromCart = async (userId, productId) => {
     return rows;
 }
 
+const deleteCart = async (userId) => {
+    const sql = `DELETE FROM carts WHERE user_id = ?`
+    const payload = [userId];
+    const [rows] = await db.promise().execute(sql, payload);
+    return rows;
+}
+
 module.exports = {
     getCartByUserId,
     addToCart,
     deleteFromCart,
-    getIsInCart
+    getIsInCart,
+    deleteCart
 }

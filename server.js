@@ -6,7 +6,7 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory,deleteCategoryByCategoryId} = require('./models/product');
 const { getAllCategory } = require('./models/category');
@@ -676,6 +676,8 @@ app.post('/api/order' , async (req, res) => {
         
         await updateUserTotalSpend(user.user_id, finalPrice);
         await updateUserTotalGame(user.user_id, gameCount);
+
+        await deleteCart(user.user_id);
 
         res.status(200).send('Order Processed Successfully');
     } catch (err) {
