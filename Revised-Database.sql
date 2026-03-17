@@ -65,14 +65,21 @@ CREATE TABLE videos (
 ) ENGINE=InnoDB;
 
 CREATE TABLE orders (
-	order_id INT UNIQUE NOT NULL AUTO_INCREMENT,
-	product_id INT NOT NULL,
+	order_id INT NOT NULL UNIQUE AUTO_INCREMENT,
     user_id INT NOT NULL,
-    order_date DATE NOT NULL,
-    payment_method ENUM('promptpay', 'mastercard', 'visa') NOT NULL,
+    order_date DATETIME NOT NULL,
+    payment_method ENUM('promptpay', 'mastercard', 'visa', 'truemoney') NOT NULL,
+    final_price FLOAT NOT NULL,
     PRIMARY KEY (order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)  ON DELETE RESTRICT,
     FOREIGN KEY (user_id) REFERENCES accounts(user_id)  ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE order_items (
+	order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)  ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)  ON DELETE RESTRICT,
+    PRIMARY KEY (order_id, product_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE wishlists (
