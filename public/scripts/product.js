@@ -57,7 +57,7 @@ cards.forEach((card) => {
             }
             return;
         } else {
-            window.location.href = `/product/${event.target.parentElement.dataset.gameId}`;
+            window.location.href = `/product/${event.target.closest('.card').dataset.gameId}`;
         }
     });
 });
