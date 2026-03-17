@@ -670,11 +670,11 @@ app.post('/api/order' , async (req, res) => {
         if (cartItems.length === 0) return res.status(400).send('Cart is empty');
 
         const productIds = cartItems.map(item => item.product_id);
-        const { method, totalPrice, gameCount } = req.body;
+        const { method, finalPrice, gameCount } = req.body;
 
-        await addOrder(user.user_id, productIds, method);
+        await addOrder(user.user_id, productIds, method, finalPrice);
         
-        await updateUserTotalSpend(user.user_id, totalPrice);
+        await updateUserTotalSpend(user.user_id, finalPrice);
         await updateUserTotalGame(user.user_id, gameCount);
 
         res.status(200).send('Order Processed Successfully');

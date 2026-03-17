@@ -1,13 +1,13 @@
 const db = require('./db');
 const { getUserById } = require('./account');
 
-const addOrder = async (userId, productIds, paymentMethod) => {
+const addOrder = async (userId, productIds, paymentMethod, finalPrice) => {
     const date = new Date();
 
      // Create the Main Order (One row)
     const [orderResult] = await db.promise().execute(
-        `INSERT INTO orders (user_id, order_date, payment_method) VALUES (?, ?, ?)`,
-        [userId, date, paymentMethod]
+        `INSERT INTO orders (user_id, order_date, payment_method, final_price) VALUES (?, ?, ?, ?)`,
+        [userId, date, paymentMethod, finalPrice]
     );
 
     const newOrderId = orderResult.insertId;

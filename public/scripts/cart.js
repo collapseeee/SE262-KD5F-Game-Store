@@ -74,7 +74,7 @@ paymentProceedBtn.addEventListener('click', async (e) => {
     try {
         const response = await axios.post('/api/order', {
             method: dbMethod,
-            totalPrice: parseFloat(finalPrice),
+            finalPrice: parseFloat(finalPrice),
             gameCount: itemsCount
         });
 
