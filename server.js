@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory} = require('./models/product');
 const { getAllCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -481,12 +481,13 @@ app.post('/api/product/add', upload.fields([
         }
     });
 
-app.put('/categories/:id', (req, res) => {
+app.put('/categories/:id', async(req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
-    const category = categories.find(cat => cat.id === targetId);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects
+    const category = categories.find(cat => cat.category_id === targetId);
     if (category) {
-        category.name = newName;
+        await renameCategory(targetId, newName); // Call the function to update the category name in the database
         res.json({ success: true });
         console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
     } else {
