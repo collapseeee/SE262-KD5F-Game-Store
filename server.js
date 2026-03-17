@@ -181,7 +181,8 @@ app.get('/result', async (req, res) => {
         searchedName: gameName || "All Games",
         searchedCategory: categoriesName,
         wishlists: wishlistIds,
-        carts: cartIds
+        carts: cartIds,
+        username: req.session.username
     });
 });
 

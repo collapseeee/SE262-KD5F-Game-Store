@@ -15,7 +15,7 @@
   <body>
     <!-- Navbar -->
     <%-include('partials/navbar');%>
-    <main class="container my-4">
+    <main data-username="<%= username %>" class="container my-4">
         <!-- Search Specification -->
          <div class="row">
             <div class="col-12 col-md-6">
@@ -47,7 +47,10 @@
     <%-include('partials/footer')%>
     <script src="/scripts/scroll-reveal.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
+    <script src="/scripts/notify.js"></script>
     <script src="/scripts/result.js"></script>
+    <script src="/scripts/product.js"></script>
     <script src="/scripts/session-expiry.js"></script>
   </body>
   <style>
