@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId,deleteProductByProductId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
@@ -573,15 +573,14 @@ app.post(
 
 app.delete('/api/games/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    games = games.filter(game => game.id !== targetId);
-    res.json({ success: true });
-    console.log(`Deleted game with ID: ${targetId}`);
-    try {
-        const data = await getAllProduct();
-        res.json(data);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err);
+    const games = await getAllProduct(); // Assuming this returns an array of game objects
+    const game = games.filter(game => game.id !== targetId);
+    if (game) {
+        await deleteProductByProductId(targetId);
+        console.log(`Deleted game with ID: ${targetId}`);
+        res.json({ success: true });
+    } else {
+        console.log('Game not found');
     }
 });
 app.delete('/categories/:id', async (req, res) => {

@@ -178,6 +178,16 @@ const deleteCategoryByCategoryId = async (categoryId) => {
         console.error(err);
     }
 };
+
+const deleteProductByProductId = async (productId) => {
+    const sql = `DELETE FROM products WHERE product_id = ?`;
+    try{
+        const [result]= await db.promise().execute(sql, [productId]);
+        return result;
+    }catch(err){
+            console.error(err);
+        }
+    };
 async function addSystemRequirements(productId, data) {
     const values = [
         [
@@ -366,5 +376,6 @@ module.exports = {
     deleteProdcutListByProductId,
     getProductByIdForEdit,
     renameCategory,
-    deleteCategoryByCategoryId
+    deleteCategoryByCategoryId,
+    deleteProductByProductId
 };

@@ -51,7 +51,7 @@
                                 
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-action-edit view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                    <button class="btn btn-action-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
+                                    <button class="btn btn-action-delete view-mode" onclick="deleteCategory(<%= cat.category_id %>)">Delete</button>
                                     <button class="btn btn-action-done edit-mode d-none" onclick="saveEdit('<%= index %>', <%= cat.category_id %>)">Done</button>
                                     <button class="btn btn-action-delete edit-mode d-none" onclick="disableEdit('<%= index %>')">Delete</button>
                                 </div>
@@ -68,7 +68,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <button class="btn btn-popover-rename view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                        <button class="btn btn-popover-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
+                                        <button class="btn btn-popover-delete view-mode" onclick="deleteCategory(<%= cat.category_id %>)">Delete</button>
                                     </ul>
                                 </div>
                         </td>
@@ -110,7 +110,7 @@
                                         visibility
                                     </span>
                                     <button class="btn btn-action-edit" onclick="window.location.href = '/api/product/edit/<%= game.product_id %>'">Edit</button>
-                                    <button class="btn btn-action-delete">Delete</button>
+                                    <button class="btn btn-action-delete" onclick="deleteproduct(<%= game.product_id %>)">Delete</button>
                                 </div>
 
                                 <div class="dropdown d-lg-none">
@@ -125,7 +125,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <li class="px-3 py-2"><a class="btn btn-popover-edit w-100" href="/api/product/edit/<%= game.product_id %>">Edit</a></li>
-                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" href="#">Delete</a></li>
+                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" onclick="deleteproduct(<%= game.product_id %>)">Delete</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -179,7 +179,7 @@ function toggleVisibility(id) {
     }
 }
 
-async function deleteItem(id) {
+async function deleteCategory(id) {
         try {
             const response = await fetch(`/categories/${id}`, {
                 method: 'DELETE'
@@ -196,6 +196,22 @@ async function deleteItem(id) {
         }
     }
 
+    async function deleteproduct(id) {
+        try {
+            const response = await fetch(`/api/games/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert("Error in database");
+            }
+        } catch (error) {
+            console.log("Error:", error);
+            alert("cannot connect Server")
+        }
+    }
     function enableEdit(index) {
     const row = document.getElementById(`row-cat-${index}`);
     
