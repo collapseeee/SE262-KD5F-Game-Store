@@ -66,7 +66,9 @@ app.get('/', async (req, res) => {
         const wishlistIds = userWishlists.map(item => item.product_id);
         const userCarts = await getCartByUserId(user.user_id);
         const cartIds = userCarts.map(item => item.product_id);
-
+        if (games.length > 12) {
+            games.slice(0, 11);
+        }
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
