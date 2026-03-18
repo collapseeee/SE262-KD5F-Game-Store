@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
@@ -168,7 +168,7 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-    
+
     // Get user wishlist and cart item to display differently in icon.
     const userWishlists = await getWishlistByUserId(user.user_id);
     const wishlistIds = userWishlists.map(item => item.product_id);
@@ -669,7 +669,7 @@ app.delete('/api/cart/:id', async (req, res) => {
     }
 });
 
-app.post('/api/order' , async (req, res) => {
+app.post('/api/order', async (req, res) => {
     try {
         const user = await getUserByName(req.session.username);
         const userId = user.user_id;
@@ -680,7 +680,7 @@ app.post('/api/order' , async (req, res) => {
         const { method, finalPrice, gameCount } = req.body;
 
         await addOrder(userId, productIds, method, finalPrice);
-        
+
         await updateUserTotalSpend(userId, finalPrice);
         await updateUserTotalGame(userId, gameCount);
 
@@ -703,7 +703,7 @@ app.post('/api/order' , async (req, res) => {
 app.put('/api/update/spend', async (req, res) => {
     try {
         const user = await getUserByName(req.session.username);
-        const amount = req.body.final-price-msg;
+        const amount = req.body.final - price - msg;
 
         const result = await updateUserTotalSpend(user.user_id, amount);
         res.send(result);
@@ -716,7 +716,7 @@ app.put('/api/update/spend', async (req, res) => {
 app.put('/api/update/game', async (req, res) => {
     try {
         const user = await getUserByName(req.session.username);
-        const amount = req.body.cart-container.length;
+        const amount = req.body.cart - container.length;
 
         const result = await updateUserTotalSpend(user.user_id, amount);
         res.send(result);
