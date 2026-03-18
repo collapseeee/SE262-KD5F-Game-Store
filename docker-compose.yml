@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  web:
+    image: kai-dow-5fong-web-store
+    ports:
+      - "3000:3000"
+    env_file:
+        - product.env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mysql
+    restart: always
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: kd5f
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3308:3306"
+    restart: always
+volumes:
+  mysql_data:
