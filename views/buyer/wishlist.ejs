@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KD5F - Wishlist</title>
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
+  </head>
+  <body>
+    <%-include('partials/navbar')%>
+    <main class="container my-4">
+      <h1 class="scroll-reveal">Wishlists</h1>
+      <a href="/" class="back-to-home scroll-reveal" style="--reveal-delay: 100ms"><p>< Back to Home</p></a>
+      <div class="items-container">
+        <% games.forEach((game, index) => { %>
+          <div class="scroll-reveal" style="--reveal-delay: <%= 150 + index * 100 %>ms">
+            <%- include('partials/cartItem',{game: game}) %>
+          </div>
+        <%});%>
+      </div>
+    </main>
+    <%-include('partials/popup/sessionExpired')%>
+    <%- include('partials/footer')%>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
+    <script type="module" src="/scripts/wishlist.js"></script>
+    <script src="/scripts/scroll-reveal.js"></script>
+    <script src="/scripts/session-expiry.js"></script>
+  </body>
+</html>
