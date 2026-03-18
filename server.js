@@ -699,32 +699,6 @@ app.post('/api/order', async (req, res) => {
     }
 });
 
-app.put('/api/update/spend', async (req, res) => {
-    try {
-        const user = await getUserByName(req.session.username);
-        const amount = req.body.final - price - msg;
-
-        const result = await updateUserTotalSpend(user.user_id, amount);
-        res.send(result);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err);
-    }
-});
-
-app.put('/api/update/game', async (req, res) => {
-    try {
-        const user = await getUserByName(req.session.username);
-        const amount = req.body.cart - container.length;
-
-        const result = await updateUserTotalSpend(user.user_id, amount);
-        res.send(result);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err);
-    }
-});
-
 app.listen(3000, () => {
     console.log('The server is listening at port 3000.');
 });

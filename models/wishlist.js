@@ -24,10 +24,7 @@ const getIsWishlisted = async (userId, productId) => {
 
     const [rows] = await db.promise().execute(sql, payload);
 
-    if (rows.length === 0) {
-        return false;
-    }
-    return true;
+    return rows.length === 0;
 }
 
 const addToWishlist = async (userId, productId) => {
