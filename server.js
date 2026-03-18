@@ -6,10 +6,10 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart} = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId,getProductByIdForEdit } = require('./models/product');
-const { getAllCategory } = require('./models/category');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const multer = require('multer');
 const Account = require('./models/account');
@@ -131,6 +131,10 @@ app.get('/account', async (req, res) => {
 
 // SEARCH PRODUCTS
 app.get('/result', async (req, res) => {
+    const user = await getUserByName(req.session.username);
+
+    if (!user) res.redirect('/identification');
+
     const { gameName, categories, category } = req.query;
     let categoryArray = [];
 
@@ -157,22 +161,27 @@ app.get('/result', async (req, res) => {
     let categoriesName = "All Categories"; // Default value if no category is selected for the search.
     if (categoryArray.length > 0) {
         const nameList = categoryArray.map(id => {
-            const found = allCategories.find(c => c.category_id === id);
+            const found = allCategories.find(c => c.category_id === Number(id));
             return found ? found.name : null;
         }).filter(Boolean);
 
         categoriesName = nameList.join(" | ");
     }
     
-    const user = await getUserByName(req.session.username);
+    // Get user wishlist and cart item to display differently in icon.
+    const userWishlists = await getWishlistByUserId(user.user_id);
+    const wishlistIds = userWishlists.map(item => item.product_id);
+    const userCarts = await getCartByUserId(user.user_id);
+    const cartIds = userCarts.map(item => item.product_id);
     res.render('buyer/searchResult', {
         categories: allCategories,
         games: results,
         // for displaying in result page
         searchedName: gameName || "All Games",
         searchedCategory: categoriesName,
-        wishlists: await getWishlistByUserId(user.user_id),
-        carts: await getCartByUserId(user.user_id)
+        wishlists: wishlistIds,
+        carts: cartIds,
+        username: req.session.username
     });
 });
 
@@ -253,10 +262,21 @@ app.get('/register', (req, res) => {
 app.get('/wishlist', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
+        const wishlists = await getWishlistByUserId(user.user_id);
+        const exportedWishlists = wishlists.map(wishlist => {
+            return {
+                product_id: wishlist.product_id,
+                name: wishlist.name,
+                price: wishlist.price,
+                poster_url: wishlist.poster_url,
+                categories: wishlist.categories,
+                wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
+            }
+        });
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: await getWishlistByUserId(user.user_id)
+            games: exportedWishlists
         });
     } else {
         res.redirect('/identification');
@@ -354,14 +374,6 @@ app.post('/signup', async (req, res) => {
 
 app.get('/api/product', async (req, res) => {
     // GET all products
-});
-
-app.delete('/categories/:id', (req, res) => {
-    const targetId = parseInt(req.params.id);
-    // ลบโดยการกรองเอาตัวที่ไม่ใช่ ID ที่ส่งมาเก็บไว้แทน
-    categories = categories.filter(cat => cat.id !== targetId);
-    res.json({ success: true });
-    alert(`Deleted category with ID: ${targetId}`);
 });
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
@@ -467,17 +479,24 @@ app.post('/api/product/add', upload.fields([
         }
     });
 
-app.put('/categories/:id', (req, res) => {
+app.put('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
     const newName = req.body.name;
-    const category = categories.find(cat => cat.id === targetId);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects
+    const category = categories.find(cat => cat.category_id === targetId);
     if (category) {
-        category.name = newName;
+        await renameCategory(targetId, newName); // Call the function to update the category name in the database
         res.json({ success: true });
         console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
     } else {
         res.status(404).json({ success: false, message: 'Category not found' });
     }
+});
+
+app.put('/api/category/hide/:id', async (req, res) => {
+    const categoryId = req.params.id;
+    const result = await hideCategory(categoryId);
+    res.json(result);
 });
 
 app.post(
@@ -565,12 +584,18 @@ app.delete('/api/games/:id', async (req, res) => {
         console.error(err);
     }
 });
-app.delete('/categories/:id', (req, res) => {
+app.delete('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-
-    categories = categories.filter(cat => cat.id !== targetId);
-    res.json({ success: true });
-    console.log(`Deleted category with ID: ${targetId}`);
+    const categories = await getAllCategory(); // Assuming this returns an array of category objects)
+    const category = categories.filter(cat => cat.id !== targetId);
+    if (category) {
+        await deleteCategoryByCategoryId(targetId);
+        res.json({ success: true });
+        console.log(`Deleted category with ID: ${targetId}`);
+    }
+    else {
+        console.log('Category not found');
+    }
 });
 app.delete('/api/gallery/delete/:id', async (req, res) => {
     const imageId = parseInt(req.params.id);
