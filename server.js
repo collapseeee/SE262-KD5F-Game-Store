@@ -6,11 +6,12 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart } = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId,deleteProductByProductId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
+const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -167,7 +168,7 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-    
+
     // Get user wishlist and cart item to display differently in icon.
     const userWishlists = await getWishlistByUserId(user.user_id);
     const wishlistIds = userWishlists.map(item => item.product_id);
@@ -660,6 +661,63 @@ app.delete('/api/cart/:id', async (req, res) => {
         const productId = req.params.id;
         const user = await getUserByName(req.session.username);
         const result = await deleteFromCart(user.user_id, productId);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/order', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const userId = user.user_id;
+        const cartItems = await getCartByUserId(userId);
+        if (cartItems.length === 0) return res.status(400).send('Cart is empty');
+
+        const productIds = cartItems.map(item => item.product_id);
+        const { method, finalPrice, gameCount } = req.body;
+
+        await addOrder(userId, productIds, method, finalPrice);
+
+        await updateUserTotalSpend(userId, finalPrice);
+        await updateUserTotalGame(userId, gameCount);
+
+        for (const item of cartItems) {
+            const sellerId = await getSellerIdByProductId(item.product_id);
+            if (sellerId) {
+                await updateUserTotalSale(sellerId, item.price);
+            }
+        }
+
+        await deleteCart(userId);
+
+        res.status(200).send('Order Processed Successfully');
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.put('/api/update/spend', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const amount = req.body.final - price - msg;
+
+        const result = await updateUserTotalSpend(user.user_id, amount);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.put('/api/update/game', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const amount = req.body.cart - container.length;
+
+        const result = await updateUserTotalSpend(user.user_id, amount);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');

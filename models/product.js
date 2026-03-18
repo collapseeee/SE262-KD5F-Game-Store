@@ -108,6 +108,13 @@ const getVideosByProductId = async (productId) => {
         return [];
     }
 };
+
+const getSellerIdByProductId = async (productId) => {
+    const sql = `SELECT user_id FROM product_lists WHERE product_id = ? LIMIT 1`;
+    const [rows] = await db.promise().execute(sql, [productId]);
+    return rows.length > 0 ? rows[0].user_id : null;
+};
+
 const addProduct = async (name, description, price, posterUrl) => {
     const sql = `INSERT INTO products (name, description, price, poster_url) VALUES (?, ?, ?, ?)`;
     try {
@@ -367,6 +374,7 @@ module.exports = {
     getRequirementsByProductId,
     getImagesByProductId,
     getVideosByProductId,
+    getSellerIdByProductId,
     deleteGalleryByImageId,
     getCategoriesByProductId,
     updateProduct,
