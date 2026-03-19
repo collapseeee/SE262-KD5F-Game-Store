@@ -414,6 +414,7 @@ app.get('/api/product/add', (req, res) => {
         currentCategories: []
     });
 });
+
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
@@ -479,7 +480,6 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
 
                 await addSystemRequirements(productId, req.body);
 
