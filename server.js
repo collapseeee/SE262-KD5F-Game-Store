@@ -6,12 +6,12 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
-const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
+const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -156,7 +156,7 @@ app.get('/result', async (req, res) => {
         }
     }
 
-    // Search Operation 
+    // Search Operation
     const results = await searchProduct(gameName, (categoryArray.length > 0) ? categoryArray : null);
 
     // Matching categoryId with its name:
@@ -219,7 +219,7 @@ app.get('/product/:id', async (req, res) => {
             requirements: await getProductRequirementById(gameId)
         });
     } catch (error) {
-        console.error(error)
+        console.error(error);
         res.status(500).send("SERVER ERROR");
     }
 });
@@ -249,7 +249,7 @@ app.get('/cart', async (req, res) => {
             poster_url: cart.poster_url,
             categories: cart.categories,
             cart_date: formattedDate
-        }
+        };
     });
     res.render('buyer/shoppingCart', {
         games: exportedCarts,
@@ -286,7 +286,7 @@ app.get('/wishlist', async (req, res) => {
                 poster_url: wishlist.poster_url,
                 categories: wishlist.categories,
                 wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
-            }
+            };
         });
         res.render('buyer/wishlist', {
             // Data here
@@ -327,7 +327,6 @@ app.post('/loginSeller', (req, res) => {
     Auth.loginSeller(username, password)
         .then(() => {
             req.session.username = username;
-
             res.redirect('/dashboard');
             console.log(req.session.username);
         })
@@ -374,18 +373,17 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    Auth.signup(username, password, 'buyer')
+        Auth.signup(username, password, 'buyer', 'seller')
         .then(() => {
             req.session.username = username;
-
             res.redirect('/');
         })
         .catch(error => {
             console.error(error);
             res.status(500).send('Error during signup');
         });
-
-});
+    }
+);
 
 app.get('/api/product', async (req, res) => {
     // GET all products
@@ -393,7 +391,7 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProduct();
+        const games = await getAllProductByUserId("1");
         const categories = await getAllCategory();
         res.render('seller/dashboard', {
             // Data here
@@ -662,7 +660,7 @@ app.post('/api/cart/:id', async (req, res) => {
     try {
         const product_id = req.params.id;
         const user = await getUserByName(req.session.username);
-        const result = await addToCart(user.user_id, product_id)
+        const result = await addToCart(user.user_id, product_id);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
