@@ -2,10 +2,10 @@ const encrypt = require('bcryptjs');
 const Account = require('../models/account');
 
 const Auth = {
-    signup: async (username, password, role) => {
+    signup: async (username, password) => {
         try {
             const hashedPassword = await encrypt.hash(password, 10);
-            const userData = { username, password: hashedPassword, isBuyer: role === 'buyer' ? 1 : 0, isSeller: role === 'seller' ? 1 : 0 };
+            const userData = { username, password: hashedPassword, isBuyer: 1, isSeller:1};
             await Account.createUser(userData);
         } catch (error) {
             error.message = 'Error creating user: ' + error.message;

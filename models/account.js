@@ -59,7 +59,7 @@ const Account = {
       error.message = 'Error creating user: ' + error.message;
       throw error;
     }
-  }
+  },
 };
 
 module.exports = Account;
