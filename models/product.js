@@ -83,16 +83,7 @@ const getCategoriesByProductId = async (productId) => {
 
 };
 
-const getProdcutListByProductId = async (productId) => {
-    const sql = `SELECT * FROM product_lists WHERE product_id = ?`;
-    try {
-        const [rows] = await db.promise().query(sql, [productId]);
-        return rows;
-    } catch (err) {
-        console.error(err);
-        return [];
-    }
-};
+
 const getRequirementsByProductId = async (productId) => {
     const sql = `SELECT * FROM hardware_requirement WHERE product_id = ?`;
     try {
