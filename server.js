@@ -83,7 +83,8 @@ app.get('/', async (req, res) => {
             games: games,
             username: null,
             wishlists: [],
-            carts: []
+            carts: [],
+            popupCarts: []
         });
     }
 });
@@ -304,12 +305,21 @@ app.get('/wishlist', async (req, res) => {
 
 });
 app.get('/contact', async (req, res) => {
-    const userCarts = await getCartByUserId(user.user_id);
-    res.render('contact', {
-        // Data here
-        categories: await getAllCategory(),
-        popupCarts: userCarts
-    });
+    if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        const userCarts = await getCartByUserId(user.user_id);
+        res.render('contact', {
+            categories: await getAllCategory(),
+            username: req.session.username,
+            popupCarts: userCarts
+        });
+    } else {
+        res.render('contact', {
+            categories: await getAllCategory(),
+            username: null,
+            popupCarts: []
+        });
+    }
 });
 
 // API endpoints
