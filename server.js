@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getImageByGameProductId } = require('./models/image');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
@@ -612,6 +612,16 @@ app.get('/api/image/:id', async (req, res) => {
     try {
         const data = await getImageByGameProductId(req.params.id);
         res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+app.post('/api/addcategorie', async(req,res) => {
+    const newcat = await addCategory(req.body.name);
+    try {
+        console.log(newcat);
+        res.json({success: true});
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);

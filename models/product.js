@@ -130,6 +130,19 @@ const addProduct = async (name, description, price, posterUrl) => {
     }
 };
 
+const addCategory = async (name) => {
+    const sql = 'INSERT INTO categories (name) VALUES (?)';
+    try {
+        const [result] = await db.promise().execute(sql, [name]);
+        if(result){
+            console.log("Insert Category Success");
+        }
+        return result;
+    }catch(err){
+        console.error(err.message);
+    }
+    };
+
 const addProductList = async (productId, categoryId, userId) => {
     const sql = `INSERT INTO product_lists (product_id, category_id, user_id,release_date) VALUES (?, ?, ?, CURDATE())`;
     try {
@@ -367,6 +380,7 @@ module.exports = {
     getProductById,
     getProductRequirementById,
     addProduct,
+    addCategory,
     addGallery,
     addVideo,
     addSystemRequirements,
