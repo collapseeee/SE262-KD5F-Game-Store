@@ -59,14 +59,16 @@ app.set('views', './views');
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
-    const games = await getAllProduct();
+    let games = await getAllProduct();
+    if (games.length > 12) {
+        games = games.slice(0, 12);
+    }
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
         const userCarts = await getCartByUserId(user.user_id);
         const cartIds = userCarts.map(item => item.product_id);
-
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
@@ -77,7 +79,7 @@ app.get('/', async (req, res) => {
     } else {
         res.render('index', {
             categories: await getAllCategory(),
-            games: await getAllProduct(),
+            games: games,
             username: null,
             wishlists: [],
             carts: []
