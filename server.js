@@ -325,10 +325,11 @@ app.post('/loginBuyer', (req, res) => {
 app.post('/loginSeller', (req, res) => {
     const { username, password } = req.body;
     Auth.loginSeller(username, password)
-        .then(() => {
-            req.session.username = username;
+        .then((user) => {
+            req.session.username = user.username;
+            req.session.user_id = user.user_id;
             res.redirect('/dashboard');
-            console.log(req.session.username);
+            console.log(req.session.username, req.session.user_id);
         })
         .catch(error => {
             console.error(error);
@@ -391,8 +392,9 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProductByUserId("1");
+        const games = await getAllProductByUserId(req.session.user_id);
         const categories = await getAllCategory();
+        console.log(games);
         res.render('seller/dashboard', {
             // Data here
             categories: categories,
@@ -461,13 +463,14 @@ app.post('/api/product/add', upload.fields([
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
             const { name, category, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
+            const userId = req.session.user_id;
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
             if (productId) {
                 const categoryArray = Array.isArray(categories) ? categories : [categories];
                 for (const categoryId of categoryArray) {
-                    if (categoryId) await addProductList(productId, categoryId, 1);
+                    if (categoryId) await addProductList(productId, categoryId, userId);
                 }
 
 
