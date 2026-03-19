@@ -74,7 +74,8 @@ app.get('/', async (req, res) => {
             categories: await getAllCategory(),
             wishlists: wishlistIds,
             username: req.session.username,
-            carts: cartIds
+            carts: cartIds,
+            popupCarts: userCarts
         });
     } else {
         res.render('index', {
@@ -122,10 +123,12 @@ app.get('/account', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
         user.created_date = `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`;
+        const userCarts = await getCartByUserId(user.user_id);
         res.render('buyer/personalInformation', {
             // Data here
             categories: await getAllCategory(),
-            user: user
+            user: user,
+            popupCarts: userCarts
         });
     } else {
         res.redirect('/identification');
@@ -184,7 +187,8 @@ app.get('/result', async (req, res) => {
         searchedCategory: categoriesName,
         wishlists: wishlistIds,
         carts: cartIds,
-        username: req.session.username
+        username: req.session.username,
+        popupCarts: userCarts
     });
 });
 
@@ -208,6 +212,7 @@ app.get('/product/:id', async (req, res) => {
         });
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
         const isInCart = await getIsInCart(user.user_id, gameId)
+        const userCarts = await getCartByUserId(user.user_id);
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
@@ -216,7 +221,8 @@ app.get('/product/:id', async (req, res) => {
             isInCart: isInCart,
             images: exportImages,
             videos: exportVideos,
-            requirements: await getProductRequirementById(gameId)
+            requirements: await getProductRequirementById(gameId),
+            popupCarts: userCarts
         });
     } catch (error) {
         console.error(error);
@@ -251,14 +257,11 @@ app.get('/cart', async (req, res) => {
             cart_date: formattedDate
         };
     });
+    const userCarts = await getCartByUserId(user.user_id);
     res.render('buyer/shoppingCart', {
         games: exportedCarts,
-        categories: await getAllCategory()
-    });
-});
-app.get('/checkout', (req, res) => {
-    res.render('checkout', {
-        // Data here
+        categories: await getAllCategory(),
+        popupCarts: userCarts
     });
 });
 
@@ -288,10 +291,12 @@ app.get('/wishlist', async (req, res) => {
                 wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
             };
         });
+        const userCarts = await getCartByUserId(user.user_id);
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: exportedWishlists
+            games: exportedWishlists,
+            popupCarts: userCarts
         });
     } else {
         res.redirect('/identification');
@@ -299,9 +304,11 @@ app.get('/wishlist', async (req, res) => {
 
 });
 app.get('/contact', async (req, res) => {
+    const userCarts = await getCartByUserId(user.user_id);
     res.render('contact', {
         // Data here
-        categories: await getAllCategory()
+        categories: await getAllCategory(),
+        popupCarts: userCarts
     });
 });
 
