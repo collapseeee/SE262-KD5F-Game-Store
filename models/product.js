@@ -188,40 +188,40 @@ const deleteCategoryByCategoryId = async (categoryId) => {
 
 const deleteProductByProductId = async (productId) => {
     const sql = `DELETE FROM products WHERE product_id = ?`;
-    try{
-        const [result]= await db.promise().execute(sql, [productId]);
+    try {
+        const [result] = await db.promise().execute(sql, [productId]);
         return result;
-    }catch(err){
-            console.error(err);
-        }
-    };
+    } catch (err) {
+        console.error(err);
+    }
+};
 async function addSystemRequirements(productId, data) {
     const values = [
         [
             productId,
             'min',
-            data.min_os || '-',
-            data.min_processor || '-',
-            data.min_memory || '-',
-            data.min_graphic || '-',
-            data.min_directx || '-',
-            data.min_network || '-',
-            data.min_storage || '-',
-            data.min_soundcard || '-',
-            data.min_notes || '-'
+            data.os[0] !== '' ? data.os[0] : '-',
+            data.processor[0] !== '' ? data.processor[0] : '-',
+            data.memory[0] !== '' ? data.memory[0] : '-',
+            data.graphic[0] !== '' ? data.graphic[0] : '-',
+            data.directx[0] !== '' ? data.directx[0] : '-',
+            data.network[0] !== '' ? data.network[0] : '-',
+            data.storage[0] !== '' ? data.storage[0] : '-',
+            data.soundcard[0] !== '' ? data.soundcard[0] : '-',
+            data.notes[0] !== '' ? data.notes[0] : '-',
         ],
         [
             productId,
             'recommended',
-            data.rec_os || '-',
-            data.rec_processor || '-',
-            data.rec_memory || '-',
-            data.rec_graphic || '-',
-            data.rec_directx || '-',
-            data.rec_network || '-',
-            data.rec_storage || '-',
-            data.rec_soundcard || '-',
-            data.rec_notes || '-'
+            data.os[1] !== '' ? data.os[1] : '-',
+            data.processor[1] !== '' ? data.processor[1] : '-',
+            data.memory[1] !== '' ? data.memory[1] : '-',
+            data.graphic[1] !== '' ? data.graphic[1] : '-',
+            data.directx[1] !== '' ? data.directx[1] : '-',
+            data.network[1] !== '' ? data.network[1] : '-',
+            data.storage[1] !== '' ? data.storage[1] : '-',
+            data.soundcard[1] !== '' ? data.soundcard[1] : '-',
+            data.notes[1] !== '' ? data.notes[1] : '-',
         ]
     ];
 

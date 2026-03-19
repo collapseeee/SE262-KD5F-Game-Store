@@ -242,6 +242,15 @@ html {
     transform: scale(1.2);
 }
 
+
+.section {
+    background-color: #8122C9;
+}
+
+.active {
+    display: block;
+}
+
 /* Mobile responsive */
 @media (max-width: 767.98px) {
     /* Stack side thumbnail above main image */

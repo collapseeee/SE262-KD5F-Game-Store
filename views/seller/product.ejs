@@ -80,31 +80,39 @@
                             <% const m = min || {}; %>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">OS:</label>
-                                <input type="text" name="min_os" class="form-control req-input" value="<%= m.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
+                                <input type="text" name="os" class="form-control req-input" value="<%= min.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Processor:</label>
-                                <input type="text" name="min_processor" class="form-control req-input" value="<%= m.processor || '' %>" placeholder="AMD64/ARM64">
+                                <input type="text" name="processor" class="form-control req-input" value="<%= min.processor || '' %>" placeholder="AMD64/ARM64">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Memory:</label>
-                                <input type="text" name="min_memory" class="form-control req-input" value="<%= m.memory || '' %>" placeholder="16 GB RAM">
+                                <input type="text" name="memory" class="form-control req-input" value="<%= min.memory || '' %>" placeholder="16 GB RAM">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Graphic:</label>
-                                <input type="text" name="min_graphic" class="form-control req-input" value="<%= m.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
+                                <input type="text" name="graphic" class="form-control req-input" value="<%= min.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">DirectX:</label>
-                                <input type="text" name="min_directx" class="form-control req-input" value="<%= m.directx_version || '' %>" placeholder="Version 11">
+                                <input type="text" name="directx" class="form-control req-input" value="<%= min.directx_version || '' %>" placeholder="Version 11">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">network:</label>
+                                <input type="text" name="network" class="form-control req-input" value="<%= min.network || '' %>" placeholder="Broadband">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Storage:</label>
-                                <input type="text" name="min_storage" class="form-control req-input" value="<%= m.storage || '' %>" placeholder="100GB space">
+                                <input type="text" name="storage" class="form-control req-input" value="<%= min.storage || '' %>" placeholder="100GB space">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Soundcard:</label>
+                                <input type="text" name="soundcard" class="form-control req-input" value="<%= min.soundcard || '' %>" placeholder="DirectX compatible">
                             </div>
                             <div class="mb-2 d-flex flex-column">
                                 <label class="req-label mb-1">Additional notes:</label>
-                                <textarea class="form-control req-input" rows="3" name="min_additional_notes" placeholder="Notes"><%= m.additional_note || '' %></textarea>
+                                <textarea class="form-control req-input" rows="3" name="notes" placeholder="Notes"><%= min.notes|| '' %></textarea>
                             </div>
                         </div>
                     </div>
@@ -113,35 +121,43 @@
                         <h4 class="text-white mb-3">Recommended:</h4>
                         <div class="requirement-box p-3">
                             <% const r = rec || {}; %>
-                             <div class="mb-2 d-flex align-items-center">
+                            <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">OS:</label>
-                                <input type="text" name="min_os" class="form-control req-input" value="<%= m.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
+                                <input type="text" name="os" class="form-control req-input" value="<%= rec.operating_system || '' %>" placeholder="[Window/MacOS/Linux]">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Processor:</label>
-                                <input type="text" name="min_processor" class="form-control req-input" value="<%= m.processor || '' %>" placeholder="AMD64/ARM64">
+                                <input type="text" name="processor" class="form-control req-input" value="<%= rec.processor || '' %>" placeholder="AMD64/ARM64">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Memory:</label>
-                                <input type="text" name="min_memory" class="form-control req-input" value="<%= m.memory || '' %>" placeholder="16 GB RAM">
+                                <input type="text" name="memory" class="form-control req-input" value="<%= rec.memory || '' %>" placeholder="16 GB RAM">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Graphic:</label>
-                                <input type="text" name="min_graphic" class="form-control req-input" value="<%= m.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
+                                <input type="text" name="graphic" class="form-control req-input" value="<%= rec.graphics_card || '' %>" placeholder="NVIDIA/Radeon">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">DirectX:</label>
-                                <input type="text" name="min_directx" class="form-control req-input" value="<%= m.directx_version || '' %>" placeholder="Version 11">
+                                <input type="text" name="directx" class="form-control req-input" value="<%= rec.directx_version || '' %>" placeholder="Version 11">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">network:</label>
+                                <input type="text" name="network" class="form-control req-input" value="<%= rec.network || '' %>" placeholder="Broadband">
                             </div>
                             <div class="mb-2 d-flex align-items-center">
                                 <label class="req-label">Storage:</label>
-                                <input type="text" name="min_storage" class="form-control req-input" value="<%= m.storage || '' %>" placeholder="100GB space">
+                                <input type="text" name="storage" class="form-control req-input" value="<%= rec.storage || '' %>" placeholder="100GB space">
+                            </div>
+                            <div class="mb-2 d-flex align-items-center">
+                                <label class="req-label">Soundcard:</label>
+                                <input type="text" name="soundcard" class="form-control req-input" value="<%= rec.soundcard || '' %>" placeholder="DirectX compatible">
                             </div>
                             <div class="mb-2 d-flex flex-column">
                                 <label class="req-label mb-1">Additional notes:</label>
-                                <textarea class="form-control req-input" rows="3" name="min_additional_notes" placeholder="Notes"><%= m.additional_note || '' %></textarea>
+                                <textarea class="form-control req-input" rows="3" name="notes" placeholder="Notes"><%= rec.notes || '' %></textarea>
                             </div>
-                            </div>
+                        </div>
                     </div>
                 </div>
 

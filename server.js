@@ -10,7 +10,7 @@ const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = 
 const { getUserByName } = require('./models/account');
 const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
-const { getImageByGameProductId } = require('./models/image');
+const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
 const multer = require('multer');
 const Account = require('./models/account');
@@ -191,8 +191,19 @@ app.get('/product/:id', async (req, res) => {
         const gameId = req.params.id;
         const game = await getProductById(gameId);
         const user = await getUserByName(req.session.username);
-        const images = await getImageByGameProductId(gameId);
-        const exportImage = images.map(image => image.image_url);
+        const images = await getProductImagesByProductId(gameId);
+        const videos = await getProductVideosByProductId(gameId);
+        const exportImages = images.map(image => image.image_url);
+        const exportVideos = videos.map(video => {
+            const url = video.video_url;
+            if (url.includes('watch')) {
+                return url.split('v=')[1];
+            }
+            if (url.includes('youtu.be')) {
+                return url.split('/').pop();
+            }
+            return url;
+        });
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
         const isInCart = await getIsInCart(user.user_id, gameId)
 
@@ -201,7 +212,8 @@ app.get('/product/:id', async (req, res) => {
             gameDetails: game,
             isWishlisted: isWishlisted,
             isInCart: isInCart,
-            images: exportImage,
+            images: exportImages,
+            videos: exportVideos,
             requirements: await getProductRequirementById(gameId)
         });
     } catch (error) {
@@ -402,6 +414,7 @@ app.get('/api/product/add', (req, res) => {
         currentCategories: []
     });
 });
+
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
@@ -467,7 +480,6 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
 
                 await addSystemRequirements(productId, req.body);
 
@@ -610,7 +622,7 @@ app.delete('/api/gallery/delete/:id', async (req, res) => {
 });
 app.get('/api/image/:id', async (req, res) => {
     try {
-        const data = await getImageByGameProductId(req.params.id);
+        const data = await getProductImagesByProductId(req.params.id);
         res.json(data);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
