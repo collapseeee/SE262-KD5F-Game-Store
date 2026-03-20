@@ -27,11 +27,34 @@ const cartButton = document.body.querySelector('.add-to-cart-btn');
 
 cartButton.addEventListener('click', async (event) => {
     const icon = event.target.querySelector('i');
+
+    const $bubbleContent = document.querySelector('.bubble-content');
+    const gameId = document.body.dataset.gameId;
+    const gameName = document.querySelector('.game-title').innerText;
+    const gamePoster = document.querySelector('.side-thumbnail img').src;
+
     if (icon.classList.contains('bi-cart-plus')) {
         try {
             await axios.post(`/api/cart/${document.body.dataset.gameId}`);
             icon.classList.remove('bi-cart-plus');
             icon.classList.add('bi-cart-plus-fill');
+
+            const emptyMsg = $bubbleContent.querySelector('p');
+            if (emptyMsg && emptyMsg.innerText === 'Empty Cart') {
+                $bubbleContent.innerHTML = '';
+            }
+
+            const newEntry = `
+                <div class="d-flex align-items-center mb-3 cart-item-${gameId}">
+                    <div class="mini-poster-container me-3">
+                        <img src="${gamePoster}" alt="poster">
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="game-name-text text-truncate">${gameName}</p>
+                    </div>
+                </div>`;
+            $bubbleContent.insertAdjacentHTML('beforeend', newEntry);
+
             Notify.show('Added to cart!', 'success');
         } catch (err) {
             Notify.show('Failed to add to cart', 'error');
@@ -41,6 +64,14 @@ cartButton.addEventListener('click', async (event) => {
             await axios.delete(`/api/cart/${document.body.dataset.gameId}`);
             icon.classList.remove('bi-cart-plus-fill');
             icon.classList.add('bi-cart-plus');
+
+            const itemToRemove = $bubbleContent.querySelector(`.cart-item-${gameId}`);
+            if (itemToRemove) itemToRemove.remove();
+            
+            if ($bubbleContent.childElementCount === 0) {
+                $bubbleContent.innerHTML = '<p class="text-center small opacity-50 mb-0">Empty Cart</p>';
+            }
+
             Notify.show('Removed from cart', 'info');
         } catch (err) {
             Notify.show('Failed to remove from cart', 'error');
