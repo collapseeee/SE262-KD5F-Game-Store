@@ -408,7 +408,8 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProductByUserId(req.session.user_id);
+        const user = await getUserByName(req.session.username);
+        const games = await getAllProductByUserId(user.user_id);
         const categories = await getAllCategory();
         res.render('seller/dashboard', {
             // Data here
