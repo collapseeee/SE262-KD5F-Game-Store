@@ -33,7 +33,7 @@ jobs:
         username: ${{ secrets.SSH_NAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          cd /home/ubuntu/app
+          cd /home/ubuntu
           docker compose pull
           docker compose down -v
           docker compose up -d
