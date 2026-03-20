@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory,deleteProductByProductId, getAllProductByUserId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit, addCategory, deleteProductByProductId, getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
@@ -368,7 +368,7 @@ app.get('/signout', (req, res) => {
 
 app.delete('/api/account', async (req, res) => {
     const user = await getUserByName(req.session.username);
-    await deleteUserById(user.user_id);
+    await Account.deleteUserById(user.user_id);
     res.status(204);
     req.session.destroy(async err => {
         if (err) {
@@ -390,7 +390,7 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-        Auth.signup(username, password, 'buyer', 'seller')
+    Auth.signup(username, password, 'buyer', 'seller')
         .then(() => {
             req.session.username = username;
             res.redirect('/');
@@ -399,7 +399,7 @@ app.post('/signup', async (req, res) => {
             console.error(error);
             res.status(500).send('Error during signup');
         });
-    }
+}
 );
 
 app.get('/api/product', async (req, res) => {
@@ -410,7 +410,6 @@ app.get('/dashboard', async (req, res) => {
     try {
         const games = await getAllProductByUserId(req.session.user_id);
         const categories = await getAllCategory();
-        console.log(games);
         res.render('seller/dashboard', {
             // Data here
             categories: categories,
@@ -601,7 +600,7 @@ app.post(
 app.delete('/api/games/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
     try {
-    await deleteProductByProductId(targetId);
+        await deleteProductByProductId(targetId);
 
         res.json({ success: true });
 
@@ -649,10 +648,10 @@ app.get('/api/image/:id', async (req, res) => {
         console.error(err);
     }
 });
-app.post('/api/addcategorie', async(req,res) => {
+app.post('/api/addcategorie', async (req, res) => {
     const newcat = await addCategory(req.body.name);
     try {
-        res.json({success: true});
+        res.json({ success: true });
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);
