@@ -57,7 +57,7 @@
                   <div class="bubble-content">
                       <% if (popupCarts && popupCarts.length > 0) { %>
                           <% popupCarts.forEach(game => { %>
-                              <div class="d-flex align-items-center mb-3">
+                              <div class="d-flex align-items-center mb-3 cart-item-<%= game.product_id %>">
                                   <div class="mini-poster-container me-3">
                                       <img src="<%= game.poster_url %>" alt="poster">
                                   </div>
