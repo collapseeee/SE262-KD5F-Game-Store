@@ -6,12 +6,12 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory,deleteProductByProductId, getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
-const { getImageByGameProductId } = require('./models/image');
-const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout')
+const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
+const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -59,28 +59,32 @@ app.set('views', './views');
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
-    const games = await getAllProduct();
+    let games = await getAllProduct();
+    if (games.length > 12) {
+        games = games.slice(0, 12);
+    }
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
         const userCarts = await getCartByUserId(user.user_id);
         const cartIds = userCarts.map(item => item.product_id);
-
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
             wishlists: wishlistIds,
             username: req.session.username,
-            carts: cartIds
+            carts: cartIds,
+            popupCarts: userCarts
         });
     } else {
         res.render('index', {
             categories: await getAllCategory(),
-            games: await getAllProduct(),
+            games: games,
             username: null,
             wishlists: [],
-            carts: []
+            carts: [],
+            popupCarts: []
         });
     }
 });
@@ -120,10 +124,12 @@ app.get('/account', async (req, res) => {
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
         user.created_date = `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`;
+        const userCarts = await getCartByUserId(user.user_id);
         res.render('buyer/personalInformation', {
             // Data here
             categories: await getAllCategory(),
-            user: user
+            user: user,
+            popupCarts: userCarts
         });
     } else {
         res.redirect('/identification');
@@ -154,7 +160,7 @@ app.get('/result', async (req, res) => {
         }
     }
 
-    // Search Operation 
+    // Search Operation
     const results = await searchProduct(gameName, (categoryArray.length > 0) ? categoryArray : null);
 
     // Matching categoryId with its name:
@@ -182,7 +188,8 @@ app.get('/result', async (req, res) => {
         searchedCategory: categoriesName,
         wishlists: wishlistIds,
         carts: cartIds,
-        username: req.session.username
+        username: req.session.username,
+        popupCarts: userCarts
     });
 });
 
@@ -191,21 +198,35 @@ app.get('/product/:id', async (req, res) => {
         const gameId = req.params.id;
         const game = await getProductById(gameId);
         const user = await getUserByName(req.session.username);
-        const images = await getImageByGameProductId(gameId);
-        const exportImage = images.map(image => image.image_url);
+        const images = await getProductImagesByProductId(gameId);
+        const videos = await getProductVideosByProductId(gameId);
+        const exportImages = images.map(image => image.image_url);
+        const exportVideos = videos.map(video => {
+            const url = video.video_url;
+            if (url.includes('watch')) {
+                return url.split('v=')[1];
+            }
+            if (url.includes('youtu.be')) {
+                return url.split('/').pop();
+            }
+            return url;
+        });
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
         const isInCart = await getIsInCart(user.user_id, gameId)
+        const userCarts = await getCartByUserId(user.user_id);
 
         res.render('buyer/productDetail', {
             categories: await getAllCategory(),
             gameDetails: game,
             isWishlisted: isWishlisted,
             isInCart: isInCart,
-            images: exportImage,
-            requirements: await getProductRequirementById(gameId)
+            images: exportImages,
+            videos: exportVideos,
+            requirements: await getProductRequirementById(gameId),
+            popupCarts: userCarts
         });
     } catch (error) {
-        console.error(error)
+        console.error(error);
         res.status(500).send("SERVER ERROR");
     }
 });
@@ -235,16 +256,13 @@ app.get('/cart', async (req, res) => {
             poster_url: cart.poster_url,
             categories: cart.categories,
             cart_date: formattedDate
-        }
+        };
     });
+    const userCarts = await getCartByUserId(user.user_id);
     res.render('buyer/shoppingCart', {
         games: exportedCarts,
-        categories: await getAllCategory()
-    });
-});
-app.get('/checkout', (req, res) => {
-    res.render('checkout', {
-        // Data here
+        categories: await getAllCategory(),
+        popupCarts: userCarts
     });
 });
 
@@ -272,12 +290,14 @@ app.get('/wishlist', async (req, res) => {
                 poster_url: wishlist.poster_url,
                 categories: wishlist.categories,
                 wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
-            }
+            };
         });
+        const userCarts = await getCartByUserId(user.user_id);
         res.render('buyer/wishlist', {
             // Data here
             categories: await getAllCategory(),
-            games: exportedWishlists
+            games: exportedWishlists,
+            popupCarts: userCarts
         });
     } else {
         res.redirect('/identification');
@@ -285,10 +305,21 @@ app.get('/wishlist', async (req, res) => {
 
 });
 app.get('/contact', async (req, res) => {
-    res.render('contact', {
-        // Data here
-        categories: await getAllCategory()
-    });
+    if (req.session.username) {
+        const user = await getUserByName(req.session.username);
+        const userCarts = await getCartByUserId(user.user_id);
+        res.render('contact', {
+            categories: await getAllCategory(),
+            username: req.session.username,
+            popupCarts: userCarts
+        });
+    } else {
+        res.render('contact', {
+            categories: await getAllCategory(),
+            username: null,
+            popupCarts: []
+        });
+    }
 });
 
 // API endpoints
@@ -311,11 +342,10 @@ app.post('/loginBuyer', (req, res) => {
 app.post('/loginSeller', (req, res) => {
     const { username, password } = req.body;
     Auth.loginSeller(username, password)
-        .then(() => {
-            req.session.username = username;
-
+        .then((user) => {
+            req.session.username = user.username;
+            req.session.user_id = user.user_id;
             res.redirect('/dashboard');
-            console.log(req.session.username);
         })
         .catch(error => {
             console.error(error);
@@ -360,18 +390,17 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    Auth.signup(username, password, 'buyer')
+        Auth.signup(username, password, 'buyer', 'seller')
         .then(() => {
             req.session.username = username;
-
             res.redirect('/');
         })
         .catch(error => {
             console.error(error);
             res.status(500).send('Error during signup');
         });
-
-});
+    }
+);
 
 app.get('/api/product', async (req, res) => {
     // GET all products
@@ -379,8 +408,9 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProduct();
+        const games = await getAllProductByUserId(req.session.user_id);
         const categories = await getAllCategory();
+        console.log(games);
         res.render('seller/dashboard', {
             // Data here
             categories: categories,
@@ -402,6 +432,7 @@ app.get('/api/product/add', (req, res) => {
         currentCategories: []
     });
 });
+
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
@@ -411,7 +442,6 @@ app.get('/api/product/edit/:id', async (req, res) => {
         const images = await getImagesByProductId(productId);
         const videoData = await getVideosByProductId(productId);
         if (!product) return res.status(404).send("Product not found");
-        console.log("Fetched product for edit:", product);
         res.render('seller/product', {
             mode: 'edit',
             product: product,
@@ -448,13 +478,14 @@ app.post('/api/product/add', upload.fields([
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
             const { name, category, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
+            const userId = req.session.user_id;
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
             if (productId) {
                 const categoryArray = Array.isArray(categories) ? categories : [categories];
                 for (const categoryId of categoryArray) {
-                    if (categoryId) await addProductList(productId, categoryId, 1);
+                    if (categoryId) await addProductList(productId, categoryId, userId);
                 }
 
 
@@ -467,7 +498,6 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
 
                 await addSystemRequirements(productId, req.body);
 
@@ -488,7 +518,6 @@ app.put('/categories/:id', async (req, res) => {
     if (category) {
         await renameCategory(targetId, newName); // Call the function to update the category name in the database
         res.json({ success: true });
-        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
     } else {
         res.status(404).json({ success: false, message: 'Category not found' });
     }
@@ -518,8 +547,6 @@ app.post(
         const galleryFiles = req.files['gallery_image[]'] || [];
         const videoIds = [req.body.videoId, req.body.videoId2];
         const videoUrls = [req.body.videoUrl, req.body.videoUrl2];
-        console.log(videoIds);
-        console.log(videoUrls);
         try {
 
             await updateProduct(
@@ -537,7 +564,6 @@ app.post(
                 )
             );
             await updateSystemRequirements(productId, req.body);
-            console.log("Files received by Multer:", req.files);
             if (galleryFiles.length > 0) {
                 for (const file of galleryFiles) {
                     const cleanPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
@@ -574,35 +600,41 @@ app.post(
 
 app.delete('/api/games/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    const games = await getAllProduct(); // Assuming this returns an array of game objects
-    const game = games.filter(game => game.id !== targetId);
-    if (game) {
-        await deleteProductByProductId(targetId);
-        console.log(`Deleted game with ID: ${targetId}`);
+    try {
+    await deleteProductByProductId(targetId);
+
         res.json({ success: true });
-    } else {
-        console.log('Game not found');
+
+    } catch (err) {
+        console.error(err);
+        if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(400).json({
+                success: false,
+                message: 'This product cannot be deleted because it has already been purchased.'
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 app.delete('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    const categories = await getAllCategory(); // Assuming this returns an array of category objects)
-    const category = categories.filter(cat => cat.id !== targetId);
-    if (category) {
+    try {
         await deleteCategoryByCategoryId(targetId);
         res.json({ success: true });
-        console.log(`Deleted category with ID: ${targetId}`);
     }
-    else {
-        console.log('Category not found');
+    catch (err) {
+        console.error(err);
     }
 });
 app.delete('/api/gallery/delete/:id', async (req, res) => {
     const imageId = parseInt(req.params.id);
     try {
-        const result = await deleteGalleryByImageId(imageId);
+        await deleteGalleryByImageId(imageId);
         res.json({ success: true });
-        console.log(`Deleted gallery image with ID: ${imageId}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error deleting gallery image');
@@ -610,8 +642,17 @@ app.delete('/api/gallery/delete/:id', async (req, res) => {
 });
 app.get('/api/image/:id', async (req, res) => {
     try {
-        const data = await getImageByGameProductId(req.params.id);
+        const data = await getProductImagesByProductId(req.params.id);
         res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+app.post('/api/addcategorie', async(req,res) => {
+    const newcat = await addCategory(req.body.name);
+    try {
+        res.json({success: true});
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);
@@ -648,7 +689,7 @@ app.post('/api/cart/:id', async (req, res) => {
     try {
         const product_id = req.params.id;
         const user = await getUserByName(req.session.username);
-        const result = await addToCart(user.user_id, product_id)
+        const result = await addToCart(user.user_id, product_id);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
@@ -700,5 +741,4 @@ app.post('/api/order', async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('The server is listening at port 3000.');
 });

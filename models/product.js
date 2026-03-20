@@ -15,6 +15,22 @@ const getAllProduct = async () => {
     }
 };
 
+const getAllProductByUserId = async (id) => {
+    const sql =
+        `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
+        INNER JOIN products p ON p.product_id = pl.product_id
+        INNER JOIN categories c ON c.category_id = pl.category_id
+        WHERE pl.user_id = ?
+        GROUP BY pl.product_id, p.name, p.price, p.poster_url
+        ORDER BY pl.product_id ASC`;
+    const payload = [id];
+    try {
+        const [rows] = await db.promise().execute(sql, payload);
+        return rows;
+    } catch (err) {
+        console.error(err);
+    }
+};
 const getProductById = async (id) => {
     const sql =
         `SELECT p.product_id, a.username, p.name, p.price, p.description, GROUP_CONCAT(c.name SEPARATOR ' | ') as category, p.poster_url FROM products p
@@ -52,7 +68,7 @@ const getProductRequirementById = async (id) => {
         const [rows] = await db.promise().execute(sql, payload);
         return rows;
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 };
 const getCategoriesByProductId = async (productId) => {
@@ -66,6 +82,8 @@ const getCategoriesByProductId = async (productId) => {
     }
 
 };
+
+
 const getRequirementsByProductId = async (productId) => {
     const sql = `SELECT * FROM hardware_requirement WHERE product_id = ?`;
     try {
@@ -130,6 +148,16 @@ const addProduct = async (name, description, price, posterUrl) => {
     }
 };
 
+const addCategory = async (name) => {
+    const sql = 'INSERT INTO categories (name) VALUES (?)';
+    try {
+        const [result] = await db.promise().execute(sql, [name]);
+        return result;
+    }catch(err){
+        console.error(err.message);
+    }
+    };
+
 const addProductList = async (productId, categoryId, userId) => {
     const sql = `INSERT INTO product_lists (product_id, category_id, user_id,release_date) VALUES (?, ?, ?, CURDATE())`;
     try {
@@ -188,40 +216,41 @@ const deleteCategoryByCategoryId = async (categoryId) => {
 
 const deleteProductByProductId = async (productId) => {
     const sql = `DELETE FROM products WHERE product_id = ?`;
-    try{
-        const [result]= await db.promise().execute(sql, [productId]);
+    try {
+        const [result] = await db.promise().execute(sql, [productId]);
         return result;
-    }catch(err){
-            console.error(err);
-        }
-    };
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
 async function addSystemRequirements(productId, data) {
     const values = [
         [
             productId,
             'min',
-            data.min_os || '-',
-            data.min_processor || '-',
-            data.min_memory || '-',
-            data.min_graphic || '-',
-            data.min_directx || '-',
-            data.min_network || '-',
-            data.min_storage || '-',
-            data.min_soundcard || '-',
-            data.min_notes || '-'
+            data.os[0] !== '' ? data.os[0] : '-',
+            data.processor[0] !== '' ? data.processor[0] : '-',
+            data.memory[0] !== '' ? data.memory[0] : '-',
+            data.graphic[0] !== '' ? data.graphic[0] : '-',
+            data.directx[0] !== '' ? data.directx[0] : '-',
+            data.network[0] !== '' ? data.network[0] : '-',
+            data.storage[0] !== '' ? data.storage[0] : '-',
+            data.soundcard[0] !== '' ? data.soundcard[0] : '-',
+            data.notes[0] !== '' ? data.notes[0] : '-',
         ],
         [
             productId,
             'recommended',
-            data.rec_os || '-',
-            data.rec_processor || '-',
-            data.rec_memory || '-',
-            data.rec_graphic || '-',
-            data.rec_directx || '-',
-            data.rec_network || '-',
-            data.rec_storage || '-',
-            data.rec_soundcard || '-',
-            data.rec_notes || '-'
+            data.os[1] !== '' ? data.os[1] : '-',
+            data.processor[1] !== '' ? data.processor[1] : '-',
+            data.memory[1] !== '' ? data.memory[1] : '-',
+            data.graphic[1] !== '' ? data.graphic[1] : '-',
+            data.directx[1] !== '' ? data.directx[1] : '-',
+            data.network[1] !== '' ? data.network[1] : '-',
+            data.storage[1] !== '' ? data.storage[1] : '-',
+            data.soundcard[1] !== '' ? data.soundcard[1] : '-',
+            data.notes[1] !== '' ? data.notes[1] : '-',
         ]
     ];
 
@@ -367,6 +396,7 @@ module.exports = {
     getProductById,
     getProductRequirementById,
     addProduct,
+    addCategory,
     addGallery,
     addVideo,
     addSystemRequirements,
@@ -385,5 +415,6 @@ module.exports = {
     getProductByIdForEdit,
     renameCategory,
     deleteCategoryByCategoryId,
-    deleteProductByProductId
+    deleteProductByProductId,
+    getAllProductByUserId
 };

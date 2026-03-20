@@ -7,6 +7,10 @@ cards.forEach((card) => {
         event.preventDefault();
         const cartButton = event.target.closest('#add-to-cart');
         const wishlistButton = event.target.closest('#wishlist');
+
+        const $bubbleContent = document.querySelector('.bubble-content');
+        const gameName = card.querySelector('.game-name').innerText;
+        const gamePoster = card.querySelector('.poster').src;
         if (username === '') {
             window.location.href = '/identification';
             return;
@@ -19,6 +23,19 @@ cards.forEach((card) => {
                     await axios.post(`/api/cart/${id}`);
                     icon.classList.remove('bi-cart-plus');
                     icon.classList.add('bi-cart-plus-fill');
+
+                    const emptyMsg = $bubbleContent.querySelector('p');
+                    if (emptyMsg && emptyMsg.innerText === 'Empty Cart') $bubbleContent.innerHTML = '';
+
+                    const newEntry = `
+                        <div class="d-flex align-items-center mb-3 cart-item-${id}">
+                            <div class="mini-poster-container me-3">
+                                <img src="${gamePoster}" alt="poster">
+                            </div>
+                            <span class="game-name-text text-truncate">${gameName}</span>
+                        </div>`;
+                    $bubbleContent.insertAdjacentHTML('beforeend', newEntry);
+
                     Notify.show('Added to cart!', 'success');
                 } catch (err) {
                     Notify.show('Failed to add to cart', 'error');
@@ -28,6 +45,15 @@ cards.forEach((card) => {
                     await axios.delete(`/api/cart/${id}`);
                     icon.classList.remove('bi-cart-plus-fill');
                     icon.classList.add('bi-cart-plus');
+
+                    const $bubbleContent = document.querySelector('.bubble-content');
+                    const itemToRemove = $bubbleContent.querySelector(`.cart-item-${id}`);
+                    if (itemToRemove) itemToRemove.remove();
+                    
+                    if ($bubbleContent.children.length === 0) {
+                        $bubbleContent.innerHTML = '<p class="text-center small opacity-50 mb-0">Empty Cart</p>';
+                    }
+
                     Notify.show('Removed from cart', 'info');
                 } catch (err) {
                     Notify.show('Failed to remove from cart', 'error');
