@@ -99,16 +99,10 @@
                     <% games.forEach((game, index) => { %>
                         <tr class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
                             <td class="ps-3 py-3 text-white"><%= game.name %></td>
-                            <td class="text-white">Category <%= game.category_id %></td>
+                            <td class="text-white"><%= game.category %></td>
                             <td class="text-white">$<%= game.price %></td>
                             <td class="text-end pe-3">
                                 <div class="d-none d-lg-flex justify-content-end align-items-center gap-2">
-                                    <span class="material-symbols-outlined icon-visibility"
-                                        id="vis-game-<%= index %>"
-                                        style="cursor: pointer; color: white;"
-                                        onclick="toggleVisibility('vis-game-<%= index %>')">
-                                        visibility
-                                    </span>
                                     <button class="btn btn-action-edit" onclick="window.location.href = '/api/product/edit/<%= game.product_id %>'">Edit</button>
                                     <button class="btn btn-action-delete" onclick="deleteproduct(<%= game.product_id %>)">Delete</button>
                                 </div>
@@ -160,24 +154,7 @@ const currentVisibility = async () => {
 };
 
 
-function toggleVisibility(id) {
-    const icon = document.getElementById(id);
-    const row = icon.closest('tr');
-    axios.put(`/api/category/hide/${icon.dataset.categoryId}`);
-    if (icon.innerText === 'visibility') {
-        // change to hidden state
-        icon.innerText = 'visibility_off';
-        icon.style.opacity = '0.5';
-        row.style.opacity = '0.5'; //
-        row.style.transition = '0.3s';
-    } else {
-        // change back to visible state
-        icon.innerText = 'visibility';
-        icon.style.opacity = '1';
-        row.style.opacity = '1';
-        row.style.transition = '0.3s';
-    }
-}
+
 
 async function deleteCategory(id) {
         try {
