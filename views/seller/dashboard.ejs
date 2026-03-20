@@ -174,21 +174,25 @@ async function deleteCategory(id) {
     }
 
     async function deleteproduct(id) {
-        try {
-            const response = await fetch(`/api/games/${id}`, {
-                method: 'DELETE'
-            });
-            const result = await response.json();
-            if (result.success) {
-                window.location.reload();
-            } else {
-                alert("Error in database");
-            }
-        } catch (error) {
-            console.log("Error:", error);
-            alert("cannot connect Server")
+    try {
+        const response = await fetch(`/api/games/${id}`, {
+            method: 'DELETE'
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            alert(result.message || "Delete failed");
+            return;
         }
+        // success
+        if (result.success) {
+            window.location.reload();
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Cannot connect to server");
     }
+}
     function enableEdit(index) {
     const row = document.getElementById(`row-cat-${index}`);
     
@@ -210,8 +214,6 @@ function disableEdit(index) {
 async function saveEdit(index, id) {
     const row = document.getElementById(`row-cat-${index}`);
     const newName = row.querySelector('input.edit-mode').value;
-    console.log("Saving new name:", newName);
-    console.log("Category ID:", id);
     try {
         const response = await fetch(`/categories/${id}`, {
             method: 'PUT',

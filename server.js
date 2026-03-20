@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory,getAllProductByUserId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory,deleteProductByProductId, getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
@@ -329,7 +329,6 @@ app.post('/loginSeller', (req, res) => {
             req.session.username = user.username;
             req.session.user_id = user.user_id;
             res.redirect('/dashboard');
-            console.log(req.session.username, req.session.user_id);
         })
         .catch(error => {
             console.error(error);
@@ -426,7 +425,6 @@ app.get('/api/product/edit/:id', async (req, res) => {
         const images = await getImagesByProductId(productId);
         const videoData = await getVideosByProductId(productId);
         if (!product) return res.status(404).send("Product not found");
-        console.log("Fetched product for edit:", product);
         res.render('seller/product', {
             mode: 'edit',
             product: product,
@@ -503,7 +501,6 @@ app.put('/categories/:id', async (req, res) => {
     if (category) {
         await renameCategory(targetId, newName); // Call the function to update the category name in the database
         res.json({ success: true });
-        console.log(`Updated category with ID: ${targetId} to new name: ${category.name}`);
     } else {
         res.status(404).json({ success: false, message: 'Category not found' });
     }
@@ -533,8 +530,6 @@ app.post(
         const galleryFiles = req.files['gallery_image[]'] || [];
         const videoIds = [req.body.videoId, req.body.videoId2];
         const videoUrls = [req.body.videoUrl, req.body.videoUrl2];
-        console.log(videoIds);
-        console.log(videoUrls);
         try {
 
             await updateProduct(
@@ -552,7 +547,6 @@ app.post(
                 )
             );
             await updateSystemRequirements(productId, req.body);
-            console.log("Files received by Multer:", req.files);
             if (galleryFiles.length > 0) {
                 for (const file of galleryFiles) {
                     const cleanPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
@@ -589,35 +583,41 @@ app.post(
 
 app.delete('/api/games/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    const games = await getAllProduct(); // Assuming this returns an array of game objects
-    const game = games.filter(game => game.id !== targetId);
-    if (game) {
-        await deleteProductByProductId(targetId);
-        console.log(`Deleted game with ID: ${targetId}`);
+    try {
+    await deleteProductByProductId(targetId);
+
         res.json({ success: true });
-    } else {
-        console.log('Game not found');
+
+    } catch (err) {
+        console.error(err);
+        if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(400).json({
+                success: false,
+                message: 'This product cannot be deleted because it has already been purchased.'
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 app.delete('/categories/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    const categories = await getAllCategory(); // Assuming this returns an array of category objects)
-    const category = categories.filter(cat => cat.id !== targetId);
-    if (category) {
+    try {
         await deleteCategoryByCategoryId(targetId);
         res.json({ success: true });
-        console.log(`Deleted category with ID: ${targetId}`);
     }
-    else {
-        console.log('Category not found');
+    catch (err) {
+        console.error(err);
     }
 });
 app.delete('/api/gallery/delete/:id', async (req, res) => {
     const imageId = parseInt(req.params.id);
     try {
-        const result = await deleteGalleryByImageId(imageId);
+        await deleteGalleryByImageId(imageId);
         res.json({ success: true });
-        console.log(`Deleted gallery image with ID: ${imageId}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error deleting gallery image');
@@ -635,7 +635,6 @@ app.get('/api/image/:id', async (req, res) => {
 app.post('/api/addcategorie', async(req,res) => {
     const newcat = await addCategory(req.body.name);
     try {
-        console.log(newcat);
         res.json({success: true});
     } catch (err) {
         res.status(500).send('SERVER ERROR');
@@ -725,5 +724,4 @@ app.post('/api/order', async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('The server is listening at port 3000.');
 });

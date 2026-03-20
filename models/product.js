@@ -68,7 +68,7 @@ const getProductRequirementById = async (id) => {
         const [rows] = await db.promise().execute(sql, payload);
         return rows;
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 };
 const getCategoriesByProductId = async (productId) => {
@@ -152,9 +152,6 @@ const addCategory = async (name) => {
     const sql = 'INSERT INTO categories (name) VALUES (?)';
     try {
         const [result] = await db.promise().execute(sql, [name]);
-        if(result){
-            console.log("Insert Category Success");
-        }
         return result;
     }catch(err){
         console.error(err.message);
@@ -224,6 +221,7 @@ const deleteProductByProductId = async (productId) => {
         return result;
     } catch (err) {
         console.error(err);
+        throw err;
     }
 };
 async function addSystemRequirements(productId, data) {

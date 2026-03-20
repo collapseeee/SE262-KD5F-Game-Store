@@ -142,7 +142,6 @@
       var fakeLastActive = Date.now() - (SESSION_DURATION - seconds) * 1000;
       localStorage.setItem(STORAGE_KEY, fakeLastActive.toString());
       warnShown = false;
-      console.log('Session will expire in ' + seconds + ' seconds. Stop moving your mouse!');
     }
   };
 
