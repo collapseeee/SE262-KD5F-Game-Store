@@ -24,15 +24,12 @@ const getIsInCart = async (userId, productId) => {
 
     const [rows] = await db.promise().execute(sql, payload);
 
-    if (rows.length === 0) {
-        return false;
-    }
-    return true;
+    return rows.length > 0;
 }
 
 const addToCart = async (userId, productId) => {
     const sql = `INSERT INTO carts (user_id, product_id, cart_date) VALUES (?, ?, ?);`
-    const date = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`;
+    const date = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`;
     const payload = [userId, productId, date];
 
     const [rows] = await db.promise().execute(sql, payload);
@@ -46,9 +43,17 @@ const deleteFromCart = async (userId, productId) => {
     return rows;
 }
 
+const deleteCart = async (userId) => {
+    const sql = `DELETE FROM carts WHERE user_id = ?`
+    const payload = [userId];
+    const [rows] = await db.promise().execute(sql, payload);
+    return rows;
+}
+
 module.exports = {
     getCartByUserId,
     addToCart,
     deleteFromCart,
-    getIsInCart
+    getIsInCart,
+    deleteCart
 }

@@ -6,11 +6,12 @@ const session = require('express-session');
 const sessionStore = require('./models/session');
 const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
-const { getCartByUserId, deleteFromCart, addToCart, getIsInCart } = require('./models/cart')
+const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit,addCategory,getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
-const { getImageByGameProductId } = require('./models/image');
+const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
+const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
 const multer = require('multer');
 const Account = require('./models/account');
 
@@ -58,14 +59,16 @@ app.set('views', './views');
 // Webpage endpoints
 
 app.get('/', async (req, res) => {
-    const games = await getAllProduct();
+    let games = await getAllProduct();
+    if (games.length > 12) {
+        games = games.slice(0, 12);
+    }
     if (req.session.username) {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
         const userCarts = await getCartByUserId(user.user_id);
         const cartIds = userCarts.map(item => item.product_id);
-
         res.render('index', {
             games: games,
             categories: await getAllCategory(),
@@ -76,7 +79,7 @@ app.get('/', async (req, res) => {
     } else {
         res.render('index', {
             categories: await getAllCategory(),
-            games: await getAllProduct(),
+            games: games,
             username: null,
             wishlists: [],
             carts: []
@@ -153,7 +156,7 @@ app.get('/result', async (req, res) => {
         }
     }
 
-    // Search Operation 
+    // Search Operation
     const results = await searchProduct(gameName, (categoryArray.length > 0) ? categoryArray : null);
 
     // Matching categoryId with its name:
@@ -167,7 +170,7 @@ app.get('/result', async (req, res) => {
 
         categoriesName = nameList.join(" | ");
     }
-    
+
     // Get user wishlist and cart item to display differently in icon.
     const userWishlists = await getWishlistByUserId(user.user_id);
     const wishlistIds = userWishlists.map(item => item.product_id);
@@ -190,8 +193,19 @@ app.get('/product/:id', async (req, res) => {
         const gameId = req.params.id;
         const game = await getProductById(gameId);
         const user = await getUserByName(req.session.username);
-        const images = await getImageByGameProductId(gameId);
-        const exportImage = images.map(image => image.image_url);
+        const images = await getProductImagesByProductId(gameId);
+        const videos = await getProductVideosByProductId(gameId);
+        const exportImages = images.map(image => image.image_url);
+        const exportVideos = videos.map(video => {
+            const url = video.video_url;
+            if (url.includes('watch')) {
+                return url.split('v=')[1];
+            }
+            if (url.includes('youtu.be')) {
+                return url.split('/').pop();
+            }
+            return url;
+        });
         const isWishlisted = await getIsWishlisted(user.user_id, gameId);
         const isInCart = await getIsInCart(user.user_id, gameId)
 
@@ -200,11 +214,12 @@ app.get('/product/:id', async (req, res) => {
             gameDetails: game,
             isWishlisted: isWishlisted,
             isInCart: isInCart,
-            images: exportImage,
+            images: exportImages,
+            videos: exportVideos,
             requirements: await getProductRequirementById(gameId)
         });
     } catch (error) {
-        console.error(error)
+        console.error(error);
         res.status(500).send("SERVER ERROR");
     }
 });
@@ -234,7 +249,7 @@ app.get('/cart', async (req, res) => {
             poster_url: cart.poster_url,
             categories: cart.categories,
             cart_date: formattedDate
-        }
+        };
     });
     res.render('buyer/shoppingCart', {
         games: exportedCarts,
@@ -271,7 +286,7 @@ app.get('/wishlist', async (req, res) => {
                 poster_url: wishlist.poster_url,
                 categories: wishlist.categories,
                 wishlist_date: `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`
-            }
+            };
         });
         res.render('buyer/wishlist', {
             // Data here
@@ -310,11 +325,11 @@ app.post('/loginBuyer', (req, res) => {
 app.post('/loginSeller', (req, res) => {
     const { username, password } = req.body;
     Auth.loginSeller(username, password)
-        .then(() => {
-            req.session.username = username;
-
+        .then((user) => {
+            req.session.username = user.username;
+            req.session.user_id = user.user_id;
             res.redirect('/dashboard');
-            console.log(req.session.username);
+            console.log(req.session.username, req.session.user_id);
         })
         .catch(error => {
             console.error(error);
@@ -359,18 +374,17 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    Auth.signup(username, password, 'buyer')
+        Auth.signup(username, password, 'buyer', 'seller')
         .then(() => {
             req.session.username = username;
-
             res.redirect('/');
         })
         .catch(error => {
             console.error(error);
             res.status(500).send('Error during signup');
         });
-
-});
+    }
+);
 
 app.get('/api/product', async (req, res) => {
     // GET all products
@@ -378,8 +392,9 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProduct();
+        const games = await getAllProductByUserId(req.session.user_id);
         const categories = await getAllCategory();
+        console.log(games);
         res.render('seller/dashboard', {
             // Data here
             categories: categories,
@@ -401,6 +416,7 @@ app.get('/api/product/add', (req, res) => {
         currentCategories: []
     });
 });
+
 app.get('/api/product/edit/:id', async (req, res) => {
     try {
         const productId = req.params.id;
@@ -447,13 +463,14 @@ app.post('/api/product/add', upload.fields([
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
             const { name, category, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
+            const userId = req.session.user_id;
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
             if (productId) {
                 const categoryArray = Array.isArray(categories) ? categories : [categories];
                 for (const categoryId of categoryArray) {
-                    if (categoryId) await addProductList(productId, categoryId, 1);
+                    if (categoryId) await addProductList(productId, categoryId, userId);
                 }
 
 
@@ -466,7 +483,6 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
 
                 await addSystemRequirements(productId, req.body);
 
@@ -573,15 +589,14 @@ app.post(
 
 app.delete('/api/games/:id', async (req, res) => {
     const targetId = parseInt(req.params.id);
-    games = games.filter(game => game.id !== targetId);
-    res.json({ success: true });
-    console.log(`Deleted game with ID: ${targetId}`);
-    try {
-        const data = await getAllProduct();
-        res.json(data);
-    } catch (err) {
-        res.status(500).send('SERVER ERROR');
-        console.error(err);
+    const games = await getAllProduct(); // Assuming this returns an array of game objects
+    const game = games.filter(game => game.id !== targetId);
+    if (game) {
+        await deleteProductByProductId(targetId);
+        console.log(`Deleted game with ID: ${targetId}`);
+        res.json({ success: true });
+    } else {
+        console.log('Game not found');
     }
 });
 app.delete('/categories/:id', async (req, res) => {
@@ -610,8 +625,18 @@ app.delete('/api/gallery/delete/:id', async (req, res) => {
 });
 app.get('/api/image/:id', async (req, res) => {
     try {
-        const data = await getImageByGameProductId(req.params.id);
+        const data = await getProductImagesByProductId(req.params.id);
         res.json(data);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+app.post('/api/addcategorie', async(req,res) => {
+    const newcat = await addCategory(req.body.name);
+    try {
+        console.log(newcat);
+        res.json({success: true});
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);
@@ -648,7 +673,7 @@ app.post('/api/cart/:id', async (req, res) => {
     try {
         const product_id = req.params.id;
         const user = await getUserByName(req.session.username);
-        const result = await addToCart(user.user_id, product_id)
+        const result = await addToCart(user.user_id, product_id);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
@@ -662,6 +687,37 @@ app.delete('/api/cart/:id', async (req, res) => {
         const user = await getUserByName(req.session.username);
         const result = await deleteFromCart(user.user_id, productId);
         res.send(result);
+    } catch (err) {
+        res.status(500).send('SERVER ERROR');
+        console.error(err);
+    }
+});
+
+app.post('/api/order', async (req, res) => {
+    try {
+        const user = await getUserByName(req.session.username);
+        const userId = user.user_id;
+        const cartItems = await getCartByUserId(userId);
+        if (cartItems.length === 0) return res.status(400).send('Cart is empty');
+
+        const productIds = cartItems.map(item => item.product_id);
+        const { method, finalPrice, gameCount } = req.body;
+
+        await addOrder(userId, productIds, method, finalPrice);
+
+        await updateUserTotalSpend(userId, finalPrice);
+        await updateUserTotalGame(userId, gameCount);
+
+        for (const item of cartItems) {
+            const sellerId = await getSellerIdByProductId(item.product_id);
+            if (sellerId) {
+                await updateUserTotalSale(sellerId, item.price);
+            }
+        }
+
+        await deleteCart(userId);
+
+        res.status(200).send('Order Processed Successfully');
     } catch (err) {
         res.status(500).send('SERVER ERROR');
         console.error(err);

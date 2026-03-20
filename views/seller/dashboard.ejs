@@ -19,7 +19,7 @@
     <div class="section-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title">CATEGORY LIST</h2>
-            <button class="btn btn-add">ADD</button>
+            <button class="btn btn-add" onclick="addCategoryRow()">ADD</button>
         </div>
 
         <div id = "categories" class="table-responsive table-category">
@@ -51,7 +51,7 @@
                                 
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-action-edit view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                    <button class="btn btn-action-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
+                                    <button class="btn btn-action-delete view-mode" onclick="deleteCategory(<%= cat.category_id %>)">Delete</button>
                                     <button class="btn btn-action-done edit-mode d-none" onclick="saveEdit('<%= index %>', <%= cat.category_id %>)">Done</button>
                                     <button class="btn btn-action-delete edit-mode d-none" onclick="disableEdit('<%= index %>')">Delete</button>
                                 </div>
@@ -68,7 +68,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <button class="btn btn-popover-rename view-mode" onclick="enableEdit('<%= index %>')">Rename</button>
-                                        <button class="btn btn-popover-delete view-mode" onclick="deleteItem(<%= cat.category_id %>)">Delete</button>
+                                        <button class="btn btn-popover-delete view-mode" onclick="deleteCategory(<%= cat.category_id %>)">Delete</button>
                                     </ul>
                                 </div>
                         </td>
@@ -82,7 +82,7 @@
     <div id="products" class="section-container table-product">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title">GAMES</h2>
-            <button class="btn btn-add" onclick="window.location.href='/api/product/add'">ADD</button>
+            <button class="btn btn-add" onclick="addCategoryRow()">ADD</button>
         </div>
 
         <div class="table-responsive">
@@ -99,18 +99,12 @@
                     <% games.forEach((game, index) => { %>
                         <tr class="<%= index % 2 === 0 ? 'row-color-1' : 'row-color-2' %>">
                             <td class="ps-3 py-3 text-white"><%= game.name %></td>
-                            <td class="text-white">Category <%= game.category_id %></td>
+                            <td class="text-white"><%= game.category %></td>
                             <td class="text-white">$<%= game.price %></td>
                             <td class="text-end pe-3">
                                 <div class="d-none d-lg-flex justify-content-end align-items-center gap-2">
-                                    <span class="material-symbols-outlined icon-visibility"
-                                        id="vis-game-<%= index %>"
-                                        style="cursor: pointer; color: white;"
-                                        onclick="toggleVisibility('vis-game-<%= index %>')">
-                                        visibility
-                                    </span>
                                     <button class="btn btn-action-edit" onclick="window.location.href = '/api/product/edit/<%= game.product_id %>'">Edit</button>
-                                    <button class="btn btn-action-delete">Delete</button>
+                                    <button class="btn btn-action-delete" onclick="deleteproduct(<%= game.product_id %>)">Delete</button>
                                 </div>
 
                                 <div class="dropdown d-lg-none">
@@ -125,7 +119,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end custom-popover shadow">
                                         <li class="px-3 py-2"><a class="btn btn-popover-edit w-100" href="/api/product/edit/<%= game.product_id %>">Edit</a></li>
-                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" href="#">Delete</a></li>
+                                        <li class="px-3 py-2"><a class="btn btn-popover-delete w-100" onclick="deleteproduct(<%= game.product_id %>)">Delete</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -160,26 +154,9 @@ const currentVisibility = async () => {
 };
 
 
-function toggleVisibility(id) {
-    const icon = document.getElementById(id);
-    const row = icon.closest('tr');
-    axios.put(`/api/category/hide/${icon.dataset.categoryId}`);
-    if (icon.innerText === 'visibility') {
-        // change to hidden state
-        icon.innerText = 'visibility_off';
-        icon.style.opacity = '0.5';
-        row.style.opacity = '0.5'; //
-        row.style.transition = '0.3s';
-    } else {
-        // change back to visible state
-        icon.innerText = 'visibility';
-        icon.style.opacity = '1';
-        row.style.opacity = '1';
-        row.style.transition = '0.3s';
-    }
-}
 
-async function deleteItem(id) {
+
+async function deleteCategory(id) {
         try {
             const response = await fetch(`/categories/${id}`, {
                 method: 'DELETE'
@@ -196,6 +173,22 @@ async function deleteItem(id) {
         }
     }
 
+    async function deleteproduct(id) {
+        try {
+            const response = await fetch(`/api/games/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert("Error in database");
+            }
+        } catch (error) {
+            console.log("Error:", error);
+            alert("cannot connect Server")
+        }
+    }
     function enableEdit(index) {
     const row = document.getElementById(`row-cat-${index}`);
     
@@ -231,6 +224,82 @@ async function saveEdit(index, id) {
         }
     } catch (error) {
         console.error("Save failed:", error);
+    }
+}
+function addCategoryRow() {
+    const existingNewRow = document.getElementById('row-cat-new');
+    if (existingNewRow) {
+        existingNewRow.querySelector('input').focus();
+        return;
+    }
+
+    const tbody = document.querySelector('.table-category tbody');
+    
+    const tempIndex = 'new';
+    
+    const isEven = tbody.children.length % 2 === 0;
+    const rowClass = isEven ? 'row-color-1' : 'row-color-2';
+
+    const newRow = `
+        <tr id="row-cat-${tempIndex}" class="${rowClass}">
+            <td class="ps-3 py-3 text-white">
+                <input type="text"
+                        class="form-control edit-mode custom-input" 
+                        placeholder="New Category Name..."
+                        onkeyup="if(event.key === 'Enter') saveNewCategory('${tempIndex}')">
+            </td>
+            <td class="text-end pe-3">
+                <div class="d-none d-lg-flex justify-content-end align-items-center gap-3">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-action-done edit-mode" onclick="saveNewCategory('${tempIndex}')">Done</button>
+                        <button class="btn btn-action-delete edit-mode" onclick="cancelNewCategory('${tempIndex}')">Cancel</button>
+                    </div>
+                </div>
+                <div class="d-flex d-lg-none justify-content-end gap-2">
+                    <button class="btn btn-action-done edit-mode px-2 py-1" onclick="saveNewCategory('${tempIndex}')">Done</button>
+                    <button class="btn btn-action-delete edit-mode px-2 py-1" onclick="cancelNewCategory('${tempIndex}')">Cancel</button>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    tbody.insertAdjacentHTML('beforeend', newRow);
+
+    document.querySelector(`#row-cat-${tempIndex} input`).focus();
+}
+
+function cancelNewCategory(index) {
+    const row = document.getElementById(`row-cat-${index}`);
+    if (row) row.remove();
+}
+
+async function saveNewCategory(index) {
+    const row = document.getElementById(`row-cat-${index}`);
+    const inputField = row.querySelector('input.edit-mode');
+    const newName = inputField.value.trim();
+
+    if (!newName) {
+        alert("Please enter a category name.");
+        inputField.focus();
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/addcategorie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            window.location.reload();
+        } else {
+            alert("Error saving new category");
+        }
+    } catch (error) {
+        console.error("Save failed:", error);
+        alert("Cannot connect to Server");
     }
 }
 </script>

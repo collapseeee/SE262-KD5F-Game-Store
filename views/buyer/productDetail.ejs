@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/styles/productDetail.css" />
     <link rel="stylesheet" href="/styles/animations.css" />
   </head>
-  <body data-game-id="<%=gameDetails.product_id%>" data-images="<%=images%>">
+  <body data-game-id="<%=gameDetails.product_id%>" data-images="<%=images%>" data-videos="<%=videos%>">
     <%- include('partials/navbar') %>
     <main class="container my-4">
       <a href="/" class="back-to-home scroll-reveal"><p>< Back to Home</p></a>
@@ -19,32 +19,60 @@
         <div class="row">
         <!-- Left: Images -->
         <div class="col-md-8 align-items-center">
-          <div class="image-gallery">
-            <div class="side-thumbnail mx-auto">
-              <img src="<%=gameDetails.poster_url%>" alt="game poster" class="rounded" />
+          <div class="image-gallery gap-3">
+            <div class="side-thumbnail mx-auto text-center text-md-start">
+              <img src="<%=gameDetails.poster_url%>" alt="game poster" class="rounded w-100" />
             </div>
-            <div id="main-image" class="mx-auto">
+            <div id="main-image" class="mx-auto flex-grow-1">
               <img
                 src=""
                 alt="Game Image"
-                class="rounded-3"
+                class="rounded-3 mx-auto"
               />
+              <iframe src=""
+                width="555"
+                height="256"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                class="rounded-3 h-100 w-100 mx-auto"
+                style="display: none;"
+                allowfullscreen>
+              </iframe>
             </div>
           </div>
           <!-- Thumbnail carousel (desktop) -->
-          <div class="d-flex align-items-center mt-3 thumbnail-carousel my-lg-0 my-3">
+          <div class="d-flex align-items-center mt-3 thumbnail-carousel my-lg-0 my-3 py-3">
             <button type="button" id="left-arrow" class="btn btn-sm carousel-arrow rounded-circle">
               <i class="bi bi-arrow-left"></i>
             </button>
             <div class="d-flex gap-2 thumb-container flex-grow-1">
+              <% videos.forEach((video, index) => {%>
+                <div class="position-relative thumb-item rounded" data-index="<%=index%>" style="cursor: pointer; display: inline-block;">
+                  <img 
+                    src="https://img.youtube.com/vi/<%=video%>/hqdefault.jpg" 
+                    alt="Video Preview" 
+                    class="w-100 h-100 rounded object-fit-cover"
+                  />
+                  <div class="position-absolute top-50 start-50 translate-middle text-white" style="pointer-events: none;">
+                    <i class="bi bi-play-circle-fill fs-4" style="color: #B7EF00;"></i>
+                  </div>
+                </div>
+              <%});%>
               <% images.forEach((image, index) => { %>
               <img
                 src="<%=image%>"
                 alt="thumbnail <%=index%>"
                 class="img-fluid rounded thumb-item"
-                data-index="<%=index%>"
+                data-index="
+                <% if (videos.length === 1) {%>
+                  <%=index+1%>
+                <%} else if (videos.length === 2) { %>
+                  <%=index+2%>
+                <%} else { %>
+                  <%=index%>
+                <%} %>"
               />
-              <%})%>
+              <%});%>
             </div>
             <button type="button" id="right-arrow" class="btn btn-sm carousel-arrow rounded-circle">
               <i class="bi bi-arrow-right"></i>
@@ -52,9 +80,19 @@
           </div>
           <!-- Dot indicators (mobile) -->
           <div class="dot-indicators my-3">
+            <% videos.forEach((video, index) => {%>
+              <span class="dot rounded-circle" data-index="<%=index%>"></span>
+            <%});%>
             <% images.forEach((image, index) => { %>
               <span class="dot rounded-circle" 
-                data-index="<%=index%>"></span>
+                data-index="
+                <% if (videos.length === 1) {%>
+                  <%=index+1%>
+                <%} else if (videos.length === 2) { %>
+                  <%=index+2%>
+                <%} else { %>
+                  <%=index%>
+                <%} %>"></span>
             <% }) %>
           </div>
         </div>
@@ -152,12 +190,6 @@
 
       </div>
     </main>
-
-    <style>
-        .section {
-            background-color: #8122C9;
-        }
-    </style>
     <%-include('partials/popup/sessionExpired')%>
     <%- include('partials/footer') %>
   </body>
