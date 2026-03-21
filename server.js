@@ -563,7 +563,7 @@ app.post(
 
             await Promise.all(
                 categoryArray.map(categoryId =>
-                    addProductList(productId, categoryId, 1)
+                    addProductList(productId, categoryId, req.session.user_id)
                 )
             );
             await updateSystemRequirements(productId, req.body);
