@@ -179,7 +179,7 @@ a > i, .bi-search {
   content: '';
   position: absolute;
   top: -8px;
-  right: 128px;      /* aligns right side since menu is right: 0 */
+  right: 50px;      /* aligns right side since menu is right: 0 */
   width: 16px;
   height: 16px;
   background: #8122c9;   /* same as .multiselect-container bg */
@@ -340,7 +340,7 @@ a > i, .bi-search {
     .multiselect-container.dropdown-menu {
       position: absolute !important;
       top: 100% !important;
-      left: 0 !important;
+      left: 100px !important;
       right: auto !important;
       min-width: 100% !important;
       margin-top: 2px !important;
@@ -354,7 +354,7 @@ a > i, .bi-search {
   }
 
     .multiselect-container::before {
-      right: 70px; /* Adjust for full-width dropdown */
+      right: 70px !important; /* Adjust for full-width dropdown */
     }
 
     .category-container .dropdown-menu button {
@@ -385,3 +385,77 @@ a > i, .bi-search {
     max-width: 220px;
     }
   }
+
+  /* Hover Cart Popup */
+#cart-hover-container {
+    display: inline-block;
+}
+
+.cart-bubble-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    width: 400px;
+    background-color: #8122C9; 
+    border-radius: 40px;
+    padding: 25px;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.bubble-arrow {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #8122C9;
+}
+
+.mini-poster-container {
+    background-color: #9D00FF; 
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.mini-poster-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.game-name-text {
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;     /* Limits name to 2 lines */
+    -webkit-box-orient: vertical;
+}
+
+/* HOVER LOGIC */
+#cart-hover-container:hover .cart-bubble-popup {
+    display: block;
+    animation: bubblePop 0.3s ease-out;
+}
+
+@keyframes bubblePop {
+    from { opacity: 0; transform: translateX(-50%) scale(0.9); }
+    to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
