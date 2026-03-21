@@ -408,8 +408,7 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const user = await getUserByName(req.session.username);
-        const games = await getAllProductByUserId(user.user_id);
+        const games = await getAllProductByUserId(req.session.user_id);
         const categories = await getAllCategory();
         res.render('seller/dashboard', {
             // Data here
@@ -478,14 +477,14 @@ app.post('/api/product/add', upload.fields([
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
             const { name, category, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
-            const userId = req.session.user_id;
+            const user = await getUserByName(req.session.username);
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
             if (productId) {
                 const categoryArray = Array.isArray(categories) ? categories : [categories];
                 for (const categoryId of categoryArray) {
-                    if (categoryId) await addProductList(productId, categoryId, userId);
+                    if (categoryId) await addProductList(productId, categoryId, req.session.user_id);
                 }
 
 
@@ -650,7 +649,7 @@ app.get('/api/image/:id', async (req, res) => {
     }
 });
 app.post('/api/addcategorie', async (req, res) => {
-    const newcat = await addCategory(req.body.name);
+    await addCategory(req.body.name);
     try {
         res.json({ success: true });
     } catch (err) {
@@ -665,7 +664,7 @@ app.post('/api/wishlist/:id', async (req, res) => {
     try {
         const product_id = req.params.id;
         const user = await getUserByName(req.session.username);
-        const result = await addToWishlist(user.user_id, product_id)
+        const result = await addToWishlist(user.user_id, product_id);
         res.send(result);
     } catch (err) {
         res.status(500).send('SERVER ERROR');
