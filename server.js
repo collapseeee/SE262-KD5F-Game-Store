@@ -408,13 +408,17 @@ app.get('/api/product', async (req, res) => {
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        const games = await getAllProductByUserId(req.session.user_id);
-        const categories = await getAllCategory();
-        res.render('seller/dashboard', {
-            // Data here
-            categories: categories,
-            games: games
-        });
+        if (req.session.username) {
+            const games = await getAllProductByUserId(req.session.user_id);
+            const categories = await getAllCategory();
+            res.render('seller/dashboard', {
+                // Data here
+                categories: categories,
+                games: games
+            });
+        } else {
+            res.redirect('/identification');
+        }
     } catch (err) {
         console.error(err);
         res.status(500).send("Error fetching dashboard data");
@@ -559,7 +563,7 @@ app.post(
 
             await Promise.all(
                 categoryArray.map(categoryId =>
-                    addProductList(productId, categoryId, 1)
+                    addProductList(productId, categoryId, req.session.user_id)
                 )
             );
             await updateSystemRequirements(productId, req.body);
