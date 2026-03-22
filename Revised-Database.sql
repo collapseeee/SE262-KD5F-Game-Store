@@ -110,4 +110,12 @@ CREATE TABLE product_lists (
     FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES accounts(user_id) ON DELETE RESTRICT,
     PRIMARY KEY (list_id)
-)ENGINE=InnoDB
+)ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `session_id` varchar(128) COLLATE utf8mb4_bin NOT NULL,
+  `expires` int(11) unsigned NOT NULL,
+  `data` mediumtext COLLATE utf8mb4_bin,
+  PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB
+
