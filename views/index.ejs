@@ -4,9 +4,63 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KD5F - Homepage</title>
+
+    <!-- Link Bootstrap -->
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <!-- Link style.css -->
+    <link rel="stylesheet" href="/styles/style.css" />
+    <!-- Link welcome-popup.css -->
+    <link rel="stylesheet" href="/styles/welcome-popup.css" />
+    <link rel="stylesheet" href="/styles/index.css" />
+    <link rel="stylesheet" href="/styles/animations.css" />
   </head>
   <body>
     <!-- Navbar -->
     <%-include('buyer/partials/navbar');%>
+
+    <!-- Welcome Popup -->
+    <%-include('buyer/partials/popup/welcome');%>
+
+    <main data-username="<%=username%>" class="container my-4">
+      <!-- Carousel -->
+      <%-include('buyer/partials/carousel');%>
+
+      <!-- Game Cards Grid -->
+      <div class="container">
+        <div class="row gap-4 justify-content-center align-items-start">
+          <% games.forEach((game, index) => { %>
+            <%-include('buyer/partials/gameCard', { game: game, index: index });%>
+          <%})%>
+        </div>
+      </div>
+
+      <!-- Explore more Text -->
+      <p id="explore" class="scroll-reveal">
+      <% if (username !== null) { %>
+        <a href="/result" id="explore-link">Explore more</a>
+      <%} else {%>
+        <p id="explore">
+        Explore more: <a href="/identification" id="login-text">Log in</a> or
+        <a href="/register" id="register-text">Register</a>
+      </p>
+      <%}%>
+    </main>
+
+    <% if (username) { %>
+      <%-include('buyer/partials/popup/sessionExpired')%>
+    <% } %>
+
+    <%-include('buyer/partials/footer')%>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/welcome-popup.js"></script>
+    <script type="module" src="/scripts/ani_welcome.js"></script>
+    <script src="/scripts/scroll-reveal.js"></script>
+    <script src="/axios/dist/axios.min.js"></script>
+    <script src="/scripts/notify.js"></script>
+    <script src="/scripts/product.js" defer></script>
+    <% if (username) { %>
+    <script src="/scripts/session-expiry.js"></script>
+    <% } %>
   </body>
 </html>

@@ -1,0 +1,40 @@
+<footer class="container-fluid d-flex justify-content-between align-items-center px-5">
+  <div class="footer-content">
+    <i class="bi bi-c-circle text-white" style="font-size: 1.2rem;"></i>
+    <p class="mb-0 text-white">2026 KaiDao-5-Fong</p>
+  </div>
+  
+  <div class="footer-content">
+    <i class="bi bi-info-circle text-white" style="font-size: 1.2rem;"></i>
+    <a class="link-light text-decoration-none fw-bold" href="/contact">CONTACT US</a>
+  </div>
+</footer>
+
+<style>
+  /* ตั้งค่า Body ให้สูงเต็มจอและเป็นแนวตั้ง */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* บังคับให้สูงเท่าความสูงหน้าจอเป็นอย่างน้อย */
+    margin: 0;
+  }
+
+  /* บังคับให้เนื้อหาตรงกลาง (main) ยืดพื้นที่ที่เหลือทั้งหมด */
+  main {
+    flex: 1;
+  }
+
+  /* ตกแต่ง Footer (ในไฟล์ footer.ejs ของคุณ) */
+  footer {
+    background-color: #2f2b33;
+    height: 60px;
+    width: 100%;
+    margin-top: auto; /* ช่วยดันตัวลงไปล่างสุดอีกแรง */
+  }
+
+  .footer-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+</style>

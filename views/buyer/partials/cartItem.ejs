@@ -1,0 +1,65 @@
+<div class="container cart-container rounded-4 mb-3">
+  <div class="p-4 row shadow">
+    <div class="col-4 overflow-hidden">
+      <a href="/product/<%=game.product_id%>">
+      <img class="game-poster w-100 rounded-4" src="<%=game.poster_url%>" alt="<%=game.name%>" style="
+      height: 256px; 
+      object-fit: cover; 
+      object-position: center;" /></a>
+    </div>
+
+    <!-- For wishlist page -->
+    <% if (game.wishlist_date) { %>
+    <div class="col-8 d-flex flex-column my-lg-0 my-sm-2">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-lg-10">
+          <p class="fs-2 fw-medium text-truncate">
+            <a href="/product/<%=game.product_id%>" style="color: white; text-decoration: none;"><%=game.name%></a>
+          </p>
+          <p class="fs-3">
+            <%=game.categories%>
+          </p>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-2">
+          <p class="fs-2 text-end">$<%=game.price%>
+          </p>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-auto">
+        <p class="opacity-75 mb-0 text-truncate fs-4">
+          Added: <%=game.wishlist_date%>
+        </p>
+        <a data-item-id="<%=game.product_id%>" class="link-danger link-underline-danger fs-4" id="remove" type="submit">Remove</a>
+      </div>
+    </div>
+    <% } else if (game.cart_date) { %>
+    <div class="col-8 d-flex flex-column my-lg-0 my-sm-2">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-lg-8">
+          <p class="fs-3 fw-medium text-truncate">
+            <a href="/product/<%=game.product_id%>" style="color: white; text-decoration: none;"><%=game.name%></a>
+          </p>
+          <p class="fs-4">
+            <%=game.categories%>
+          </p>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <p class="fs-3 text-end">$<%=game.price%>
+          </p>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-auto">
+        <p class="opacity-75 mb-0 text-truncate fs-5">
+          Added: <%=game.cart_date%>
+        </p>
+        <a data-item-id="<%=game.product_id%>" class="link-danger link-underline-danger fs-4" id="remove" type="submit">Remove</a>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
+<style>
+  .cart-container {
+    background-color: #8b00f5;
+  }
+</style>

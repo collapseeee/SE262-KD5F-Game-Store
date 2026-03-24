@@ -1,0 +1,461 @@
+a > i, .bi-search {
+    color: #FEFEFE !important;
+    line-height: 1;
+  }
+
+  .navbar-brand {
+    background-color: #8b00f5;
+    text-align: center;
+    align-items: center;
+    height: 100%;
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+    font-size: 12px;
+  }
+
+  .navbar-brand, .nav-button, #search-button, #search-input, .dropdown > a > div{
+    box-shadow: 5px 5px 5px rgb(0 0 0 / 15%);
+  }
+
+  #brand-icon {
+    size: auto;
+    max-width: 64px;
+  }
+
+
+  .category-container>* {
+    text-decoration: none;
+    color: #fefefe;
+  }
+
+  .bg-custom {
+    background-color: #8122c9;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Search bar */
+  .search-bar {
+    height: 48px;
+  }
+
+  #search-button {
+    margin: 0;
+    height: 100%;
+    background-color: #2f2b33;
+    border: none;
+  }
+
+  #search-input {
+    margin: 0;
+    color: #fefefe;
+    border: none;
+    background-color: #2f2b33;
+  }
+  .nav-button {
+    background-color: #8b00f5;
+    color: #FEFEFE;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-button:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px rgba(139, 0, 245, 0.5);
+  }
+
+  #brand-icon {
+    transition: transform 0.3s ease;
+  }
+
+  #brand-icon:hover {
+    transform: scale(1.08);
+  }
+
+  #search-input:focus {
+    outline: none;
+    box-shadow: 0 2px 0 0 #B7EF00;
+  }
+
+  .multiselect-native-select, 
+  .multiselect-native-select .btn-group {
+    height: 100%;
+    position: relative;
+  }
+
+  /* Ensure dropdown menu appears below button on all viewports */
+  .multiselect-container.dropdown-menu {
+    position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
+    min-width: 200px !important;
+    margin-top: 2px !important;
+    margin-left: 0 !important;
+    float: none !important;
+    z-index: 1000 !important;
+  }
+
+  .multiselect-native-select {
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .multiselect-native-select .btn-group {
+    width: 100%;
+    height: 100%;
+    position: static; 
+  }
+  .multiselect-container{
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    left: auto !important;
+    right: 0 !important;
+    z-index: 1050 !important;
+    padding: 0.4em;
+    border-radius: 1em;
+    border: none;
+    background-color: #8122c9;
+    color: #FEFEFE;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    min-width: 160px;
+    animation: dropdownFadeIn 0.25s ease forwards;
+  }
+
+  .multiselect-container.hiding {
+    animation: dropdownFadeOut 0.25s ease forwards !important;
+  }
+  
+  .multiselect-all {
+    background-color: #8b00f5;
+    border-radius: 1em 1em 0 0;
+    margin-bottom: 5px;
+    color: hsl(0, 0%, 75%) !important;
+  }
+  .multiselect-container .multiselect-all:hover {
+    background-color: #8b00f5 !important;
+    color: #FEFEFE !important;
+  }
+  .multiselect-container .multiselect-all.active {
+    background-color: #8b00f5 !important;
+    color: #FEFEFE !important;
+  }
+  .multiselect-option {
+    background-color: #8b00f5;
+    width: 100%;
+    color: hsl(0, 0%, 75%);
+  }
+
+  .multiselect-container .multiselect-option:hover {
+    color: #FEFEFE !important;
+    background-color: #8b00f5 !important;
+  }
+
+  .multiselect-container .multiselect-option.active {
+    color: #FEFEFE !important;
+    background-color: #8b00f5 !important;
+  }
+
+    .multiselect-container .multiselect-option:focus {
+    color: hsl(0, 0%, 75%);
+    background-color: #8b00f5 !important;
+  }
+
+  .multiselect-container input[type="checkbox"]:checked {
+    background-color: #8122c9 !important;
+    border: none;
+  }
+
+  .multiselect-container input[type="checkbox"]:active {
+    background-color: #8122c9 !important;
+    border: none;
+  }
+
+  .multiselect-option:last-child {
+    border-radius: 0 0 1em 1em;
+  }
+
+  .multiselect-container::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 50px;      /* aligns right side since menu is right: 0 */
+  width: 16px;
+  height: 16px;
+  background: #8122c9;   /* same as .multiselect-container bg */
+  transform: rotate(45deg);
+  border-radius: 3px 0 0 0;
+  z-index: -1;
+  }
+
+  .dropdown-toggle {
+    margin: 0;
+    max-width: 256px;
+    color: #fefefe;
+    background-color: #8b00f5;
+  }
+
+  /* NOTE: I copied from https://davidstutz.github.io/bootstrap-multiselect/
+      The most important classes are: 
+      multiselect-container, 
+      multiselect-filter,
+      multiselect-all, 
+      multiselect-item, 
+      multiselect-group, 
+      multiselect-option 
+      as well as disabled and active. Both for collapsing and filtering options,
+      the classes multiselect-filter-hidden and
+      multiselect-collapsible-hidden are used. 
+  */
+
+  /* Dropdown animation */
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-100px) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-100px) translateY(0);
+    }
+  }
+
+  .category-container .dropdown-menu {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .category-container .dropdown-menu.show {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    border-radius: 1em !important;
+    background-color: #8b00f5 !important;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    padding: 1em;
+    border: 3px solid #8122c9;
+    left: -150%;
+    animation: dropdownFadeIn 0.25s ease forwards;
+  }
+
+  .category-container .dropdown-menu button {
+    word-break: break-word;
+    line-height: 1.3;
+    text-align: left;
+    padding: 4px 16px!important; 
+    margin-bottom: 2px;
+    gap: 4px;
+  }
+
+@media only screen and (width < 576px) {
+    .category-container .dropdown-item {
+    width: 50%;
+  }
+
+    .category-container .dropdown-menu  {
+    position: absolute !important;
+    width: max-content;
+    max-width: 280px;
+    top: 135% !important;
+  }
+}
+
+@media only screen and (width > 576px) {
+    .category-container .dropdown-item {
+    width: 33.33%;
+  }
+
+    .category-container .dropdown-menu  {
+    position: absolute !important;
+    width: max-content;
+    max-width: 520px;
+    min-width: 420px;
+    top: 135% !important;
+  }
+}
+
+  .category-container .dropdown-menu button {
+    color: hsl(0, 0%, 75%);
+    background-color: transparent;
+    border-radius: 0.5em;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .category-container .dropdown-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #FEFEFE;
+  }
+
+  li>a>img {
+    width: 32px;
+  }
+
+  .category-container p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+  }
+
+  /* Dropdown menu positioning */
+  .category-container .dropdown-menu {
+    min-width: 200px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+  }
+
+  
+
+  @media screen and (max-width: 576px) {
+    .navbar-brand {
+      position: absolute;
+      height: 50%;
+      left:7.5%;
+    }
+    
+    /* Fix dropdown on mobile */
+    .category-container {
+      width: 100%;
+    }
+    
+    .category-container .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0 !important;
+      right: auto !important;
+      min-width: 100%;
+      margin-top: 8px;
+    }
+
+    .category-container .dropdown-menu.show {
+      transform: translateX(-100px) !important; /* Shift left to align with button */
+    }
+
+    /* Keep multiselect dropdown below button */
+    .multiselect-native-select, 
+    .multiselect-native-select .btn-group {
+      position: relative;
+    }
+
+    .multiselect-container.dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 100px !important;
+      right: auto !important;
+      min-width: 100% !important;
+      margin-top: 2px !important;
+      float: none !important;
+      z-index: 1000 !important;
+    }
+
+    .multiselect-native-select .multiselect-container.dropdown-menu {
+    top: calc(100% + 20px) !important;
+    margin-top: 0 !important;
+  }
+
+    .multiselect-container::before {
+      right: 70px !important; /* Adjust for full-width dropdown */
+    }
+
+    .category-container .dropdown-menu button {
+      white-space: normal;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .navbar-brand {
+      position: absolute;
+      height: 50%;
+      left:7.5%;
+    }
+    
+    /* Fix dropdown on tablet */
+    .category-container .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0 !important;
+      right: auto !important;
+      min-width: 200px;
+      margin-top: 8px;
+    }
+
+    .multiselect-container {
+    right: 0 !important;
+    left: auto !important;
+    max-width: 220px;
+    }
+  }
+
+  /* Hover Cart Popup */
+#cart-hover-container {
+    display: inline-block;
+}
+
+.cart-bubble-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    width: 400px;
+    background-color: #8122C9; 
+    border-radius: 40px;
+    padding: 25px;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.bubble-arrow {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #8122C9;
+}
+
+.mini-poster-container {
+    background-color: #9D00FF; 
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.mini-poster-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.game-name-text {
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;     /* Limits name to 2 lines */
+    -webkit-box-orient: vertical;
+}
+
+/* HOVER LOGIC */
+#cart-hover-container:hover .cart-bubble-popup {
+    display: block;
+    animation: bubblePop 0.3s ease-out;
+}
+
+@keyframes bubblePop {
+    from { opacity: 0; transform: translateX(-50%) scale(0.9); }
+    to { opacity: 1; transform: translateX(-50%) scale(1); }
+}

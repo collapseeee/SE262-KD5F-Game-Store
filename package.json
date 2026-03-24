@@ -4,8 +4,12 @@
   "description": "[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=22699377&assignment_repo_type=AssignmentRepo)",
   "main": "server.js",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint . --ext .js",
+    "lint:html": "eslint . --format html --output-file eslint-report.html"
   },
   "repository": {
     "type": "git",
@@ -20,13 +24,28 @@
   },
   "homepage": "https://github.com/camt-pathathai/termproject-2025-mhuhaorak-frontend#readme",
   "dependencies": {
+    "animejs": "^4.3.6",
     "axios": "^1.13.5",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "bootstrap-multiselect": "^2.0.0",
     "dotenv": "^17.3.1",
     "ejs": "^4.0.1",
+    "eslint": "^10.0.2",
     "express": "^5.2.1",
+    "express-mysql-session": "^3.0.3",
+    "express-session": "^1.19.0",
+    "jquery": "^4.0.0",
+    "method-override": "^3.0.0",
+    "multer": "^2.1.1",
     "mysql2": "^3.18.0",
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.4.0"
   }
 }

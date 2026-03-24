@@ -1,0 +1,229 @@
+<div class="section-container Gallery-container">
+    <h2 class="text-white fw-bold mb-4">Gallery (Optional)</h2>
+    
+    <div class="row g-4 justify-content-center">
+        <% if (mode === 'edit' && gallery && gallery.length > 0) { %>
+            <% gallery.forEach((img, index) => { %>
+                <div class="col-12 col-sm-6 col-lg-3 gallery-item-wrapper">
+                    <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" 
+                                onclick="deleteExistingImage(event, '<%= img.image_id %>', this)"></button>
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                            <div class="icon-wrapper mb-2" style="width: 100%; height: 100%;">
+                                <img src="<%= img.image_url%>" class="img-fluid gallery-placeholder-img" style="object-fit: cover; width: 100%; height: 100%;">
+                            </div>
+                            <input type="hidden" name="existing_gallery[]" value="<%= img.image_id %>">
+                        </div>
+                    </div>
+                    <div class="progress mt-2 shadow-sm">
+                        <p style="margin-left: 10px; color: #FFFFFF;">Existing Image</p>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+        <%
+    const currentCount = (mode === 'edit' && typeof gallery !== 'undefined') ? gallery.length : 0;
+    const maxSlots = 4;
+        %>
+        <% for(let i = 0; i < (maxSlots - currentCount); i++) { %>
+            <div class="col-12 col-sm-6 col-lg-3 gallery-item-wrapper">
+                <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                        <div class="icon-wrapper mb-2">
+                            <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                        </div>
+                        <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                        <input type="file" class="d-none" name="gallery_image[]">
+                    </div>
+                </div>
+                <div class="progress mt-2 shadow-sm">
+                    <p style="margin-left: 10px">Uploading...</p>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="mt-4">
+    <label for="videoUrl" class="form-label text-white">Video URL (Optional):</label>
+    
+    <% 
+        
+        const vIds = (typeof videoIds !== 'undefined') ? videoIds : [];
+        const vUrls = (typeof videos !== 'undefined') ? videos : [];
+    %>
+
+    <input type="hidden" name="videoId" value="<%= (mode === 'edit' && videoIds && videoIds[0]) ? videoIds[0] : '' %>">
+    <input type="text" class="form-control video-input mb-2" id="videoUrl" name="videoUrl"
+           value="<%= (mode === 'edit' && videos && videos[0]) ? videos[0] : '' %>">
+    
+    <input type="hidden" name="videoId2" value="<%= (mode === 'edit' && videoIds && videoIds[1]) ? videoIds[1] : '' %>">
+    <input type="text" class="form-control video-input" id="videoUrl2" name="videoUrl2"
+           value="<%= (mode === 'edit' && videos && videos[1]) ? videos[1] : '' %>">
+</div>
+</div>
+</main>
+<style>
+    
+.gallery-item-wrapper {
+    max-width: 256px;
+    margin: 0 auto;
+}
+
+
+.gallery-card {
+    width: 100% !important;
+    aspect-ratio: 1 / 1; 
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+}
+
+
+.gallery-card .icon-wrapper {
+    width: 80%;
+    height: 50%; 
+    background-color: #f8f9fa;
+    border-radius: 15px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gallery-placeholder-img {
+    max-height: 80%;
+    width: auto;
+    object-fit: contain;
+}
+
+
+.gallery-item-wrapper .progress {
+    width: 100%;
+}
+.progress {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
+}
+
+.progress-bar {
+    background-color: white !important;
+}
+/* --- Video URL (Capsule Design) --- */
+.video-input {
+    border-radius: 50px !important;
+    border: none !important;
+    padding: 10px 20px;
+    background-color: white !important;
+    color: #333;
+    margin-bottom: 10px;
+    max-height: 22px !important;
+    max-width: 256px !important;
+
+}
+.gallery-placeholder-img {
+    max-height: 120px;
+    width: auto;
+    transition: transform 0.2s;
+}
+
+.gallery-card:hover .gallery-placeholder-img {
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+    
+function initGalleryLogic() {
+    document.querySelectorAll('.gallery-item-wrapper').forEach(wrapper => {
+        const card = wrapper.querySelector('.gallery-card');
+        const input = wrapper.querySelector('input[type="file"]');
+        const img = wrapper.querySelector('.gallery-placeholder-img');
+        const progress = wrapper.querySelector('.progress');
+        const statusText = progress ? progress.querySelector('p') : null;
+        const closeBtn = wrapper.querySelector('.btn-close');
+
+        
+        if (card && input && !card.dataset.bound) {
+            card.dataset.bound = "true"; 
+            
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('btn-close')) {
+                    input.click();
+                }
+            });
+
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        img.src = e.target.result;
+                        img.style.objectFit = 'cover';
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        if(statusText) statusText.textContent = this.files[0].name;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            if (closeBtn && !closeBtn.hasAttribute('onclick')) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    input.value = "";
+                    img.src = "/picture.png";
+                    img.style.objectFit = 'contain';
+                    if(statusText) statusText.textContent = "Uploading...";
+                });
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initGalleryLogic);
+</script>
+<script>
+async function deleteExistingImage(e, imageId, btnElement) {
+    if (e) e.stopPropagation();
+
+    if (confirm('ยืนยันการลบรูปภาพนี้ออกจากแกลเลอรี?')) {
+        try {
+            const response = await fetch(`/api/gallery/delete/${imageId}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                // 1. หา Container ใหญ่ที่รวมรูปทั้งหมด
+                const galleryRow = btnElement.closest('.row'); 
+                // 2. ลบรูปที่สั่งลบทิ้ง
+                const wrapper = btnElement.closest('.gallery-item-wrapper');
+                wrapper.remove();
+
+                // 3. สร้างช่องว่างใหม่ (Empty Slot) กลับเข้าไปแทนที่
+                const emptySlotHTML = `
+                    <div class="col-12 col-sm-6 col-lg-3 gallery-item-wrapper">
+                        <div class="card custom-upload-card gallery-card text-center shadow-lg border-0">
+                            <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-2" aria-label="Close"></button>
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center p-3">
+                                <div class="icon-wrapper mb-2">
+                                    <img src="/picture.png" alt="Browse Image" class="img-fluid gallery-placeholder-img">
+                                </div>
+                                <p class="card-text text-white fw-light mb-0" style="font-size: 0.8rem;">Click to browse</p>
+                                <input type="file" class="d-none" name="gallery">
+                            </div>
+                        </div>
+                        <div class="progress mt-2 shadow-sm">
+                            <p style="margin-left: 10px; color: #FFFFFF;">New Upload</p>
+                        </div>
+                    </div>
+                `;
+                
+                galleryRow.insertAdjacentHTML('beforeend', emptySlotHTML);
+
+                initGalleryLogic();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+}
+</script>
