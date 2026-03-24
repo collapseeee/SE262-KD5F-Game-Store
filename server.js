@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit, addCategory, deleteProductByProductId, getAllProductByUserId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit, addCategory, deleteProductByProductId, getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
@@ -402,7 +402,7 @@ app.post('/signup', async (req, res) => {
 }
 );
 
-app.get('/api/product', async (req, res) => {
+app.get('/api/product', async () => {
     // GET all products
 });
 // dashboard page for seller
@@ -479,9 +479,8 @@ app.post('/api/product/add', upload.fields([
             }
             const galleryFiles = req.files['gallery_image[]'] || [];
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
-            const { name, category, price, description } = req.body;
+            const { name, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
-            const user = await getUserByName(req.session.username);
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
