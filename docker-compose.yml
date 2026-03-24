@@ -1,11 +1,11 @@
 version: "3.9"
 services:
   web:
-    image: kai-dow-5fong-web-store
+    image: amony550/web-store
     ports:
       - "3000:3000"
     env_file:
-        - product.env
+        - .env
     command: ["pnpm", "dev"]
     depends_on:
       - mysql

@@ -304,6 +304,24 @@ async function saveNewCategory(index) {
         alert("Cannot connect to Server");
     }
 }
+function toggleVisibility(id) {
+    const icon = document.getElementById(id);
+    const row = icon.closest('tr');
+    axios.put(`/api/category/hide/${icon.dataset.categoryId}`);
+    if (icon.innerText === 'visibility') {
+        // change to hidden state
+        icon.innerText = 'visibility_off';
+        icon.style.opacity = '0.5';
+        row.style.opacity = '0.5'; //
+        row.style.transition = '0.3s';
+    } else {
+        // change back to visible state
+        icon.innerText = 'visibility';
+        icon.style.opacity = '1';
+        row.style.opacity = '1';
+        row.style.transition = '0.3s';
+    }
+}
 </script>
 <style>
     

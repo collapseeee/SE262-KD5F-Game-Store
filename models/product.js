@@ -5,6 +5,7 @@ const getAllProduct = async () => {
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
         INNER JOIN products p ON p.product_id = pl.product_id
         INNER JOIN categories c ON c.category_id = pl.category_id
+        WHERE c.isHidden = false
         GROUP BY pl.product_id, p.name, p.price, p.poster_url
         ORDER BY pl.product_id ASC`;
     try {

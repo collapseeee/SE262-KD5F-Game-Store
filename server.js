@@ -8,7 +8,7 @@ const path = require('path');
 const { getWishlistByUserId, deleteFromWishlist, addToWishlist, getIsWishlisted } = require('./models/wishlist');
 const { getCartByUserId, deleteFromCart, addToCart, getIsInCart, deleteCart } = require('./models/cart');
 const { getUserByName } = require('./models/account');
-const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateGallery, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit, addCategory, deleteProductByProductId, getAllProductByUserId } = require('./models/product');
+const { getAllProduct, searchProduct, getProductById, getProductRequirementById, getSellerIdByProductId, addProduct, addGallery, addVideo, addSystemRequirements, addProductList, getRequirementsByProductId, getImagesByProductId, getVideosByProductId, deleteGalleryByImageId, getCategoriesByProductId, updateProduct, updateSystemRequirements, updateVideo, deleteProdcutListByProductId, renameCategory, deleteCategoryByCategoryId, getProductByIdForEdit, addCategory, deleteProductByProductId, getAllProductByUserId } = require('./models/product');
 const { getAllCategory, hideCategory } = require('./models/category');
 const { getProductImagesByProductId, getProductVideosByProductId } = require('./models/media');
 const { addOrder, updateUserTotalSpend, updateUserTotalGame, updateUserTotalSale } = require('./models/checkout');
@@ -63,7 +63,7 @@ app.get('/', async (req, res) => {
     if (games.length > 12) {
         games = games.slice(0, 12);
     }
-    if (req.session.username) {
+    if (req.session.username || req.session.user_id) {
         const user = await getUserByName(req.session.username);
         const userWishlists = await getWishlistByUserId(user.user_id);
         const wishlistIds = userWishlists.map(item => item.product_id);
@@ -90,7 +90,15 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/identification', (req, res) => {
-    res.render('identification');
+    if (req.session.username || req.session.user_id) {
+        if (req.session.role === 'b') {
+            res.redirect('/');
+        } else {
+            res.redirect('/dashboard');
+        }
+    } else {
+        res.render('identification');
+    }
 });
 
 app.get('/register', (req, res) => {
@@ -98,7 +106,7 @@ app.get('/register', (req, res) => {
 });
 app.get('/sellerInformation', async (req, res) => {
     try {
-        if (req.session.username) {
+        if (req.session.username || req.session.user_id) {
             const user = await Account.getUserByName(req.session.username);
             res.render('seller/personalInformation', { seller: user });
 
@@ -113,15 +121,23 @@ app.get('/sellerInformation', async (req, res) => {
 
 
 app.get('/sellerLogin', (req, res) => {
-    res.render('seller/login');
+    if (req.session.username || req.session.user_id) {
+        res.redirect('/');
+    } else {
+        res.render('seller/login');
+    }
 });
 
 app.get('/buyerLogin', (req, res) => {
-    res.render('buyer/login');
+    if (req.session.username || req.session.user_id) {
+        res.redirect('/');
+    } else {
+        res.render('buyer/login');
+    }
 });
 
 app.get('/account', async (req, res) => {
-    if (req.session.username) {
+    if (req.session.username || req.session.user_id) {
         const user = await getUserByName(req.session.username);
         user.created_date = `${new Date(user.created_date).getDate()}/${new Date(user.created_date).getMonth() + 1}/${new Date(user.created_date).getFullYear()}`;
         const userCarts = await getCartByUserId(user.user_id);
@@ -279,7 +295,7 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/wishlist', async (req, res) => {
-    if (req.session.username) {
+    if (req.session.username || req.session.user_id) {
         const user = await getUserByName(req.session.username);
         const wishlists = await getWishlistByUserId(user.user_id);
         const exportedWishlists = wishlists.map(wishlist => {
@@ -305,7 +321,7 @@ app.get('/wishlist', async (req, res) => {
 
 });
 app.get('/contact', async (req, res) => {
-    if (req.session.username) {
+    if (req.session.username || req.session.user_id) {
         const user = await getUserByName(req.session.username);
         const userCarts = await getCartByUserId(user.user_id);
         res.render('contact', {
@@ -325,33 +341,51 @@ app.get('/contact', async (req, res) => {
 // API endpoints
 
 
-app.post('/loginBuyer', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginBuyer(username, password)
-        .then(() => {
-            req.session.username = username;
-            return res.redirect('/');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.', username });
-        });
+app.post('/loginBuyer', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const result = await Auth.loginBuyer(username, password);
 
+        if (result) {
+            req.session.username = result.username;
+            req.session.user_id = result.user_id;
+            req.session.role = 'b';
+            req.session.save((err) => {
+                if (err) {
+                    throw new Error();
+                }
+                res.redirect('/');
+            });
+        } else {
+            throw new Error();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.'});
+    }
 });
 
-app.post('/loginSeller', (req, res) => {
-    const { username, password } = req.body;
-    Auth.loginSeller(username, password)
-        .then((user) => {
-            req.session.username = user.username;
-            req.session.user_id = user.user_id;
-            res.redirect('/dashboard');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.', username });
-        });
-
+app.post('/loginSeller', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const result = await Auth.loginSeller(username, password);
+        if (result) {
+            req.session.username = result.username;
+            req.session.user_id = result.user_id;
+            req.session.role = 'b';
+            req.session.save((err) => {
+                if (err) {
+                    throw new Error();
+                }
+                res.redirect('/dashboard');
+            });
+        } else {
+            throw new Error();
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.'});
+    }
 });
 
 app.get('/signout', (req, res) => {
@@ -370,7 +404,7 @@ app.delete('/api/account', async (req, res) => {
     const user = await getUserByName(req.session.username);
     await Account.deleteUserById(user.user_id);
     res.status(204);
-    req.session.destroy(async err => {
+    req.session.destroy(err => {
         if (err) {
             console.error(err);
             res.status(500).send('Error during delete account');
@@ -402,13 +436,13 @@ app.post('/signup', async (req, res) => {
 }
 );
 
-app.get('/api/product', async (req, res) => {
+app.get('/api/product', async () => {
     // GET all products
 });
 // dashboard page for seller
 app.get('/dashboard', async (req, res) => {
     try {
-        if (req.session.username) {
+        if (req.session.username || req.session.user_id) {
             const games = await getAllProductByUserId(req.session.user_id);
             const categories = await getAllCategory();
             res.render('seller/dashboard', {
@@ -479,9 +513,8 @@ app.post('/api/product/add', upload.fields([
             }
             const galleryFiles = req.files['gallery_image[]'] || [];
             const videoUrls = [req.body.videoUrl, req.body.videoUrl2].filter(url => url && url.trim() !== "");
-            const { name, category, price, description } = req.body;
+            const { name, price, description } = req.body;
             const productId = await addProduct(name, description, price, cleanPath);
-            const user = await getUserByName(req.session.username);
             if (!Array.isArray(categories)) {
                 categories = [categories];
             }
