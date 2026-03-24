@@ -91,7 +91,7 @@ app.get('/', async (req, res) => {
 
 app.get('/identification', (req, res) => {
     if (req.session.username || req.session.user_id) {
-        if (req.session.role = 'b') {
+        if (req.session.role === 'b') {
             res.redirect('/');
         } else {
             res.redirect('/dashboard');
@@ -120,7 +120,7 @@ app.get('/sellerInformation', async (req, res) => {
 });
 
 
-app.get('/sellerLogin', async (req, res) => {
+app.get('/sellerLogin', (req, res) => {
     if (req.session.username || req.session.user_id) {
         res.redirect('/');
     } else {
@@ -128,7 +128,7 @@ app.get('/sellerLogin', async (req, res) => {
     }
 });
 
-app.get('/buyerLogin', async (req, res) => {
+app.get('/buyerLogin', (req, res) => {
     if (req.session.username || req.session.user_id) {
         res.redirect('/');
     } else {
@@ -361,7 +361,7 @@ app.post('/loginBuyer', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.', username });
+        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.'});
     }
 });
 
@@ -384,7 +384,7 @@ app.post('/loginSeller', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.', username });
+        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.'});
     }
 });
 
