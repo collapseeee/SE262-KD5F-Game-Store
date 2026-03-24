@@ -2,7 +2,9 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: [ "main" ,"release/v1.0.0"]
+    branches: 
+      - main
+      - release/*
 
 jobs:
   build-and-deploy:
