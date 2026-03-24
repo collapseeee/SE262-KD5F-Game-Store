@@ -34,7 +34,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST_PROD }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_NAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "docker-compose.yml"
@@ -45,7 +45,7 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/release/')
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST_STAGING }}
+          host: ${{ secrets.SSH_RELEASE_HOST }}
           username: ${{ secrets.SSH_NAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "docker-compose.yml"
