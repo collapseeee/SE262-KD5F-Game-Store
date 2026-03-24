@@ -9,10 +9,24 @@ const config = {
     database: 'kd5f'
 };
 
-const connection = mysql.createPool(config);
-connection.getConnection(err => {
-    if (err) throw err;
-    console.log('Connected to the MySQL database.');
-});
+function createConnectionPool(retryInterval = 5000) {
+    const pool = mysql.createPool(config);
 
+    const tryConnect = () => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                // Logging DB connection failure is necessary for monitoring and retry logic
+                console.error(`DB connection failed: ${err.message}. Retrying in ${retryInterval/1000}s...`); // skipcq: JS-0002
+                setTimeout(tryConnect, retryInterval);
+            } else {
+                if (connection) connection.release();
+            }
+        });
+    };
+
+    tryConnect();
+    return pool;
+}
+
+const connection = createConnectionPool();
 module.exports = connection;
