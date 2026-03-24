@@ -15,10 +15,10 @@ function createConnectionPool(retryInterval = 5000) {
     const tryConnect = () => {
         pool.getConnection((err, connection) => {
             if (err) {
-                console.error(`DB connection failed: ${err.message}. Retrying in ${retryInterval/1000}s...`);
+                // Logging DB connection failure is necessary for monitoring and retry logic
+                console.error(`DB connection failed: ${err.message}. Retrying in ${retryInterval/1000}s...`); // skipcq: JS-0002
                 setTimeout(tryConnect, retryInterval);
             } else {
-                console.log('Database connected successfully!');
                 if (connection) connection.release();
             }
         });
