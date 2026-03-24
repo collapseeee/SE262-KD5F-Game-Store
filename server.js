@@ -92,7 +92,7 @@ app.get('/', async (req, res) => {
 app.get('/identification', (req, res) => {
     if (req.session.username || req.session.user_id) {
         if (req.session.role = 'b') {
-            res.redirect('/dashboard');
+            res.redirect('/');
         } else {
             res.redirect('/dashboard');
         }
@@ -120,7 +120,7 @@ app.get('/sellerInformation', async (req, res) => {
 });
 
 
-app.get('/sellerLogin', (req, res) => {
+app.get('/sellerLogin', async (req, res) => {
     if (req.session.username || req.session.user_id) {
         res.redirect('/');
     } else {
@@ -128,9 +128,9 @@ app.get('/sellerLogin', (req, res) => {
     }
 });
 
-app.get('/buyerLogin', (req, res) => {
+app.get('/buyerLogin', async (req, res) => {
     if (req.session.username || req.session.user_id) {
-        res.redirect('/')
+        res.redirect('/');
     } else {
         res.render('buyer/login');
     }
@@ -344,12 +344,20 @@ app.get('/contact', async (req, res) => {
 app.post('/loginBuyer', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const result = await Auth.loginBuyer(username, password)
-        if (await result) {
+        const result = await Auth.loginBuyer(username, password);
+
+        if (result) {
             req.session.username = result.username;
-            req.session.user_id = result.user_id
+            req.session.user_id = result.user_id;
             req.session.role = 'b';
-            return res.redirect('/');
+            req.session.save((err) => {
+                if (err) {
+                    throw new Error();
+                }
+                res.redirect('/');
+            });
+        } else {
+            throw new Error();
         }
     } catch (error) {
         console.error(error);
@@ -361,11 +369,18 @@ app.post('/loginSeller', async (req, res) => {
     try {
         const { username, password } = req.body;
         const result = await Auth.loginSeller(username, password);
-        if (await result) {
+        if (result) {
             req.session.username = result.username;
             req.session.user_id = result.user_id;
-            req.session.role = 's';
-            res.redirect('/dashboard');
+            req.session.role = 'b';
+            req.session.save((err) => {
+                if (err) {
+                    throw new Error();
+                }
+                res.redirect('/dashboard');
+            });
+        } else {
+            throw new Error();
         }
     } catch (error) {
         console.error(error);
