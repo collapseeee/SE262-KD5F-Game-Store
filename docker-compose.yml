@@ -5,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-        - product.env
+        - .env
     command: ["pnpm", "dev"]
     depends_on:
       - mysql
