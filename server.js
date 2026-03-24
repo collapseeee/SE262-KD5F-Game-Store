@@ -370,7 +370,7 @@ app.delete('/api/account', async (req, res) => {
     const user = await getUserByName(req.session.username);
     await Account.deleteUserById(user.user_id);
     res.status(204);
-    req.session.destroy(async err => {
+    req.session.destroy(err => {
         if (err) {
             console.error(err);
             res.status(500).send('Error during delete account');
