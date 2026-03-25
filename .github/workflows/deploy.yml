@@ -28,7 +28,16 @@ jobs:
           IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
           docker build -t $IMAGE .
           docker push $IMAGE
-
+      #push sql-init (main)
+      - name: Copy folder to Main
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_NAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "mysql-init"
+          target: "/home/ubuntu/"
       # push docker-compose (main)
       - name: Push compose to Main
         if: github.ref == 'refs/heads/main'
@@ -39,7 +48,16 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "docker-compose.yml"
           target: "/home/ubuntu/"
-
+      #push sql-init (release)
+      - name: Copy folder to Release
+        if: startsWith(github.ref, 'refs/heads/release/')
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_RELEASE_HOST  }}
+          username: ${{ secrets.SSH_NAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "mysql-init"
+          target: "/home/ubuntu/"
       # push docker-compose (release)
       - name: Push compose to RELEASE
         if: startsWith(github.ref, 'refs/heads/release/')
