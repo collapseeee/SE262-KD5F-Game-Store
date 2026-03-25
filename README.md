@@ -32,7 +32,7 @@ For Sellers
 
 - Sales Tracking: Real-time updates to total sales and revenue.
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 Backend: Node.js, Express.js
 
 Frontend: EJS (Embedded JavaScript), Bootstrap 5, jQuery
