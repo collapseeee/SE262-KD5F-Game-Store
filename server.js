@@ -534,9 +534,7 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
                 await addSystemRequirements(productId, req.body);
-
                 res.redirect('/dashboard');
             }
         }
@@ -599,7 +597,6 @@ app.post(
                     addProductList(productId, categoryId, req.session.user_id)
                 )
             );
-            await updateSystemRequirements(productId, req.body);
             if (galleryFiles.length > 0) {
                 for (const file of galleryFiles) {
                     const cleanPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
@@ -611,8 +608,6 @@ app.post(
             for (let i = 0; i < videoUrls.length; i++) {
                 const url = videoUrls[i];
                 const id = videoIds[i];
-
-
                 if (url && url.trim() !== "" && id && id !== "") {
                     try {
                         await updateVideo(id, url);
@@ -624,7 +619,7 @@ app.post(
                     await addVideo(url, productId);
                 }
             }
-
+                    await updateSystemRequirements(productId, req.body);
             res.redirect('/dashboard');
 
         } catch (err) {
