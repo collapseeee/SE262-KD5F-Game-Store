@@ -154,10 +154,10 @@ const addCategory = async (name) => {
     try {
         const [result] = await db.promise().execute(sql, [name]);
         return result;
-    }catch(err){
+    } catch (err) {
         console.error(err.message);
     }
-    };
+};
 
 const addProductList = async (productId, categoryId, userId) => {
     const sql = `INSERT INTO product_lists (product_id, category_id, user_id,release_date) VALUES (?, ?, ?, CURDATE())`;
@@ -373,7 +373,7 @@ const searchProduct = async (gameName, filteredIds) => {
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
         INNER JOIN products p ON p.product_id = pl.product_id
         INNER JOIN categories c ON c.category_id = pl.category_id
-        WHERE p.name LIKE ?`;
+        WHERE p.name LIKE ? AND c.isHidden = false`;
     let payload = [`%${gameName ? gameName : ''}%`]
 
     if (filteredIds) {
