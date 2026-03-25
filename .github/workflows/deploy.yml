@@ -25,11 +25,9 @@ jobs:
       #  build + push
       - name: Build and Push Docker Image
         run: |
-          IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
-          LATEST=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
-          docker build -t $IMAGE -t $LATEST .
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
+          docker build -t $IMAGE .
           docker push $IMAGE
-          docker push $LATEST
 
       # push docker-compose (main)
       - name: Push compose to Main
@@ -64,7 +62,7 @@ jobs:
           script: |
             cd /home/ubuntu
 
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
+            IMAGE=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
@@ -84,7 +82,7 @@ jobs:
           script: |
             cd /home/ubuntu
 
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
+            IMAGE=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
             docker compose down
