@@ -361,7 +361,7 @@ app.post('/loginBuyer', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.'});
+        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.' });
     }
 });
 
@@ -384,7 +384,7 @@ app.post('/loginSeller', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.'});
+        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.' });
     }
 });
 
@@ -424,17 +424,21 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    Auth.signup(username, password, 'buyer', 'seller')
-        .then(() => {
-            req.session.username = username;
+    const result = Auth.signup(username, password, 'buyer', 'seller');
+    if (result) {
+        req.session.username = result.username;
+        req.session.user_id = result.user_id;
+        req.session.role = 'b';
+        req.session.save((err) => {
+            if (err) {
+                throw new Error();
+            }
             res.redirect('/');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during signup');
         });
-}
-);
+    } else {
+        throw new Error();
+    }
+});
 
 app.get('/api/product', async () => {
     // GET all products
@@ -619,7 +623,7 @@ app.post(
                     await addVideo(url, productId);
                 }
             }
-                    await updateSystemRequirements(productId, req.body);
+            await updateSystemRequirements(productId, req.body);
             res.redirect('/dashboard');
 
         } catch (err) {
