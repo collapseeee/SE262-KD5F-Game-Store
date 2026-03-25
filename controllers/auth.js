@@ -5,8 +5,8 @@ const Auth = {
     signup: async (username, password) => {
         try {
             const hashedPassword = await encrypt.hash(password, 10);
-            const userData = { username, password: hashedPassword, isBuyer: 1, isSeller:1};
-            await Account.createUser(userData);
+            const userData = { username, password: hashedPassword, isBuyer: 1, isSeller: 1 };
+            return await Account.createUser(userData);
         } catch (error) {
             error.message = 'Error creating user: ' + error.message;
             throw error;
