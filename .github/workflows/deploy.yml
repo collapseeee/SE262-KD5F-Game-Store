@@ -26,7 +26,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
-          LATEST=${{ secrets.DOCKER_USERNAME }}/web-store:latest
+          LATEST=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
           docker build -t $IMAGE -t $LATEST .
           docker push $IMAGE
           docker push $LATEST
@@ -68,8 +68,10 @@ jobs:
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
+            docker compose down
             docker compose pull --no-cache
             docker compose up -d --remove-orphans --force-recreate
+            docker image prune -f
 
       # deploy RELEASE
       - name: Deploy to RELEASE
@@ -85,6 +87,7 @@ jobs:
             IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-
+            docker compose down
             docker compose pull --no-cache
             docker compose up -d --remove-orphans --force-recreate
+            docker image prune -f
