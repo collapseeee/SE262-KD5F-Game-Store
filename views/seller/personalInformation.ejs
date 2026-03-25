@@ -62,15 +62,51 @@
         >
           Log Out
         </button>
-        <a id="delete-account-button" class="fs-3 text-danger m-4" href=""
-          >Delete my account</a
-        >
+        <button id="delete-account-button" class="fs-3 text-danger m-4" data-bs-toggle="modal" data-bs-target="#confirm-modal">
+          Delete my account
+        </button>
+      </div>
+      <!-- Modal -->
+      <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirmation-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body fs-2 text-center">
+              <h1 class="modal-title fs-1" id="confirmation-label">Are you sure?</h1>
+              <div class="fs-3">You are deleting your account.</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              <button id="confirm-delete-button" type="button" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
     <%- include('../buyer/partials/popup/sessionExpired')%>
     <%-include('partials/footer')%>
   </body>
   <script src="/scripts/session-expiry.js"></script>
+  <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/axios/dist/axios.min.js"></script>
+  <script>
+    const confirmDeleteButton = document.body.querySelector('#confirm-delete-button');
+    if (confirmDeleteButton) {
+      confirmDeleteButton.addEventListener('click', async event => {
+        try {
+          const response = await axios.delete('/api/account');
+          if (response.status === 200) {
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Error deleting account:', error);
+          alert('Error deleting account. Please try again.');
+        }
+      });
+    }
+  </script>
 
   <style>
     .account-container {

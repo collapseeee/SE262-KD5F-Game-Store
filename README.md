@@ -8,8 +8,8 @@
 # Your Deployment URL
 The IP is dynamic, URL will be put later before the presentation.
 
-# Forked Repository
-https://github.com/GERRYExpress/termproject-2025-mhuhaorak-frontend
+# Main Repository
+[https://github.com/GERRYExpress/termproject-2025-mhuhaorak-frontend](https://github.com/camt-pathathai/termproject-2025-mhuhaorak-frontend)
 
 # 🎮 KD5F - Game Store Project
 KD5F is a full-stack e-commerce web application for digital video games. It features a dual-user system (Buyers and Sellers), a dynamic shopping cart with instant navbar updates, and a robust media carousel for product details.

@@ -62,14 +62,16 @@ jobs:
           script: |
             cd /home/ubuntu
 
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
+            IMAGE=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
-            docker compose pull
-            docker compose up -d --remove-orphans
+            docker compose down
+            docker compose pull --no-cache
+            docker compose up -d --remove-orphans --force-recreate
+            docker image prune -f
 
-      # deploy STAGING
+      # deploy RELEASE
       - name: Deploy to RELEASE
         if: startsWith(github.ref, 'refs/heads/release/')
         uses: appleboy/ssh-action@v1.0.3
@@ -80,9 +82,10 @@ jobs:
           script: |
             cd /home/ubuntu
 
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
+            IMAGE=${{ secrets.DOCKER_USERNAME }}/kai-dao-web-store:latest
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-
-            docker compose pull
-            docker compose up -d --remove-orphans
+            docker compose down
+            docker compose pull --no-cache
+            docker compose up -d --remove-orphans --force-recreate
+            docker image prune -f
