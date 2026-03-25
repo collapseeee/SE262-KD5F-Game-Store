@@ -29,7 +29,7 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
       # push sql file to Main
-      - name: Copy folder
+      - name: Copy folder to main
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -48,7 +48,7 @@ jobs:
           source: "docker-compose.yml"
           target: "/home/ubuntu/"
       # push sql file to Release
-      - name: Copy folder
+      - name: Copy folder to release
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_RELEASE_HOST}}
