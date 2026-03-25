@@ -26,8 +26,10 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE=${{ secrets.DOCKER_USERNAME }}/web-store:${{ github.sha }}
-          docker build -t $IMAGE .
+          LATEST=${{ secrets.DOCKER_USERNAME }}/web-store:latest
+          docker build -t $IMAGE -t $LATEST .
           docker push $IMAGE
+          docker push $LATEST
 
       # push docker-compose (main)
       - name: Push compose to Main
@@ -66,10 +68,10 @@ jobs:
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
-            docker compose pull
+            docker compose pull --no-cache
             docker compose up -d --remove-orphans --force-recreate
 
-      # deploy STAGING
+      # deploy RELEASE
       - name: Deploy to RELEASE
         if: startsWith(github.ref, 'refs/heads/release/')
         uses: appleboy/ssh-action@v1.0.3
@@ -84,5 +86,5 @@ jobs:
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
-            docker compose pull
+            docker compose pull --no-cache
             docker compose up -d --remove-orphans --force-recreate
