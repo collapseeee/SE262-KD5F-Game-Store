@@ -424,7 +424,7 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    const result = Auth.signup(username, password, 'buyer', 'seller');
+    const result = await Auth.signup(username, password, 'buyer', 'seller');
     if (result) {
         req.session.username = result.username;
         req.session.user_id = result.user_id;
