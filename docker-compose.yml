@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   web:
-    image: amony550/web-store
+    image: amony550/web-store:latest
     ports:
       - "3000:3000"
     env_file:
