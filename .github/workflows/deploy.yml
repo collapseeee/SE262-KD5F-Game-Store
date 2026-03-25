@@ -30,6 +30,7 @@ jobs:
           docker push $IMAGE
       # push sql file to Main
       - name: Copy folder to main
+        if: github.ref == 'refs/heads/main'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -49,6 +50,7 @@ jobs:
           target: "/home/ubuntu/"
       # push sql file to Release
       - name: Copy folder to release
+        if: startsWith(github.ref, 'refs/heads/release/')
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_RELEASE_HOST}}
