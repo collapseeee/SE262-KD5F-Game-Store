@@ -66,8 +66,10 @@ jobs:
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
+            docker compose down
             docker compose pull
             docker compose up -d --remove-orphans
+            docker image prune -f
 
       # deploy STAGING
       - name: Deploy to RELEASE
@@ -84,5 +86,7 @@ jobs:
 
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
 
+            docker compose down
             docker compose pull
             docker compose up -d --remove-orphans
+            docker image prune -f
