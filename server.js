@@ -401,17 +401,21 @@ app.get('/signout', (req, res) => {
 });
 
 app.delete('/api/account', async (req, res) => {
-    const user = await getUserByName(req.session.username);
-    await Account.deleteUserById(user.user_id);
-    res.status(204);
-    req.session.destroy(err => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error during delete account');
-        } else {
-            res.redirect('/');
-        }
-    });
+    try {
+        const user = await getUserByName(req.session.username);
+        await Account.deleteUserById(user.user_id);
+        req.session.destroy(err => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ error: 'Error during delete account' });
+            } else {
+                res.status(200).json({ success: true, redirect: '/' });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error deleting account' });
+    }
 });
 
 app.post('/signup', async (req, res) => {
@@ -426,9 +430,6 @@ app.post('/signup', async (req, res) => {
     }
     const result = await Auth.signup(username, password, 'buyer', 'seller');
     if (result) {
-        req.session.username = result.username;
-        req.session.user_id = result.user_id;
-        req.session.role = 'b';
         req.session.save((err) => {
             if (err) {
                 throw new Error();
