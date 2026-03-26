@@ -6,7 +6,8 @@
 - **672115050** Apitawan Chirakunasin 
 
 # Your Deployment URL
-The IP is dynamic, URL will be put later before the presentation.
+- Release 1.0.4 (Latest) : http://3.223.117.251:3000
+- Main : http://54.88.230.88:3000
 
 # Main Repository
 [https://github.com/GERRYExpress/termproject-2025-mhuhaorak-frontend](https://github.com/camt-pathathai/termproject-2025-mhuhaorak-frontend)
