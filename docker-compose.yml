@@ -5,6 +5,7 @@ services:
       - "3000:3000"
     env_file:
         - .env
+    pull_policy: always
     command: ["pnpm", "dev"]
     depends_on:
       - mysql
