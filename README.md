@@ -12,6 +12,9 @@
 # Main Repository
 [https://github.com/GERRYExpress/termproject-2025-mhuhaorak-frontend](https://github.com/camt-pathathai/termproject-2025-mhuhaorak-frontend)
 
+# Presentation
+https://canva.link/azbo539ab5mdj2r
+
 # 🎮 KD5F - Game Store Project
 KD5F is a full-stack e-commerce web application for digital video games. It features a dual-user system (Buyers and Sellers), a dynamic shopping cart with instant navbar updates, and a robust media carousel for product details.
 
