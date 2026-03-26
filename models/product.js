@@ -154,10 +154,10 @@ const addCategory = async (name) => {
     try {
         const [result] = await db.promise().execute(sql, [name]);
         return result;
-    }catch(err){
+    } catch (err) {
         console.error(err.message);
     }
-    };
+};
 
 const addProductList = async (productId, categoryId, userId) => {
     const sql = `INSERT INTO product_lists (product_id, category_id, user_id,release_date) VALUES (?, ?, ?, CURDATE())`;
@@ -304,28 +304,28 @@ const updateSystemRequirements = async (productId, data) => {
         WHERE product_id = ? AND type = ?`;
     try {
         const minResult = await db.promise().execute(sql, [
-            data.min_os || '-',
-            data.min_processor || '-',
-            data.min_memory || '-',
-            data.min_graphic || '-',
-            data.min_directx || '-',
-            data.min_network || '-',
-            data.min_storage || '-',
-            data.min_soundcard || '-',
-            data.min_notes || '-',
+            data.os?.[0] || '-',
+            data.processor?.[0] || '-',
+            data.memory?.[0] || '-',
+            data.graphic?.[0] || '-',
+            data.directx?.[0] || '-',
+            data.network?.[0] || '-',
+            data.storage?.[0] || '-',
+            data.soundcard?.[0] || '-',
+            data.notes?.[0] || '-',
             productId,
             'min'
         ]);
         const recResult = await db.promise().execute(sql, [
-            data.rec_os || '-',
-            data.rec_processor || '-',
-            data.rec_memory || '-',
-            data.rec_graphic || '-',
-            data.rec_directx || '-',
-            data.rec_network || '-',
-            data.rec_storage || '-',
-            data.rec_soundcard || '-',
-            data.rec_notes || '-',
+            data.os?.[1] || '-',
+            data.processor?.[1] || '-',
+            data.memory?.[1] || '-',
+            data.graphic?.[1] || '-',
+            data.directx?.[1] || '-',
+            data.network?.[1] || '-',
+            data.storage?.[1] || '-',
+            data.soundcard?.[1] || '-',
+            data.notes?.[1] || '-',
             productId,
             'recommended'
         ]);
@@ -373,7 +373,7 @@ const searchProduct = async (gameName, filteredIds) => {
         `SELECT pl.product_id, GROUP_CONCAT(c.name SEPARATOR ', ') AS category, p.name, p.price, p.poster_url FROM product_lists pl
         INNER JOIN products p ON p.product_id = pl.product_id
         INNER JOIN categories c ON c.category_id = pl.category_id
-        WHERE p.name LIKE ?`;
+        WHERE p.name LIKE ? AND c.isHidden = false`;
     let payload = [`%${gameName ? gameName : ''}%`]
 
     if (filteredIds) {

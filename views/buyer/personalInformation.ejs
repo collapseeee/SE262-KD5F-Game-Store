@@ -108,10 +108,16 @@
     <script src="/scripts/scroll-reveal.js"></script>
     <script>
       const confirmDeleteButton = document.body.querySelector('#confirm-delete-button');
-      confirmDeleteButton.addEventListener('click', event => {
-        axios.delete('/api/account');
-        window.location.reload();
-        window.location.href = '/';
+      confirmDeleteButton.addEventListener('click', async event => {
+        try {
+          const response = await axios.delete('/api/account');
+          if (response.status === 200) {
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Error deleting account:', error);
+          alert('Error deleting account. Please try again.');
+        }
       });
     </script>
     <script src="/scripts/session-expiry.js"></script>

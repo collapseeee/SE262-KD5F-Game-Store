@@ -361,7 +361,7 @@ app.post('/loginBuyer', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.'});
+        res.status(400).render('buyer/login', { error: 'Login failed. Username or password may be wrong.' });
     }
 });
 
@@ -384,7 +384,7 @@ app.post('/loginSeller', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.'});
+        res.status(400).render('seller/login', { error: 'Login failed. Username or password may be wrong.' });
     }
 });
 
@@ -401,17 +401,21 @@ app.get('/signout', (req, res) => {
 });
 
 app.delete('/api/account', async (req, res) => {
-    const user = await getUserByName(req.session.username);
-    await Account.deleteUserById(user.user_id);
-    res.status(204);
-    req.session.destroy(err => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error during delete account');
-        } else {
-            res.redirect('/');
-        }
-    });
+    try {
+        const user = await getUserByName(req.session.username);
+        await Account.deleteUserById(user.user_id);
+        req.session.destroy(err => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ error: 'Error during delete account' });
+            } else {
+                res.status(200).json({ success: true, redirect: '/' });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error deleting account' });
+    }
 });
 
 app.post('/signup', async (req, res) => {
@@ -424,17 +428,18 @@ app.post('/signup', async (req, res) => {
     if (existingUser) {
         return res.status(400).render('register', { error: 'Username already exists', username });
     }
-    Auth.signup(username, password, 'buyer', 'seller')
-        .then(() => {
-            req.session.username = username;
+    const result = await Auth.signup(username, password, 'buyer', 'seller');
+    if (result) {
+        req.session.save((err) => {
+            if (err) {
+                throw new Error();
+            }
             res.redirect('/');
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Error during signup');
         });
-}
-);
+    } else {
+        throw new Error();
+    }
+});
 
 app.get('/api/product', async () => {
     // GET all products
@@ -534,9 +539,7 @@ app.post('/api/product/add', upload.fields([
                 for (const video of videoUrls) {
                     await addVideo(video, productId);
                 }
-
                 await addSystemRequirements(productId, req.body);
-
                 res.redirect('/dashboard');
             }
         }
@@ -599,7 +602,6 @@ app.post(
                     addProductList(productId, categoryId, req.session.user_id)
                 )
             );
-            await updateSystemRequirements(productId, req.body);
             if (galleryFiles.length > 0) {
                 for (const file of galleryFiles) {
                     const cleanPath = file.path.replace(/\\/g, '/').replace('public/assets', '');
@@ -611,8 +613,6 @@ app.post(
             for (let i = 0; i < videoUrls.length; i++) {
                 const url = videoUrls[i];
                 const id = videoIds[i];
-
-
                 if (url && url.trim() !== "" && id && id !== "") {
                     try {
                         await updateVideo(id, url);
@@ -624,7 +624,7 @@ app.post(
                     await addVideo(url, productId);
                 }
             }
-
+            await updateSystemRequirements(productId, req.body);
             res.redirect('/dashboard');
 
         } catch (err) {
